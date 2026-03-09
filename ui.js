@@ -22,6 +22,7 @@ function startAsGuest() {
     const guestModal = document.getElementById('guest-login-modal');
     if (guestModal) {
         guestModal.classList.remove('hidden');
+        guestModal.classList.add('flex');
     }
 }
 
@@ -157,6 +158,7 @@ function handleSajuAnalysis() {
         const guestModal = document.getElementById('guest-login-modal');
         if (guestModal) {
             guestModal.classList.add('hidden');
+            guestModal.classList.remove('flex');
         }
 
         const nameInput = document.querySelector('#user-name');
