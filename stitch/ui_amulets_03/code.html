@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<title>프리미엄 맞춤 부적</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
+<div class="relative mx-auto flex h-full min-h-screen max-w-[480px] flex-col bg-white dark:bg-slate-900 shadow-xl overflow-hidden">
+<!-- Header -->
+<header class="sticky top-0 z-10 flex items-center justify-between bg-white/80 dark:bg-slate-900/80 px-4 py-4 backdrop-blur-md">
+<button class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-amber-500 text-sm mb-0.5 fill-1">workspace_premium</span>
+<h1 class="text-base font-bold tracking-tight">나만의 프리미엄 맞춤 부적</h1>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">settings</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 overflow-y-auto px-4 pb-20">
+<!-- Preview Section -->
+<div class="flex flex-col items-center"><div class="group relative w-full overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 shadow-inner">
+<div class="absolute right-4 top-4 z-10 rounded-full bg-slate-900/60 px-3 py-1 text-[10px] font-bold tracking-wider text-white backdrop-blur-sm">PREVIEW</div>
+<div class="aspect-[16/10] w-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="Traditional golden paper amulet with intricate patterns and calligraphy" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCTlx9sZl0VNUN_tzcCguuGVicPVDhEktS5oEdOXGdGZkHbXqlRlCD5705m5-EwuUgNSuKPo8ju-uaVjgVAxx-sSWiWqqvexbdMJ5IyCTSGvYG5ZeWk5zu8UTZ8iUI4OZAdps2yQeXEWWExBQ2Mm5In52zBrqj-MtrgNJmpX6O8PHxsA9ExF8OYR-cKS-Bgw1317wt4-oAmPOTtq8Ok6RZrJeTbfncaApWhszoOR-4YE4CEg5s1Vsj69emNAva9Jqmm3FjSWevbBFo')">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+</div>
+<div class="text-center">
+<h2 class="text-lg font-bold leading-snug mt-2">현재 가장 간절히 바라는<br/>소망은 무엇인가요?</h2>
+</div></div>
+<!-- Keyword Selection -->
+<section class="">
+<div class="mb-4 flex items-center justify-between">
+<h3 class="text-sm font-bold text-slate-500 dark:text-slate-400">소망 키워드 선택</h3>
+<span class="text-xs font-medium text-primary">1개 선택 가능</span>
+</div>
+<div class="grid grid-cols-2 gap-3 sm:grid-cols-2">
+<!-- Keyword Chip: Selected -->
+<button class="flex items-center justify-center gap-2 rounded-xl bg-primary px-3 text-white shadow-md transition-all active:scale-95 py-2.5">
+<span class="text-sm font-bold">#재물</span>
+<span class="material-symbols-outlined text-base">check_circle</span>
+</button>
+<!-- Keyword Chips: Default -->
+<button class="flex items-center justify-center rounded-xl border border-primary/20 bg-white dark:bg-slate-800 px-3 text-sm font-medium transition-all hover:bg-primary/5 active:scale-95 py-2.5">#사업</button>
+<button class="flex items-center justify-center rounded-xl border border-primary/20 bg-white dark:bg-slate-800 px-3 text-sm font-medium transition-all hover:bg-primary/5 active:scale-95 py-2.5">#취업/직장</button>
+<button class="flex items-center justify-center rounded-xl border border-primary/20 bg-white dark:bg-slate-800 px-3 text-sm font-medium transition-all hover:bg-primary/5 active:scale-95 py-2.5">#새로운연애</button>
+<button class="flex items-center justify-center rounded-xl border border-primary/20 bg-white dark:bg-slate-800 px-3 text-sm font-medium transition-all hover:bg-primary/5 active:scale-95 py-2.5">#재회</button>
+<button class="flex items-center justify-center rounded-xl border border-primary/20 bg-white dark:bg-slate-800 px-3 text-sm font-medium transition-all hover:bg-primary/5 active:scale-95 py-2.5">#가정/결혼</button>
+<button class="flex items-center justify-center rounded-xl border border-primary/20 bg-white dark:bg-slate-800 px-3 text-sm font-medium transition-all hover:bg-primary/5 active:scale-95 py-2.5">#건강</button>
+<button class="flex items-center justify-center rounded-xl border border-primary/20 bg-white dark:bg-slate-800 px-3 text-sm font-medium transition-all hover:bg-primary/5 active:scale-95 py-2.5">#학업/시험</button>
+<button class="flex items-center justify-center rounded-xl border border-primary/20 bg-white dark:bg-slate-800 px-3 text-sm font-medium transition-all hover:bg-primary/5 active:scale-95 py-2.5">#액막이/평안</button>
+<button class="flex items-center justify-center rounded-xl border border-primary/20 bg-white dark:bg-slate-800 px-3 text-sm font-medium transition-all hover:bg-primary/5 active:scale-95 py-2.5">#소원성취</button>
+</div>
+</section>
+</main>
+<!-- Fixed CTA Area -->
+<div class="absolute bottom-[68px] left-0 right-0 z-20 px-4 pb-4 pt-2 bg-gradient-to-t from-white via-white dark:from-slate-900 dark:via-slate-900 to-transparent">
+<div class="relative pt-3">
+<div class="absolute -top-1 left-4 z-30 flex items-center gap-1 rounded-md bg-[#f1c40f] px-2 py-1 shadow-sm">
+<span class="material-symbols-outlined text-[10px] text-primary fill-1">diamond</span>
+<span class="text-[10px] font-black text-[#1e293b]">PREMIUM</span>
+</div>
+<button class="flex h-[60px] w-full items-center justify-center gap-2 rounded-[24px] bg-primary text-white shadow-lg transition-all active:scale-[0.98]">
+<span class="text-lg font-bold tracking-tight">나만의 맞춤 부적 생성하기</span>
+<span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 mx-auto w-full max-w-[480px] border-t border-slate-100 bg-white/95 dark:border-slate-800 dark:bg-slate-900/95 px-2 pb-6 pt-3 backdrop-blur-md">
+<div class="flex justify-around items-end">
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">내 사주</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-[10px] font-medium">오늘의 가이드</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="text-[10px] font-medium">기질 분석</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-1">history_edu</span>
+<span class="text-[10px] font-bold">부적</span>
+</a>
+</div>
+</nav>
+</div>
+</body></html>

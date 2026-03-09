@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNSE (운세)</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            safelist: ['bg-[#3b82f6]', 'border-[#3b82f6]', 'text-white'],
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "saju-wood": "#4ade80",
+                        "saju-fire": "#f87171",
+                        "saju-earth": "#fbbf24",
+                        "saju-metal": "#94a3b8",
+                        "saju-water": "#60a5fa",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body,
+        p,
+        span,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            word-break: keep-all;
+            overflow-wrap: break-word;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100dvh;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .material-symbols-outlined.fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+
+        /* Tab switching logic */
+        .screen {
+            display: none !important;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .screen.active {
+            display: block !important;
+        }
+
+        /* transform 삭제: position:fixed 버그 해결을 위해 투명도만 조절 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Saju Colors for specific texts */
+        .c-wood {
+            color: #4ade80;
+        }
+
+        .c-fire {
+            color: #f87171;
+        }
+
+        .c-earth {
+            color: #fbbf24;
+        }
+
+        .c-metal {
+            color: #94a3b8;
+        }
+
+        .c-water {
+            color: #60a5fa;
+        }
+
+        /* Bottom Nav Active State */
+        .nav-link.active .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+            color: #256af4;
+        }
+
+        .nav-link.active span.nav-text {
+            color: #256af4;
+            font-weight: 700;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .time-box {
+            background: #f1f5f9;
+            color: #1e293b;
+            font-size: 3rem;
+            padding: 8px 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            min-width: 90px;
+            text-align: center;
+            font-weight: 700;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .time-box.active {
+            background: rgba(37, 106, 244, 0.1);
+            color: #256af4;
+            box-shadow: 0 0 0 3px #256af4;
+        }
+
+        .clock-face {
+            width: 260px;
+            height: 260px;
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .clock-number {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #475569;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 50%;
+            z-index: 5;
+            transition: 0.2s;
+        }
+
+        .clock-number:hover {
+            background: rgba(37, 106, 244, 0.05);
+        }
+
+        .clock-hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            width: 3px;
+            height: 115px;
+            background: #256af4;
+            transform-origin: bottom center;
+            transform: translateX(-50%);
+            z-index: 2;
+            border-radius: 3px;
+        }
+
+        .clock-hand::before {
+            content: '';
+            position: absolute;
+            bottom: -4.5px;
+            left: -4.5px;
+            width: 12px;
+            height: 12px;
+            background: #256af4;
+            border-radius: 50%;
+        }
+
+        .hand-tip {
+            position: absolute;
+            top: -18px;
+            left: -16.5px;
+            width: 36px;
+            height: 36px;
+            background: rgba(37, 106, 244, 0.2);
+            border: 2px solid #256af4;
+            border-radius: 50%;
+            box-sizing: border-box;
+        }
+
+        /* Premium Amulet Modal */
+        @keyframes amuletGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
+            }
+        }
+
+        #amulet-detail-modal {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 생년월일: 브라우저 기본 달력 숨김 및 터치 영역 전체 확장 */
+        input[type="date"] {
+            position: relative;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+            background: transparent;
+            color: transparent;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light text-slate-900 flex justify-center w-full min-h-screen">
+    <div id="app" class="w-full max-w-md bg-white shadow-xl relative min-h-screen flex flex-col pt-14 pb-20">
+
+        <!-- ========================================== -->
+        <!-- WELCOME SCREEN (ui_0)                      -->
+        <!-- ========================================== -->
+        <div id="welcome-screen"
+            class="fixed inset-0 mx-auto max-w-md w-full z-[100] bg-white text-slate-900 flex flex-col items-center justify-between px-6 py-12 md:py-20 h-[100dvh]">
+            <!-- Top Section: Logo -->
+            <div class="flex flex-col items-center justify-center mt-8">
+                <h1 class="text-4xl font-bold tracking-tight text-slate-900">UNSE</h1>
+            </div>
+            <!-- Center Section: Hero Visual -->
+            <div class="w-full max-w-[400px] my-8">
+                <div
+                    class="aspect-square w-full rounded-full bg-gradient-to-tr from-primary/5 via-white to-primary/10 flex items-center justify-center relative">
+                    <div class="relative z-10 text-center">
+                        <span class="material-symbols-outlined text-primary/40 text-5xl">flare</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Bottom Section: Slogan and Auth -->
+            <div class="w-full max-w-[400px] flex flex-col gap-8 mb-4">
+                <div class="text-center space-y-2">
+                    <h3 class="text-xl font-medium text-slate-900">당신의 운명적 흐름을 읽다</h3>
+                    <p class="text-sm text-slate-500">데이터로 분석하는 나만의 맞춤형 운세 서비스</p>
+                </div>
+                <div class="flex flex-col">
+                    <button
+                        class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white h-14 px-6 text-slate-900 shadow-sm hover:bg-slate-50 transition-colors">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                            <path
+                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                fill="#4285F4"></path>
+                            <path
+                                d="M12 23c2.97 0 5.46-.98 7.28-2.67l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                fill="#34A853"></path>
+                            <path
+                                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+                                fill="#FBBC05"></path>
+                            <path
+                                d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                fill="#EA4335"></path>
+                        </svg>
+                        <span class="text-base font-semibold">Google로 시작하기</span>
+                    </button>
+                    <button
+                        class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-primary h-14 px-6 text-white shadow-md hover:bg-primary/90 transition-colors mt-3">
+                        <span class="text-base font-semibold">이메일로 시작하기</span>
+                    </button>
+                    <button onclick="startAsGuest()"
+                        class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-transparent bg-transparent h-12 px-6 text-slate-500 hover:text-slate-900 transition-colors mt-1">
+                        <span class="text-sm font-medium">게스트로 시작하기</span>
+                    </button>
+                </div>
+                <p class="text-[12px] text-center text-slate-400 px-6">
+                    계속 진행함으로써 UNSE의 <a class="underline" href="#">이용약관</a> 및 <a class="underline" href="#">개인정보처리방침</a>에
+                    동의하게 됩니다.
+                </p>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 1: 내 사주 (Stitch ui_1)                 -->
+        <!-- ========================================== -->
+        <section id="tab-saju" class="screen">
+            <header
+                class="fixed top-0 max-w-md w-full z-20 bg-white/90 backdrop-blur border-b border-slate-100 flex items-center justify-between h-14 px-4">
+                <div class="w-8"></div>
+                <h1 class="text-lg font-bold">내 사주</h1>
+                <button class="w-8 h-8 text-slate-500 flex items-center justify-center"><span
+                        class="material-symbols-outlined">settings</span></button>
+            </header>
+            <div id="correction-alert-top"
+                class="hidden bg-primary/5 text-primary text-xs font-semibold text-center py-2 border-b border-primary/10">
+            </div>
+
+            <main class="p-4 space-y-6">
+                <!-- Profile Card -->
+                <div
+                    class="bg-white rounded-3xl p-6 flex flex-col gap-4 shadow-sm border border-slate-100 relative overflow-hidden">
+                    <div
+                        class="absolute -right-10 -top-10 w-40 h-40 bg-gradient-to-br from-primary/5 to-transparent rounded-full blur-2xl pointer-events-none">
+                    </div>
+                    <div class="flex items-center gap-5 relative z-10">
+                        <div class="relative">
+                            <div class="w-20 h-20 rounded-full border-4 border-primary/20 p-1">
+                                <img id="profile-avatar" src="" alt=""
+                                    class="w-full h-full rounded-full object-cover bg-slate-100">
+                            </div>
+                            <div id="profile-element-badge"
+                                class="absolute -bottom-1 right-0 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white shadow-sm uppercase">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-baseline gap-1 mb-1">
+                                <h2 id="profile-name" class="text-2xl font-bold">홍길동</h2><span
+                                    class="text-slate-400 text-sm">님</span>
+                            </div>
+                            <p id="profile-birth" class="text-slate-500 text-sm mb-2">0000년생 · 00:00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Core Energy -->
+                <div class="mb-4">
+                    <h3 id="core-title" class="text-xl font-bold mb-2">나의 상징 (일간): -</h3>
+                    <p id="core-desc" class="text-sm text-slate-600 mb-4 leading-relaxed">-</p>
+                    <h3 id="weapon-title" class="text-lg font-bold mb-1">나의 사회적 무기: -</h3>
+                    <p id="weapon-desc" class="text-sm text-slate-600 leading-relaxed">-</p>
+                </div>
+
+                <!-- 8 Pillars -->
+                <div>
+                    <div class="grid grid-cols-4 gap-2 mb-2">
+                        <div class="text-center text-xs text-slate-400 font-medium">시주</div>
+                        <div class="text-center text-xs text-slate-400 font-medium">일주</div>
+                        <div class="text-center text-xs text-slate-400 font-medium">월주</div>
+                        <div class="text-center text-xs text-slate-400 font-medium">연주</div>
+                    </div>
+                    <!-- Stems -->
+                    <div class="grid grid-cols-4 gap-2 mb-2">
+                        <div
+                            class="bg-white rounded-2xl py-5 px-3 flex flex-col items-center border border-slate-100 shadow-sm">
+                            <span id="hour-gan-hangul" class="text-xs text-slate-400 font-medium mb-1.5">-</span><span
+                                id="hour-gan-hanja" class="text-[32px] font-bold">-</span>
+                        </div>
+                        <div
+                            class="bg-white rounded-2xl py-5 px-3 flex flex-col items-center border-2 border-primary ring-2 ring-primary/10 shadow-md">
+                            <span id="day-gan-hangul" class="text-xs text-primary font-medium mb-1.5">-</span><span
+                                id="day-gan-hanja" class="text-[32px] font-bold text-slate-800">-</span>
+                        </div>
+                        <div
+                            class="bg-white rounded-2xl py-5 px-3 flex flex-col items-center border border-slate-100 shadow-sm">
+                            <span id="month-gan-hangul" class="text-xs text-slate-400 font-medium mb-1.5">-</span><span
+                                id="month-gan-hanja" class="text-[32px] font-bold">-</span>
+                        </div>
+                        <div
+                            class="bg-white rounded-2xl py-5 px-3 flex flex-col items-center border border-slate-100 shadow-sm">
+                            <span id="year-gan-hangul" class="text-xs text-slate-400 font-medium mb-1.5">-</span><span
+                                id="year-gan-hanja" class="text-[32px] font-bold">-</span>
+                        </div>
+                    </div>
+                    <!-- Branches -->
+                    <div class="grid grid-cols-4 gap-2">
+                        <div
+                            class="bg-white rounded-2xl py-5 px-3 flex flex-col items-center border border-slate-100 shadow-sm">
+                            <span id="hour-ji-hangul" class="text-xs text-slate-400 font-medium mb-1.5">-</span><span
+                                id="hour-ji-hanja" class="text-[32px] font-bold">-</span>
+                        </div>
+                        <div
+                            class="bg-white rounded-2xl py-5 px-3 flex flex-col items-center border-2 border-primary ring-2 ring-primary/10 shadow-md">
+                            <span id="day-ji-hangul" class="text-xs text-primary font-medium mb-1.5">-</span><span
+                                id="day-ji-hanja" class="text-[32px] font-bold text-slate-800">-</span>
+                        </div>
+                        <div
+                            class="bg-white rounded-2xl py-5 px-3 flex flex-col items-center border border-slate-100 shadow-sm">
+                            <span id="month-ji-hangul" class="text-xs text-slate-400 font-medium mb-1.5">-</span><span
+                                id="month-ji-hanja" class="text-[32px] font-bold">-</span>
+                        </div>
+                        <div
+                            class="bg-white rounded-2xl py-5 px-3 flex flex-col items-center border border-slate-100 shadow-sm">
+                            <span id="year-ji-hangul" class="text-xs text-slate-400 font-medium mb-1.5">-</span><span
+                                id="year-ji-hanja" class="text-[32px] font-bold">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Destiny Flow -->
+                <div class="bg-primary/5 rounded-2xl p-6 border border-primary/10">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="material-symbols-outlined text-primary">auto_awesome</span>
+                        <h3 id="destiny-title" class="font-bold text-primary">000님의 운명적 흐름</h3>
+                    </div>
+                    <p id="destiny-desc" class="text-sm text-slate-700 leading-relaxed mb-4">-</p>
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div class="bg-white p-3 rounded-lg border border-slate-100">
+                            <p class="text-[10px] text-slate-400 uppercase">주요 오행</p>
+                            <p id="dominant-element-card-text" class="font-bold text-sm">- 0%</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-slate-100">
+                            <p class="text-[10px] text-slate-400 uppercase">조화로운 색</p>
+                            <p id="lucky-color-text" class="font-bold text-sm">-</p>
+                        </div>
+                    </div>
+                    <!-- Progress Bars -->
+                    <div class="space-y-3">
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold">
+                                <div>
+                                    <span class="text-saju-wood">목 (Wood)</span><span id="status-wood"
+                                        class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold text-white tracking-wide"></span>
+                                </div>
+                                <span id="pct-wood" class="text-slate-500">0%</span>
+                            </div>
+                            <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                                <div id="bar-wood" class="h-full bg-saju-wood w-0 transition-all duration-1000"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold">
+                                <div>
+                                    <span class="text-saju-fire">화 (Fire)</span><span id="status-fire"
+                                        class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold text-white tracking-wide"></span>
+                                </div>
+                                <span id="pct-fire" class="text-slate-500">0%</span>
+                            </div>
+                            <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                                <div id="bar-fire" class="h-full bg-saju-fire w-0 transition-all duration-1000"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold">
+                                <div>
+                                    <span class="text-saju-earth">토 (Earth)</span><span id="status-earth"
+                                        class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold text-white tracking-wide"></span>
+                                </div>
+                                <span id="pct-earth" class="text-slate-500">0%</span>
+                            </div>
+                            <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                                <div id="bar-earth" class="h-full bg-saju-earth w-0 transition-all duration-1000"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold">
+                                <div>
+                                    <span class="text-saju-metal">금 (Metal)</span><span id="status-metal"
+                                        class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold text-white tracking-wide"></span>
+                                </div>
+                                <span id="pct-metal" class="text-slate-500">0%</span>
+                            </div>
+                            <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                                <div id="bar-metal" class="h-full bg-saju-metal w-0 transition-all duration-1000"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold">
+                                <div>
+                                    <span class="text-saju-water">수 (Water)</span><span id="status-water"
+                                        class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold text-white tracking-wide"></span>
+                                </div>
+                                <span id="pct-water" class="text-slate-500">0%</span>
+                            </div>
+                            <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                                <div id="bar-water" class="h-full bg-saju-water w-0 transition-all duration-1000"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: 기질 분석 (Stitch ui_2)               -->
+        <!-- ========================================== -->
+        <section id="tab-trait" class="screen">
+            <header
+                class="fixed top-0 max-w-md w-full z-20 bg-white/90 backdrop-blur border-b border-slate-100 flex items-center justify-between h-14 px-4">
+                <div class="w-8"></div>
+                <h1 class="text-lg font-bold">기질 분석</h1>
+                <div class="w-8"></div>
+            </header>
+
+            <main class="space-y-8">
+                <!-- Top Graphic -->
+                <div class="flex flex-col items-center pt-8">
+                    <div class="relative mb-4 mt-2">
+                        <div
+                            class="w-24 h-24 rounded-full bg-gradient-to-tr from-[#89b4f8] to-primary flex items-center justify-center border-4 border-white shadow-md overflow-hidden">
+                            <span class="material-symbols-outlined text-white text-[48px] fill-icon">diamond</span>
+                        </div>
+                        <div
+                            class="absolute bottom-0 right-0 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow border border-slate-100/50">
+                            <span class="material-symbols-outlined text-primary text-[14px] fill-icon">star</span>
+                        </div>
+                    </div>
+                    <h2 id="trait-profile-name" class="text-[22px] font-bold mb-1 text-slate-800">홍길동님</h2>
+                    <p id="trait-profile-desc" class="text-slate-400 text-[13px]">- 기질</p>
+                </div>
+
+                <!-- Theme Slogan -->
+                <div class="px-5">
+                    <div
+                        class="relative overflow-hidden rounded-2xl bg-[#f8faff] p-6 shadow-sm border border-[#f0f4ff]">
+                        <div class="relative z-10">
+                            <div
+                                class="inline-block px-3 py-1 rounded-full bg-[#e6edff] text-primary text-[11px] font-bold mb-4">
+                                성격 테마</div>
+                            <h3 id="trait-slogan"
+                                class="text-[19px] font-bold text-slate-900 mb-3 leading-snug tracking-tight">-</h3>
+                            <p id="trait-summary" class="text-slate-600 text-[13px] leading-relaxed break-keep">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Core Energy -->
+                <div class="px-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="material-symbols-outlined text-primary text-[22px] fill-icon">bolt</span>
+                        <h3 class="text-[17px] font-bold text-slate-800 tracking-tight">코어 에너지</h3>
+                    </div>
+                    <div class="bg-[#f8faff] rounded-2xl p-5 border border-[#f0f4ff] shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm border border-slate-100">
+                                <span id="trait-core-hanja" class="text-primary text-[24px] font-bold">-</span>
+                            </div>
+                            <p id="trait-core-desc"
+                                class="text-slate-700 text-[13.5px] leading-[1.6] break-keep tracking-tight pt-1">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Goal Style -->
+                <div class="px-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="material-symbols-outlined text-primary text-[22px] fill-icon">radar</span>
+                        <h3 class="text-[17px] font-bold text-slate-800 tracking-tight">목표 달성 스타일</h3>
+                    </div>
+                    <div
+                        class="bg-white rounded-2xl p-6 border border-slate-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)]">
+                        <div class="flex gap-2 items-center mb-4">
+                            <div class="bg-[#e0f8e9] text-[#16a34a] p-1.5 rounded-full mr-1">
+                                <span class="material-symbols-outlined text-[20px] fill-icon">trending_up</span>
+                            </div>
+                            <span id="trait-functional-title"
+                                class="font-bold text-[16px] text-slate-800 tracking-tight">-</span>
+                        </div>
+                        <p id="trait-functional-desc"
+                            class="text-slate-600 text-[13.5px] leading-[1.6] tracking-tight mb-6 break-keep">-</p>
+
+                        <div class="grid grid-cols-2 gap-3 mt-2">
+                            <div
+                                class="bg-[#fafbfc] rounded-xl py-3.5 flex flex-col items-center justify-center border border-slate-100/50">
+                                <span id="flow-chip-title-1"
+                                    class="text-[11px] text-slate-400 font-medium mb-1 tracking-tight">아이디어</span>
+                                <span id="flow-chip-value-1" class="text-primary text-[13px] font-bold">-</span>
+                            </div>
+                            <div
+                                class="bg-[#fafbfc] rounded-xl py-3.5 flex flex-col items-center justify-center border border-slate-100/50">
+                                <span id="flow-chip-title-2"
+                                    class="text-[11px] text-slate-400 font-medium mb-1 tracking-tight">성과</span>
+                                <span id="flow-chip-value-2" class="text-primary text-[13px] font-bold">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comprehensive Desc -->
+                <div class="px-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="material-symbols-outlined text-primary text-[22px] fill-icon">auto_awesome</span>
+                        <h3 class="text-[17px] font-bold text-slate-800 tracking-tight">기질 종합 분석</h3>
+                    </div>
+                    <div
+                        class="bg-gradient-to-br from-indigo-50 to-white rounded-2xl p-6 border border-indigo-100/50 shadow-sm">
+                        <p id="trait-comprehensive"
+                            class="text-slate-700 text-[14px] leading-relaxed break-keep tracking-tight">-</p>
+                    </div>
+                </div>
+
+                <!-- Keywords -->
+                <div class="px-5 pb-12">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="material-symbols-outlined text-primary text-[22px] fill-icon">psychology</span>
+                        <h3 class="text-[17px] font-bold text-slate-800 tracking-tight">기질 키워드</h3>
+                    </div>
+                    <div id="trait-keywords" class="flex flex-wrap gap-2"></div>
+                </div>
+            </main>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- ========================================== -->
+        <!-- TAB 3: 오늘의 가이드 (Stitch ui_3 / ui_todayguide 01 & 02) -->
+        <!-- ========================================== -->
+        <section id="tab-guide" class="screen pb-32">
+            <!-- Header -->
+            <header
+                class="fixed top-0 z-40 max-w-md w-full bg-white/80 backdrop-blur-md px-4 py-4 flex items-center justify-between border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-slate-600">menu</span>
+                </div>
+                <h1 class="text-lg font-bold">오늘의 가이드</h1>
+                <div class="relative">
+                    <span class="material-symbols-outlined text-slate-600">notifications</span>
+                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-primary ring-2 ring-white"></span>
+                </div>
+            </header>
+
+            <main class="pt-[60px]">
+                <!-- Profile Section -->
+                <section class="px-6 pt-2 pb-5">
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <img alt="프로필" class="w-20 h-20 rounded-full border-4 border-white shadow-sm object-cover"
+                                id="guide-profile-img"
+                                src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4" />
+                            <div
+                                class="absolute bottom-0 right-0 bg-primary text-white p-1 rounded-full text-[10px] flex items-center justify-center border-2 border-white">
+                                <span class="material-symbols-outlined !text-[14px]">verified</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 id="guide-title" class="text-2xl font-bold flex items-center gap-1">홍길동님</h2>
+                            <p id="guide-date" class="text-primary font-medium mt-0.5">갑진년 무진월 을사일</p>
+                            <p id="guide-sub-desc" class="text-sm text-slate-500 mt-1">상서로운 기운이 가득한 날입니다</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Main Score Card -->
+                <section class="px-4 mb-6">
+                    <div
+                        class="bg-white rounded-2xl p-8 text-center shadow-sm border border-slate-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 text-primary">
+                            <span class="material-symbols-outlined !text-7xl">wb_sunny</span>
+                        </div>
+                        <p class="text-slate-500 font-medium mb-2">오늘의 운세 총점</p>
+                        <div class="flex items-baseline justify-center gap-1">
+                            <span id="guide-total-score" class="text-6xl font-extrabold text-primary">00</span>
+                            <span class="text-2xl font-bold text-slate-400">/ 100</span>
+                        </div>
+
+                        <!-- Trend Graph -->
+                        <div class="relative w-full h-32 mt-6">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+
+                        <p id="guide-short-summary"
+                            class="text-base font-bold text-slate-800 leading-snug px-4 mt-6 break-keep"></p>
+                    </div>
+                </section>
+
+                <!-- Summary Score Cards (2x2 Grid) -->
+                <section class="px-4 mb-8">
+                    <h3 class="text-lg font-bold mb-4 px-1">상세 운세 지표</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- 재물운 (Summary) -->
+                        <div
+                            class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between h-[150px]">
+                            <div class="flex justify-between items-start">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center text-lg">
+                                    💰
+                                </div>
+                                <div
+                                    class="bg-amber-50 text-amber-600 px-2.5 py-1 rounded-full text-sm font-bold flex items-baseline gap-0.5">
+                                    <span id="score-money-summary" class="text-lg font-extrabold">0</span><span
+                                        class="text-xs">점</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-base font-bold text-slate-800">재물운</h4>
+                                <p id="short-money" class="text-[11px] text-slate-500 mt-1 truncate"></p>
+                            </div>
+                            <div class="flex justify-end mt-1">
+                                <button onclick="openScoreDetail()"
+                                    class="text-[11px] font-bold text-primary flex items-center">
+                                    자세히 보기 <span
+                                        class="material-symbols-outlined !text-[12px] ml-0.5">chevron_right</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 직업운 (Summary) -->
+                        <div
+                            class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between h-[150px]">
+                            <div class="flex justify-between items-start">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-lg">
+                                    💼
+                                </div>
+                                <div
+                                    class="bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full text-sm font-bold flex items-baseline gap-0.5">
+                                    <span id="score-career-summary" class="text-lg font-extrabold">0</span><span
+                                        class="text-xs">점</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-base font-bold text-slate-800">직업운</h4>
+                                <p id="short-career" class="text-[11px] text-slate-500 mt-1 truncate"></p>
+                            </div>
+                            <div class="flex justify-end mt-1">
+                                <button onclick="openScoreDetail()"
+                                    class="text-[11px] font-bold text-primary flex items-center">
+                                    자세히 보기 <span
+                                        class="material-symbols-outlined !text-[12px] ml-0.5">chevron_right</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 애정운 (Summary) -->
+                        <div
+                            class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between h-[150px]">
+                            <div class="flex justify-between items-start">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center text-lg">
+                                    💘
+                                </div>
+                                <div
+                                    class="bg-rose-50 text-rose-600 px-2.5 py-1 rounded-full text-sm font-bold flex items-baseline gap-0.5">
+                                    <span id="score-love-summary" class="text-lg font-extrabold">0</span><span
+                                        class="text-xs">점</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-base font-bold text-slate-800">애정운</h4>
+                                <p id="short-love" class="text-[11px] text-slate-500 mt-1 truncate"></p>
+                            </div>
+                            <div class="flex justify-end mt-1">
+                                <button onclick="openScoreDetail()"
+                                    class="text-[11px] font-bold text-primary flex items-center">
+                                    자세히 보기 <span
+                                        class="material-symbols-outlined !text-[12px] ml-0.5">chevron_right</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 건강운 (Summary) -->
+                        <div
+                            class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between h-[150px]">
+                            <div class="flex justify-between items-start">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-lg">
+                                    💚
+                                </div>
+                                <div
+                                    class="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full text-sm font-bold flex items-baseline gap-0.5">
+                                    <span id="score-health-summary" class="text-lg font-extrabold">0</span><span
+                                        class="text-xs">점</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-base font-bold text-slate-800">건강운</h4>
+                                <p id="short-health" class="text-[11px] text-slate-500 mt-1 truncate"></p>
+                            </div>
+                            <div class="flex justify-end mt-1">
+                                <button onclick="openScoreDetail()"
+                                    class="text-[11px] font-bold text-primary flex items-center">
+                                    자세히 보기 <span
+                                        class="material-symbols-outlined !text-[12px] ml-0.5">chevron_right</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Lucky Factors -->
+                <section class="px-4 mb-8">
+                    <h3 class="text-lg font-bold mb-4 px-1">오늘의 행운 요소</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <!-- Lucky Color Card -->
+                        <div
+                            class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50 flex flex-col items-center text-center">
+                            <p class="text-[10px] font-bold text-blue-600/70 mb-2 uppercase tracking-tight">행운의 색상</p>
+                            <div id="guide-lucky-chip"
+                                class="w-10 h-10 rounded-full shadow-sm mb-2 border-2 border-white"></div>
+                            <p id="guide-lucky-color" class="text-sm font-bold text-slate-800">-</p>
+                        </div>
+                        <!-- Lucky Number Card -->
+                        <div
+                            class="bg-purple-50/50 p-4 rounded-2xl border border-purple-100/50 flex flex-col items-center text-center">
+                            <p class="text-[10px] font-bold text-purple-600/70 mb-2 uppercase tracking-tight">행운의 숫자</p>
+                            <div id="guide-lucky-number" class="flex gap-1 mb-2 h-7 items-center justify-center">
+                                <!-- spans to be injected by js -->
+                            </div>
+                            <p class="text-sm font-bold text-slate-800">행운 번호</p>
+                        </div>
+                    </div>
+                    <!-- Lucky Food Card (Full Width) -->
+                    <div
+                        class="bg-orange-50/50 p-4 rounded-2xl border border-orange-100/50 flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                                <span class="text-xl">🍤</span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-orange-600/70 uppercase tracking-tight">행운의 음식</p>
+                                <p id="guide-lucky-food" class="text-sm font-bold text-slate-800">-</p>
+                            </div>
+                        </div>
+                        <span class="material-symbols-outlined text-orange-300">chevron_right</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <!-- Lucky Direction -->
+                        <div class="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/50">
+                            <p class="text-[10px] font-bold text-emerald-600/70 mb-1 uppercase tracking-tight">행운의 방향
+                            </p>
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-emerald-500 !text-lg">explore</span>
+                                <p id="guide-lucky-direction" class="text-[13px] font-bold text-slate-800 truncate">-
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Lucky Time -->
+                        <div class="bg-amber-50/50 p-4 rounded-2xl border border-amber-100/50">
+                            <p class="text-[10px] font-bold text-amber-600/70 mb-1 uppercase tracking-tight">행운의 시간</p>
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-amber-500 !text-lg">schedule</span>
+                                <p id="guide-lucky-time" class="text-[13px] font-bold text-slate-800 truncate">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Today's Action Card -->
+                <section class="px-4 mb-8">
+                    <div class="bg-slate-900 p-5 rounded-2xl shadow-lg mt-5">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-2xl">💡</span>
+                            <p class="text-white font-bold">오늘의 한마디</p>
+                        </div>
+                        <p id="guide-daily-tip" class="text-slate-300 text-[15px] leading-relaxed break-keep">
+                            -
+                        </p>
+                    </div>
+                </section>
+            </main>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: 마이 / 홈 (Stitch ui_4)               -->
+        <!-- ========================================== -->
+        <!-- ========================================== -->
+        <!-- NEW FEATURE: SCORE DETAIL SCREEN           -->
+        <!-- ========================================== -->
+        <section id="screen-score-detail" class="screen bg-slate-50 min-h-screen pb-20">
+            <!-- Header -->
+            <header
+                class="fixed top-0 z-50 max-w-md w-full bg-slate-50 px-4 py-4 flex items-center justify-between border-b border-slate-100">
+                <div class="flex items-center" onclick="closeScoreDetail()">
+                    <span class="material-symbols-outlined text-slate-700 cursor-pointer">arrow_back_ios_new</span>
+                </div>
+                <h1 class="text-base font-bold text-slate-800">상세 운세 분석</h1>
+                <div class="w-6"></div> <!-- Spacer for centering -->
+            </header>
+
+            <main class="pt-[80px] px-4">
+                <div class="text-center mb-8">
+                    <h2 id="detail-top-title" class="text-2xl font-bold text-slate-800 tracking-tight">홍길동님의 오늘 운세</h2>
+                    <p id="detail-top-date" class="text-slate-400 mt-2 text-sm font-medium">2026년 3월 8일</p>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- 재물운 (Detail) -->
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">💰</span>
+                                <span class="text-lg font-bold text-slate-800">재물운</span>
+                            </div>
+                            <span id="score-money" class="text-xl font-extrabold font-mono text-slate-800">0</span>
+                        </div>
+                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden mb-4">
+                            <div id="bar-money" class="h-full bg-orange-400 rounded-full transition-all duration-1000"
+                                style="width: 0%;"></div>
+                        </div>
+                        <p id="desc-money" class="text-slate-600 leading-relaxed text-[15px] break-keep"></p>
+                    </div>
+
+                    <!-- 직업운 (Detail) -->
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">💼</span>
+                                <span class="text-lg font-bold text-slate-800">직업운</span>
+                            </div>
+                            <span id="score-career" class="text-xl font-extrabold font-mono text-slate-800">0</span>
+                        </div>
+                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden mb-4">
+                            <div id="bar-career" class="h-full bg-blue-500 rounded-full transition-all duration-1000"
+                                style="width: 0%;"></div>
+                        </div>
+                        <p id="desc-career" class="text-slate-600 leading-relaxed text-[15px] break-keep"></p>
+                    </div>
+
+                    <!-- 건강운 (Detail) -->
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">💚</span>
+                                <span class="text-lg font-bold text-slate-800">건강운</span>
+                            </div>
+                            <span id="score-health" class="text-xl font-extrabold font-mono text-slate-800">0</span>
+                        </div>
+                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden mb-4">
+                            <div id="bar-health" class="h-full bg-emerald-500 rounded-full transition-all duration-1000"
+                                style="width: 0%;"></div>
+                        </div>
+                        <p id="desc-health" class="text-slate-600 leading-relaxed text-[15px] break-keep"></p>
+                    </div>
+
+                    <!-- 애정운 (Detail) -->
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">💘</span>
+                                <span class="text-lg font-bold text-slate-800">애정운</span>
+                            </div>
+                            <span id="score-love" class="text-xl font-extrabold font-mono text-slate-800">0</span>
+                        </div>
+                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden mb-4">
+                            <div id="bar-love" class="h-full bg-rose-400 rounded-full transition-all duration-1000"
+                                style="width: 0%;"></div>
+                        </div>
+                        <p id="desc-love" class="text-slate-600 leading-relaxed text-[15px] break-keep"></p>
+                    </div>
+                </div>
+            </main>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- GUEST LOGIN MODAL (Formerly tab-my)        -->
+        <!-- ========================================== -->
+        <div id="guest-login-modal"
+            class="fixed inset-0 mx-auto max-w-md w-full z-[60] flex flex-col bg-[#f0f2f5] hidden">
+            <!-- Spacer for top 10% -->
+            <div class="flex-none h-[10%] min-h-[60px]"></div>
+
+            <!-- Bottom Sheet Card -->
+            <div
+                class="flex-1 w-full bg-white rounded-t-[32px] shadow-[0_-8px_30px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col relative">
+                <!-- Handle & Title -->
+                <div class="flex flex-col items-center justify-center shrink-0 z-20 bg-white pt-5 pb-3 relative">
+                    <!-- Handle -->
+                    <div class="h-1 w-10 rounded-full bg-slate-200 mb-4"></div>
+                    <h2 class="text-slate-900 text-base font-bold">정보 입력</h2>
+                </div>
+
+                <!-- Scrollable Form Area -->
+                <div class="flex-1 overflow-y-auto px-6 pt-4 pb-[120px]">
+                    <h3 class="text-slate-900 text-2xl font-bold leading-snug mb-8 tracking-tight">
+                        더욱 정확한 맞춤형 분석을 위해<br />회원님의 정보를 입력해주세요.
+                    </h3>
+                    <form id="saju-form" class="space-y-6">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-slate-700 text-[13px] font-bold ml-1">이름 (또는 닉네임)</label>
+                            <input id="user-name"
+                                class="w-full h-14 px-4 rounded-xl border border-slate-200 bg-[#f8fafc] text-slate-900 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-[15px]"
+                                placeholder="성함을 입력해주세요" type="text" required />
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-slate-700 text-[13px] font-bold ml-1">생년월일</label>
+                            <div class="relative">
+                                <input id="birth-date"
+                                    class="w-full h-14 px-4 pr-12 rounded-xl border border-slate-200 bg-[#f8fafc] text-slate-900 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-[15px] relative"
+                                    type="date" required max="9999-12-31" />
+                                <span
+                                    class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">calendar_today</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-slate-700 text-[13px] font-bold ml-1">태어난 시간</label>
+                            <div class="relative cursor-pointer" onclick="openTimePicker()">
+                                <div
+                                    class="w-full h-14 px-4 pr-12 rounded-xl border border-slate-200 bg-[#f8fafc] text-slate-900 font-medium flex items-center text-[15px]">
+                                    <span id="display-time" class="text-slate-400">시간 선택</span>
+                                </div>
+                                <span
+                                    class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">schedule</span>
+                            </div>
+                            <input type="hidden" id="birth-time" required>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-slate-700 text-[13px] font-bold ml-1">태어난 지역 검색</label>
+                            <div class="relative">
+                                <input id="location-search" list="korea-cities-data"
+                                    class="w-full h-14 px-4 pr-12 rounded-xl border border-slate-200 bg-[#f8fafc] text-slate-900 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-[15px]"
+                                    placeholder="도시 또는 지역 검색" type="text" />
+                                <span
+                                    class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">search</span>
+                            </div>
+                            <datalist id="korea-cities-data"></datalist>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Floating Submit Button -->
+                <div
+                    class="absolute bottom-0 left-0 w-full px-6 pt-12 pb-10 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none flex justify-center z-30">
+                    <button type="submit" form="saju-form"
+                        class="w-full h-[56px] bg-[#256af4] hover:bg-blue-600 text-white text-[17px] font-bold rounded-xl shadow-[0_4px_14px_0_rgba(37,106,244,0.39)] flex items-center justify-center gap-2 transition-transform active:scale-[0.98] pointer-events-auto">
+                        <span>분석 시작하기</span>
+                        <span class="text-xl">✨</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: 프리미엄 맞춤 부적 생성               -->
+        <!-- ========================================== -->
+        <section id="tab-amulet"
+            class="screen h-[calc(100dvh-56px)] overflow-y-auto pb-[130px] bg-white flex flex-col relative w-full h-full">
+            <header class="fixed top-0 max-w-md w-full z-50 bg-white flex items-center justify-between h-[56px] px-4">
+                <div class="w-8"></div>
+                <div class="flex flex-col items-center justify-center">
+                    <h1 class="font-bold text-lg text-slate-800 leading-tight">나만의 프리미엄 맞춤 부적</h1>
+                </div>
+                <button class="w-8 h-8 flex items-center justify-center -mr-1 text-slate-700">
+                    <span class="material-symbols-outlined !text-[24px]">settings</span>
+                </button>
+            </header>
+
+            <!-- 상단 PREVIEW 이미지 및 메인 타이틀 -->
+            <div class="pt-[60px]">
+                <div class="flex justify-center px-5 mb-5 mt-1">
+                    <div class="relative w-40 h-40">
+                        <div class="relative w-full h-full rounded-full overflow-hidden border-[4px] border-slate-800 shadow-[0_0_20px_rgba(212,175,55,0.15)]"
+                            style="background: linear-gradient(180deg, #0f172a 0%, #080e1a 50%, #000000 100%);">
+                            <div class="absolute inset-0"
+                                style="background: radial-gradient(circle at center, rgba(212, 175, 55, 0.25) 0%, transparent 65%);">
+                            </div>
+                            <div class="absolute inset-0 w-full h-full bg-center transition-transform duration-700 hover:scale-105"
+                                style="background-image: url('./assets/amulets/재왕부_gold.png'); background-size: 70%; background-repeat: no-repeat;">
+                            </div>
+                        </div>
+                        <div
+                            class="absolute -bottom-3 left-1/2 -translate-x-1/2 z-10 rounded-full bg-primary px-4 py-1 text-[11px] font-bold tracking-wide text-white shadow-md">
+                            PREVIEW
+                        </div>
+                    </div>
+                </div>
+                <h2 class="text-[20px] text-slate-800 font-bold leading-snug mb-5 text-center">
+                    현재 가장 간절히 바라는<br>소망은 무엇인가요?
+                </h2>
+            </div>
+
+            <!-- 10개 키워드 2열 그리드 영역 -->
+            <div class="px-5 flex-1 flex flex-col mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-sm font-bold text-slate-500">소망 키워드 선택</span>
+                    <span class="text-xs font-medium text-primary">1개 선택 가능</span>
+                </div>
+                <div id="amulet-keyword-chips" class="grid grid-cols-2 gap-4 sm:grid-cols-2">
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="money">
+                        <span>#재물</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="business">
+                        <span>#사업</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="job">
+                        <span>#취업/직장</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="love_new">
+                        <span>#새로운연애</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="love_reunion">
+                        <span>#재회</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="family">
+                        <span>#가정/결혼</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="health">
+                        <span>#건강</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="study">
+                        <span>#학업/시험</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="protect">
+                        <span>#액막이/평안</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="wish">
+                        <span>#소원성취</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 하단 고정 CTA 버튼 -->
+            <div
+                class="fixed bottom-[60px] max-w-md w-full z-20 px-4 pb-4 pt-8 bg-gradient-to-t from-white via-white via-70% to-transparent pointer-events-none">
+                <div class="relative pointer-events-auto w-full mx-auto px-1">
+                    <div
+                        class="absolute -top-3 left-6 z-30 flex items-center gap-1 rounded-md bg-[#f1c40f] px-2 py-0.5 shadow-sm">
+                        <span class="material-symbols-outlined text-[10px] text-[#1e293b]">diamond</span>
+                        <span class="text-[10px] font-black text-[#1e293b]">PREMIUM</span>
+                    </div>
+                    <button id="amulet-generate-btn"
+                        class="flex h-[60px] w-full items-center justify-center gap-2 rounded-[24px] bg-[#3b82f6] text-white shadow-lg transition-all active:scale-[0.98] opacity-50 pointer-events-none"
+                        disabled>
+                        <span class="text-[16px] font-bold tracking-tight">나만의 맞춤 부적 생성하기</span>
+                        <span class="material-symbols-outlined text-xl">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- BOTTOM NAVIGATION                          -->
+        <!-- ========================================== -->
+        <nav class="fixed bottom-0 max-w-md w-full bg-white/95 backdrop-blur-md border-t border-slate-100 z-40">
+            <div class="flex items-center justify-around h-16 px-2">
+                <button type="button"
+                    class="nav-link w-full flex flex-col items-center gap-1 text-slate-400 transition-colors"
+                    data-target="tab-saju">
+                    <span class="material-symbols-outlined text-[24px]">calendar_month</span>
+                    <span class="nav-text text-[10px] font-medium">내 사주</span>
+                </button>
+                <button type="button"
+                    class="nav-link active w-full flex flex-col items-center gap-1 text-slate-400 transition-colors"
+                    data-target="tab-guide">
+                    <span class="material-symbols-outlined text-[24px] fill-icon">auto_awesome</span>
+                    <span class="nav-text text-[10px] font-medium">오늘의 가이드</span>
+                </button>
+                <button type="button"
+                    class="nav-link w-full flex flex-col items-center gap-1 text-slate-400 transition-colors"
+                    data-target="tab-trait">
+                    <span class="material-symbols-outlined text-[24px]">psychology</span>
+                    <span class="nav-text text-[10px] font-medium">기질 분석</span>
+                </button>
+                <button type="button"
+                    class="nav-link w-full flex flex-col items-center gap-1 text-slate-400 transition-colors"
+                    data-target="tab-amulet">
+                    <span class="material-symbols-outlined text-[24px]">auto_fix_high</span>
+                    <span class="nav-text text-[10px] font-medium">부적</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Amulet Premium Result Modal (Fullscreen) -->
+        <div id="amulet-detail-modal"
+            class="fixed inset-0 z-[100] bg-slate-900 hidden opacity-0 transition-opacity duration-300 overflow-y-auto">
+            <div class="min-h-[100dvh] flex flex-col items-center px-5 py-6">
+                <div class="flex-1 flex flex-col items-center justify-center w-full mt-4">
+                    <div class="w-full max-w-[340px] flex-shrink-0" style="max-height: 65vh;">
+                        <canvas id="amulet-composite-canvas"
+                            class="w-full rounded-2xl shadow-[0_0_40px_rgba(251,191,36,0.2)]"
+                            style="aspect-ratio: 9/16;">
+                        </canvas>
+                    </div>
+                </div>
+                <div class="w-full max-w-[340px] mt-auto pt-8 pb-2 flex-shrink-0">
+                    <button id="amulet-save-btn" onclick="downloadCompositeAmulet()"
+                        class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg active:scale-[0.98] transition-all text-[16px] flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path
+                                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+                                stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        맞춤 부적 저장
+                    </button>
+                    <button
+                        class="w-full mt-3 text-slate-400 text-sm font-medium hover:text-slate-200 transition-colors py-3"
+                        onclick="closeAmuletModal()">
+                        닫기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Picker Modal -->
+        <div id="time-picker-modal" class="modal">
+            <div class="bg-white rounded-3xl p-8 w-full max-w-[320px] shadow-xl">
+                <header class="text-center mb-6"><span class="text-sm font-semibold text-slate-500">시간 선택</span>
+                </header>
+                <div class="flex items-center justify-center gap-4 mb-8">
+                    <div id="hour-box" class="time-box active" onclick="switchPickerMode('hour')">12</div>
+                    <span class="text-4xl text-slate-300">:</span>
+                    <div id="minute-box" class="time-box" onclick="switchPickerMode('minute')">00</div>
+                    <div class="flex flex-col gap-2">
+                        <button id="am-btn"
+                            class="bg-slate-900 text-white border-none w-12 h-9 rounded-lg font-bold text-xs"
+                            onclick="selectAmPm('AM')">오전</button>
+                        <button id="pm-btn"
+                            class="bg-slate-100 text-slate-500 border-none w-12 h-9 rounded-lg font-bold text-xs"
+                            onclick="selectAmPm('PM')">오후</button>
+                    </div>
+                </div>
+                <div class="flex justify-center mb-6">
+                    <div id="clock-face" class="clock-face">
+                        <div class="clock-hand" id="clock-hand">
+                            <div class="hand-tip"></div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="flex justify-end gap-2">
+                    <button class="px-5 py-2 rounded-lg text-slate-500 font-bold text-sm"
+                        onclick="closeTimePicker()">취소</button>
+                    <button class="px-5 py-2 rounded-lg text-primary font-bold text-sm"
+                        onclick="applyTime()">확인</button>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script src="amulet_data.js?v=5"></script>
+    <script src="cities.js"></script>
+    <script src="engine.js"></script>
+    <script src="ui.js?v=5"></script>
+</body>
+
+</html>

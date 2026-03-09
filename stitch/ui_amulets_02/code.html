@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Premium Amulet Result - UNSE</title>
+<!-- Tailwind CSS v3 CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#D4AF37', // Gold color for premium look
+            accent: '#B8860B',
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-out forwards',
+            'glow': 'glow 2s infinite ease-in-out',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            glow: {
+              '0%, 100%': { boxShadow: '0 0 20px rgba(212, 175, 55, 0.3)' },
+              '50%': { boxShadow: '0 0 40px rgba(212, 175, 55, 0.6)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-styling">
+    body {
+      background-color: #0f172a; /* Slate-900 */
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Smooth gradient for the modal backdrop */
+    .modal-overlay {
+      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 1));
+    }
+
+    /* Elegant gold text effect */
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #FDF5E6 0%, #D4AF37 50%, #B8860B 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 font-sans text-slate-100">
+<!-- BEGIN: AmuletResultModal -->
+<div class="w-full max-w-md bg-slate-900/95 border border-slate-800 rounded-[2.5rem] p-6 shadow-2xl animate-fade-in flex flex-col items-center gap-8" data-purpose="premium-result-container" id="amulet-modal">
+<!-- BEGIN: CanvasSection -->
+<div class="relative w-full group" data-purpose="canvas-container">
+<!-- Decorative glow behind canvas -->
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/30 to-amber-600/30 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-glow"></div>
+<!-- Canvas for Image Composition -->
+<canvas class="relative w-full aspect-[9/16] bg-slate-800 rounded-2xl shadow-[0_0_30px_rgba(212,175,55,0.2)] border border-primary/20" data-purpose="amulet-renderer" id="amulet-composite-canvas">
+<!-- Fallback text for older browsers -->
+        이미지를 생성 중입니다...
+      </canvas>
+<!-- Watermark or Branding -->
+<div class="absolute top-4 right-4 text-primary/40 text-xs font-bold tracking-widest uppercase">
+        UNSE Premium
+      </div>
+</div>
+<!-- END: CanvasSection -->
+<!-- BEGIN: InfoSection -->
+<div class="text-center space-y-4 px-2" data-purpose="amulet-description">
+<!-- Amulet Title -->
+<h2 class="text-3xl gold-gradient-text tracking-tighter">
+        [재왕부]
+      </h2>
+<!-- Custom Message -->
+<p class="text-slate-300 text-base leading-relaxed break-keep font-light">
+        박진호님의 <span class="text-primary font-medium">신(辛)금</span> 기운에 맞춰<br/>
+        재물이 모이는 기운을 합성했습니다.
+      </p>
+</div>
+<!-- END: InfoSection -->
+<!-- BEGIN: ActionSection -->
+<footer class="w-full pt-4" data-purpose="modal-actions">
+<button class="w-full bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-slate-950 font-bold py-4 px-6 rounded-2xl shadow-lg transform active:scale-[0.98] transition-all duration-200 text-lg flex items-center justify-center gap-2" id="save-button" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+        배경화면으로 갤러리에 저장
+      </button>
+<button class="w-full mt-4 text-slate-500 text-sm font-medium hover:text-slate-300 transition-colors" data-purpose="close-btn" onclick="window.history.back()">
+        닫기
+      </button>
+</footer>
+<!-- END: ActionSection -->
+</div>
+<!-- END: AmuletResultModal -->
+<!-- BEGIN: ScriptLogic -->
+<script data-purpose="canvas-init">
+    /**
+     * This script handles the canvas rendering for the amulet composition.
+     * It sets up the 9:16 aspect ratio based on the container width.
+     */
+    window.addEventListener('DOMContentLoaded', () => {
+      const canvas = document.getElementById('amulet-composite-canvas');
+      const ctx = canvas.getContext('2d');
+
+      // Set internal resolution (High DPI)
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      
+      // Standard 9:16 portrait resolution (e.g., 1080x1920 base)
+      canvas.width = 1080;
+      canvas.height = 1920;
+
+      // Mock composition logic (since real images aren't provided)
+      function drawMockComposition() {
+        // Background
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, '#1e293b'); // slate-800
+        gradient.addColorStop(1, '#0f172a'); // slate-900
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Center Gold Border
+        ctx.strokeStyle = '#D4AF37';
+        ctx.lineWidth = 20;
+        ctx.strokeRect(100, 100, canvas.width - 200, canvas.height - 200);
+
+        // Mock Amulet Graphic Placeholder
+        ctx.fillStyle = 'rgba(212, 175, 55, 0.1)';
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, 300, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.font = 'bold 80px serif';
+        ctx.fillStyle = '#D4AF37';
+        ctx.textAlign = 'center';
+        ctx.fillText('財王符', canvas.width / 2, canvas.height / 2 + 30);
+        
+        ctx.font = '30px sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.fillText('UNSE PREMIUM SERVICE', canvas.width / 2, canvas.height - 300);
+      }
+
+      drawMockComposition();
+    });
+  </script>
+<script data-purpose="event-handlers">
+    document.getElementById('save-button').addEventListener('click', function() {
+      // Logic for saving to gallery typically involves creating a link or using Web Share API
+      alert('갤러리에 저장 기능이 실행됩니다.\n(실제 구현 시 canvas.toDataURL()을 사용합니다.)');
+    });
+  </script>
+<!-- END: ScriptLogic -->
+</body></html>

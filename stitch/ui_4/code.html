@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style class="custom-icon-fill">
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style class="custom-icon-fill">
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col items-center">
+<div class="w-full max-w-md min-h-screen flex flex-col bg-white dark:bg-slate-900 shadow-sm">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-10 flex items-center justify-between h-14 px-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800">
+<div class="w-10"></div>
+<h1 class="text-lg font-semibold text-slate-900 dark:text-slate-100">마이 프로필</h1>
+<button class="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</header><div class="px-6 pt-6 pb-2 text-center">
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+    더욱 정확한 맞춤형 분석을 위해<br/>회원님의 정보를 최신으로 유지해주세요.
+  </p>
+</div>
+<!-- Main Content Card -->
+<main class="flex-1 px-6 pb-8">
+<div class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700">
+<div class="mb-8">
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold mb-2">내 정보 관리</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm">정밀한 만세력 보정을 위해 정확한 정보를 입력해주세요.</p>
+</div>
+<div class="space-y-5">
+<!-- Name Input -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">이름 (또는 닉네임)</label>
+<div class="relative">
+<input class="w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="예: 홍길동" type="text"/>
+</div>
+</div>
+<!-- Birth Date Input -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">생년월일</label>
+<div class="relative">
+<input class="w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="연도-월-일" type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">calendar_today</span>
+</div>
+</div>
+<!-- Birth Time Input -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">태어난 시간</label>
+<div class="relative">
+<input class="w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 font-normal focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="시간 선택" type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">schedule</span>
+</div>
+</div>
+<!-- Birth Location Input -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300">태어난 지역 검색 (한국 도시)</label>
+<div class="relative">
+<input class="w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="도시명 검색 (예: 서울, 부산, 수원...)" type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">location_on</span>
+</div>
+</div>
+</div>
+<!-- Action Button -->
+<div class="mt-10">
+<button class="w-full flex items-center justify-center transition-opacity hover:opacity-90">
+<img alt="분석 시작하기" class="w-full h-auto max-w-[400px]" src="data:image/png;base64,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"/>
+</button>
+</div>
+</div>
+<!-- Optional: Footer note -->
+<div class="mt-8 text-center">
+<p class="text-xs text-slate-400 dark:text-slate-500">입력하신 정보는 사주 분석 목적으로만 사용되며 저장되지 않습니다.</p>
+</div>
+</main>
+<!-- Bottom Tab Bar Placeholder (Optional/Mobile style) -->
+<footer class="sticky bottom-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 px-2 pb-safe">
+<div class="flex h-16 items-center justify-around">
+<a class="flex flex-col items-center justify-center flex-1 gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">auto_awesome</span>
+<span class="text-[10px] font-medium">내 사주</span>
+</a>
+<a class="flex flex-col items-center justify-center flex-1 gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">psychology</span>
+<span class="text-[10px] font-medium">기질 분석</span>
+</a>
+<a class="flex flex-col items-center justify-center flex-1 gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">explore</span>
+<span class="text-[10px] font-medium">오늘의 가이드</span>
+</a>
+<a class="flex flex-col items-center justify-center flex-1 gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-[24px] font-variation-fill">person</span>
+<span class="text-[10px] font-bold">마이</span>
+</a>
+</div>
+</footer>
+</div>
+</body></html>

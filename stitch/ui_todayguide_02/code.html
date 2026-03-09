@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>상세 운세 분석 - 박진호</title>
+<!-- BEGIN: Scripts and Stylesheets -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Manrope:wght@400;600;800&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#256af4',
+            bgGray: '#f8faff',
+          },
+          fontFamily: {
+            sans: ['Inter', 'Manrope', 'Noto Sans KR', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-layout">
+    body {
+      background-color: #f8faff;
+      font-family: 'Inter', 'Manrope', 'Noto Sans KR', sans-serif;
+    }
+    .progress-bar-container {
+      height: 8px;
+      background-color: #f0f0f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .safe-area-bottom {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  </style>
+<!-- END: Scripts and Stylesheets -->
+</head>
+<body class="flex flex-col min-h-screen text-[#333]">
+<!-- BEGIN: MainHeader -->
+<header class="sticky top-0 z-50 bg-white border-b border-gray-100 px-4 h-14 flex items-center justify-between">
+<button class="p-2 -ml-2" data-purpose="back-button">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="m15 18-6-6 6-6"></path></svg>
+</button>
+<h1 class="text-lg font-bold">상세 운세 분석</h1>
+<div class="w-10"></div> <!-- Spacer for centering -->
+</header>
+<!-- END: MainHeader -->
+<main class="flex-1 overflow-y-auto p-5 pb-32">
+<!-- BEGIN: User Summary -->
+<section class="text-center mb-8" data-purpose="user-info">
+<h2 class="text-2xl font-bold mb-1">박진호님의 오늘 운세</h2>
+<p class="text-gray-400 font-medium">2026년 3월 8일</p>
+</section>
+<!-- END: User Summary -->
+<!-- BEGIN: Fortune Detail Cards -->
+<div class="space-y-4">
+<!-- 재물운 Section -->
+<section class="bg-white rounded-3xl p-6 shadow-sm border border-gray-50" data-purpose="fortune-card">
+<div class="flex justify-between items-center mb-4">
+<div class="flex items-center gap-2">
+<span class="text-xl">💰</span>
+<span class="text-lg font-bold">재물운</span>
+</div>
+<span class="text-xl font-extrabold font-mono">58</span>
+</div>
+<div class="progress-bar-container mb-4">
+<div class="h-full bg-orange-400 rounded-full" style="width: 58%;"></div>
+</div>
+<p class="text-gray-600 leading-relaxed text-[15px]">
+          기운이 치우치지 않고 비화(比和)하여 안정을 이루는 날입니다. 평소 하던 대로 유지하면 무난하게 흘러갑니다.
+        </p>
+</section>
+<!-- 직업운 Section -->
+<section class="bg-white rounded-3xl p-6 shadow-sm border border-gray-50" data-purpose="fortune-card">
+<div class="flex justify-between items-center mb-4">
+<div class="flex items-center gap-2">
+<span class="text-xl">💼</span>
+<span class="text-lg font-bold">직업운</span>
+</div>
+<span class="text-xl font-extrabold font-mono">52</span>
+</div>
+<div class="progress-bar-container mb-4">
+<div class="h-full bg-blue-500 rounded-full" style="width: 52%;"></div>
+</div>
+<p class="text-gray-600 leading-relaxed text-[15px]">
+          외부 환경이 다소 엄격하게 작용하는 상극(相剋)의 날입니다. 명예/직장에 있어 무리한 욕심보다는 철저한 안정과 점검이 우선입니다.
+        </p>
+</section>
+<!-- 건강운 Section -->
+<section class="bg-white rounded-3xl p-6 shadow-sm border border-gray-50" data-purpose="fortune-card">
+<div class="flex justify-between items-center mb-4">
+<div class="flex items-center gap-2">
+<span class="text-xl">💚</span>
+<span class="text-lg font-bold">건강운</span>
+</div>
+<span class="text-xl font-extrabold font-mono">64</span>
+</div>
+<div class="progress-bar-container mb-4">
+<div class="h-full bg-emerald-500 rounded-full" style="width: 64%;"></div>
+</div>
+<p class="text-gray-600 leading-relaxed text-[15px]">
+          오늘의 맑은 기운이 나의 건강/휴식 에너지를 생조(生助)하여 힘을 실어줍니다. 기대 이상의 긍정적인 성과를 기대해볼 만합니다.
+        </p>
+</section>
+<!-- 애정운 Section -->
+<section class="bg-white rounded-3xl p-6 shadow-sm border border-gray-50" data-purpose="fortune-card">
+<div class="flex justify-between items-center mb-4">
+<div class="flex items-center gap-2">
+<span class="text-xl">💘</span>
+<span class="text-lg font-bold">애정운</span>
+</div>
+<span class="text-xl font-extrabold font-mono">50</span>
+</div>
+<div class="progress-bar-container mb-4">
+<div class="h-full bg-rose-400 rounded-full" style="width: 50%;"></div>
+</div>
+<p class="text-gray-600 leading-relaxed text-[15px]">
+          과감한 돌파가 필요한 역동적인 날입니다. 관계/애정 관련 이슈에서 내가 주도적으로 상황을 이끌어갈 때 행운이 따릅니다.
+        </p>
+</section>
+</div>
+<!-- END: Fortune Detail Cards -->
+</main>
+<!-- BEGIN: BottomNavigationBar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex justify-around items-center h-20 safe-area-bottom z-50">
+<a class="flex flex-col items-center gap-1 text-gray-400" data-purpose="nav-item" href="#">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+<span class="text-[10px] font-medium">내 사주</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-400" data-purpose="nav-item" href="#">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><line x1="18" x2="18" y1="20" y2="10"></line><line x1="12" x2="12" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="14"></line></svg>
+<span class="text-[10px] font-medium">기질 분석</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" data-purpose="nav-item" href="#">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+<span class="text-[10px] font-bold">오늘의 가이드</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-400" data-purpose="nav-item" href="#">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+<span class="text-[10px] font-medium">마이</span>
+</a>
+</nav>
+<!-- END: BottomNavigationBar -->
+</body></html>

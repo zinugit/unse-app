@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "premium-gold": "#fbbf24",
+                        "premium-dark": "#0f172a",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<nav class="sticky top-0 z-50 flex items-center bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-3 justify-between border-b border-slate-200 dark:border-slate-800">
+<div class="flex size-10 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">arrow_back</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold tracking-tight">UNSE</h2>
+<div class="size-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">more_horiz</span>
+</div>
+</nav>
+<main class="flex-1 overflow-y-auto px-6 pt-10 pb-24">
+<!-- Hero Section -->
+<div class="text-center mb-12">
+<div class="inline-flex items-center justify-center p-3 mb-6 rounded-2xl bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-3xl">auto_awesome</span>
+</div>
+<h1 class="text-slate-900 dark:text-slate-100 text-3xl font-bold leading-tight mb-3">
+                나만의 프리미엄 <br/>맞춤 부적
+            </h1>
+<p class="text-slate-500 dark:text-slate-400 text-base font-medium">
+                현재 가장 간절히 바라는 소망은 무엇인가요?
+            </p>
+</div>
+<!-- Visual Decoration -->
+<div class="relative w-full aspect-square max-w-[280px] mx-auto mb-12 rounded-full overflow-hidden flex items-center justify-center">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-premium-gold/20 animate-pulse"></div>
+<div class="relative z-10 w-4/5 h-4/5 rounded-3xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-premium-gold to-transparent"></div>
+<span class="material-symbols-outlined text-6xl text-premium-gold mb-2" style="font-variation-settings: 'FILL' 1">shield_moon</span>
+<p class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold">Premium Guardian</p>
+</div>
+</div>
+<!-- Selection Section -->
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold tracking-tight">소망 키워드 선택</h3>
+<span class="text-primary text-sm font-semibold">최대 3개 선택</span>
+</div>
+<!-- Keyword Chips -->
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-slate-300 transition-all">
+                    #재물/투자
+                </button>
+<button class="px-4 py-2.5 rounded-full bg-premium-dark text-premium-gold border border-premium-dark text-sm font-bold shadow-lg shadow-slate-200 dark:shadow-none ring-2 ring-premium-gold/20">
+                    #취업/이직
+                </button>
+<button class="px-4 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-slate-300 transition-all">
+                    #사업/성공
+                </button>
+<button class="px-4 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-slate-300 transition-all">
+                    #연애/재회
+                </button>
+<button class="px-4 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-slate-300 transition-all">
+                    #인기/매력
+                </button>
+<button class="px-4 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-slate-300 transition-all">
+                    #건강/회복
+                </button>
+<button class="px-4 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-slate-300 transition-all">
+                    #시험/합격
+                </button>
+<button class="px-4 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-slate-300 transition-all">
+                    #액막이/평안
+                </button>
+<button class="px-4 py-2.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-sm font-medium hover:border-slate-300 transition-all">
+                    #가정/임신
+                </button>
+</div>
+</div>
+</main>
+<!-- Bottom Action Area -->
+<div class="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-background-dark/80 backdrop-blur-xl border-t border-slate-100 dark:border-slate-800 px-6 pt-4 pb-8 z-50">
+<button class="w-full bg-premium-dark text-premium-gold flex flex-col items-center justify-center py-4 rounded-2xl shadow-xl active:scale-[0.98] transition-all overflow-hidden relative group">
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+<div class="flex items-center gap-1.5 mb-0.5">
+<span class="bg-premium-gold/20 text-premium-gold text-[10px] font-bold px-2 py-0.5 rounded-full border border-premium-gold/30">💎 프리미엄</span>
+</div>
+<span class="text-lg font-bold">나만의 맞춤 부적 생성하기</span>
+</button>
+</div>
+<!-- Bottom Nav Bar Component -->
+<div class="fixed bottom-0 w-full bg-white dark:bg-background-dark border-t border-slate-100 dark:border-slate-800 hidden md:flex">
+<div class="flex gap-2 w-full px-4 pb-3 pt-2 max-w-md mx-auto">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">home</span>
+<p class="text-[10px] font-medium">홈</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">auto_awesome</span>
+<p class="text-[10px] font-medium">부적</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">nights_stay</span>
+<p class="text-[10px] font-medium">운세</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">more_horiz</span>
+<p class="text-[10px] font-medium">더보기</p>
+</a>
+</div>
+</div>
+</body></html>

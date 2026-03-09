@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Navigation Tabs -->
+<nav class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-md mx-auto px-4">
+<div class="flex items-center justify-between h-14">
+<div class="w-10"></div>
+<h1 class="text-lg font-bold flex-1 text-center">오늘의 가이드</h1>
+<div class="w-10 flex justify-end">
+<span class="material-symbols-outlined text-slate-400">settings</span>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 max-w-md mx-auto w-full p-4 space-y-6 pb-24">
+<!-- Header Section -->
+<header class="text-center py-6">
+<h2 class="text-2xl font-bold tracking-tight">박진호님의 오늘 운세</h2>
+<p class="text-slate-500 dark:text-slate-400 mt-1">2023년 10월 27일 금요일</p>
+</header>
+<!-- Score Card -->
+<section class="bg-white dark:bg-slate-900 rounded-xl p-8 shadow-sm border border-slate-100 dark:border-slate-800 text-center relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"></div>
+<p class="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-2">운세 총점</p>
+<div class="inline-flex items-end gap-1">
+<span class="text-6xl font-black text-primary leading-none">88</span>
+<span class="text-xl font-bold text-primary pb-1">점</span>
+</div>
+<div class="mt-4 flex justify-center gap-1">
+<span class="material-symbols-outlined text-amber-400 active-icon">star</span>
+<span class="material-symbols-outlined text-amber-400 active-icon">star</span>
+<span class="material-symbols-outlined text-amber-400 active-icon">star</span>
+<span class="material-symbols-outlined text-amber-400 active-icon">star</span>
+<span class="material-symbols-outlined text-slate-200 dark:text-slate-700 active-icon">star</span>
+</div>
+</section><!-- Detailed Scores Section -->
+<section class="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-slate-100 dark:border-slate-800 space-y-5 mt-4">
+<div class="space-y-2">
+<div class="flex justify-between items-center mb-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-500 text-lg">payments</span>
+<span class="text-sm font-bold text-slate-700 dark:text-slate-200">재물운</span>
+</div>
+<span class="text-sm font-bold">92</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2">
+<div class="bg-amber-500 h-2 rounded-full" style="width: 92%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center mb-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-blue-500 text-lg">work</span>
+</div>
+<span class="text-sm font-bold text-slate-700 dark:text-slate-200 flex-1">직업운</span>
+<span class="text-sm font-bold">90</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2">
+<div class="bg-blue-500 h-2 rounded-full" style="width: 90%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center mb-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-green-500 text-lg">favorite</span>
+<span class="text-sm font-bold text-slate-700 dark:text-slate-200">건강운</span>
+</div>
+<span class="text-sm font-bold">85</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2">
+<div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center mb-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-rose-500 text-lg">volunteer_activism</span>
+<span class="text-sm font-bold text-slate-700 dark:text-slate-200">애정운</span>
+</div>
+<span class="text-sm font-bold">78</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2">
+<div class="bg-rose-500 h-2 rounded-full" style="width: 78%"></div>
+</div>
+</div>
+</section>
+<!-- Lucky Factors Section -->
+<section class="space-y-4">
+<h3 class="text-lg font-bold px-1">오늘의 행운 요소</h3>
+<div class="grid grid-cols-1 gap-3">
+<!-- Lucky Color -->
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">palette</span>
+</div>
+<div>
+<p class="text-xs text-slate-400 font-medium">행운의 컬러</p>
+<p class="text-base font-bold">청색 (Azure)</p>
+</div>
+</div>
+<div class="w-10 h-10 rounded-lg shadow-inner bg-[#007FFF]" data-alt="Azure blue color chip swatch"></div>
+</div>
+<!-- Best Time -->
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">schedule</span>
+</div>
+<div>
+<p class="text-xs text-slate-400 font-medium">활동 추천 시간</p>
+<p class="text-base font-bold">오후 3시 이후</p>
+</div>
+</div>
+<span class="text-slate-300 material-symbols-outlined">chevron_right</span>
+</div>
+<!-- Recommended Food -->
+<div class="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">restaurant</span>
+</div>
+<div>
+<p class="text-xs text-slate-400 font-medium">추천 음식</p>
+<p class="text-base font-bold">신선한 채소 요리</p>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-800 p-2 rounded-full">
+<span class="material-symbols-outlined text-green-500">nutrition</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Daily Tip Card -->
+<section class="bg-primary/5 dark:bg-primary/10 border border-primary/20 p-5 rounded-xl">
+<div class="flex items-center gap-2 mb-2 text-primary">
+<span class="material-symbols-outlined text-sm active-icon">tips_and_updates</span>
+<span class="text-sm font-bold uppercase tracking-wider">오늘의 팁</span>
+</div>
+<p class="text-slate-700 dark:text-slate-300 leading-relaxed text-sm">
+                오늘은 대인관계에서 긍정적인 에너지가 넘치는 날입니다. 오후 3시 이후 중요한 미팅이나 약속을 잡는다면 좋은 결실을 맺을 수 있습니다. 청색 아이템을 착용하여 행운을 높여보세요.
+            </p>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-background-dark/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 pb-safe z-50">
+<div class="max-w-md mx-auto flex justify-around px-2 pt-2 pb-4">
+<a class="flex flex-col items-center gap-1 group w-1/4" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">person</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary">내 사주</span>
+</a>
+<a class="flex flex-col items-center gap-1 group w-1/4" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">bar_chart</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary">기질 분석</span>
+</a>
+<a class="flex flex-col items-center gap-1 group w-1/4" href="#">
+<span class="material-symbols-outlined text-primary active-icon">auto_awesome</span>
+<span class="text-[10px] font-bold text-primary">오늘의 가이드</span>
+</a>
+<a class="flex flex-col items-center gap-1 group w-1/4" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">account_circle</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary">마이</span>
+</a>
+</div>
+</nav>
+</body></html>
