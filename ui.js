@@ -5,6 +5,10 @@
 let currentChart = null;
 let trendChartInstance = null;
 
+// 데이터 관리 변수
+let userSajuData = JSON.parse(localStorage.getItem('unse_user_saju') || 'null');
+let friendList = JSON.parse(localStorage.getItem('unse_friends') || '[]');
+
 // Initialization
 document.addEventListener('DOMContentLoaded', () => {
     initCityDatalist();
@@ -12,17 +16,25 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     replaceBrandName(); // 화면 초기화 시 Bluwings를 UNSE로 변경
     setupAmuletKeywords();
+    renderFriendList();
 });
 
 function startAsGuest() {
+    resetGenderSelection();
     const welcome = document.getElementById('welcome-screen');
     if (welcome) {
         welcome.style.display = 'none';
     }
-    const guestModal = document.getElementById('guest-login-modal');
-    if (guestModal) {
-        guestModal.classList.remove('hidden');
-        guestModal.classList.add('flex');
+    const modal = document.getElementById('guest-login-modal');
+    if (modal) {
+        // 모드 및 텍스트 리셋
+        modal.querySelector('h3').innerText = "정보 입력";
+        const submitBtnSpan = modal.querySelector('button[type="submit"] span');
+        if (submitBtnSpan) submitBtnSpan.innerText = "분석 시작하기";
+        modal.removeAttribute('data-mode');
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
     }
 }
 
@@ -55,10 +67,26 @@ function setupEventListeners() {
     const correctionMsg = document.querySelector('#correction-msg');
 
     if (birthDateInput) {
+        // 연도 4자리 초과 입력 방지 (YYYY-MM-DD 형식 유지)
+        birthDateInput.addEventListener('input', (e) => {
+            if (e.target.value.length > 10) {
+                e.target.value = e.target.value.slice(0, 10);
+            }
+        });
+
         birthDateInput.addEventListener('change', (e) => {
             const val = e.target.value;
             if (!val) return;
-            const year = parseInt(val.split('-')[0]);
+            const yearStr = val.split('-')[0];
+            const year = parseInt(yearStr);
+
+            // 연도 4자리 초과 시 강제 보정 (HTML max 속성 백업)
+            if (yearStr.length > 4) {
+                const corrected = yearStr.slice(0, 4) + val.slice(yearStr.length);
+                e.target.value = corrected;
+                return;
+            }
+
             let msg = "";
             if (year >= 1908 && year <= 1911) msg = "1908-11년 표준시 보정 (-30분)이 적용되었습니다.";
             else if (year >= 1954 && year <= 1961) msg = "1954-61년 한국 표준시 보정 (-30분)이 적용되었습니다.";
@@ -127,31 +155,39 @@ function setupEventListeners() {
 
     // Tab switching logic
     const navLinks = document.querySelectorAll('.nav-link');
-    const screens = document.querySelectorAll('.screen');
-
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
             const targetId = link.getAttribute('data-target');
-            if (!targetId) return;
-
-            screens.forEach(s => s.classList.remove('active'));
-            const targetScreen = document.getElementById(targetId);
-            if (targetScreen) targetScreen.classList.add('active');
-
-            navLinks.forEach(n => {
-                n.classList.remove('active');
-                const icon = n.querySelector('.material-symbols-outlined');
-                if (icon) icon.classList.remove('fill-icon');
-            });
-
-            link.classList.add('active');
-            const activeIcon = link.querySelector('.material-symbols-outlined');
-            if (activeIcon) activeIcon.classList.add('fill-icon');
-
-            window.scrollTo({ top: 0, behavior: 'instant' });
+            if (targetId) window.switchTab(targetId);
         });
     });
 }
+
+window.switchTab = function (tabId) {
+    const screens = document.querySelectorAll('.screen');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    screens.forEach(s => s.classList.remove('active'));
+    const targetScreen = document.getElementById(tabId);
+    if (targetScreen) targetScreen.classList.add('active');
+
+    navLinks.forEach(n => {
+        n.classList.remove('active');
+        const icon = n.querySelector('.material-symbols-outlined');
+        if (icon) icon.classList.remove('fill-icon');
+    });
+
+    const activeLink = document.querySelector(`.nav-link[data-target="${tabId}"]`);
+    if (activeLink) {
+        activeLink.classList.add('active');
+        const activeIcon = activeLink.querySelector('.material-symbols-outlined');
+        if (activeIcon) activeIcon.classList.add('fill-icon');
+    }
+
+    if (tabId === 'tab-network') renderFriendList();
+
+    window.scrollTo({ top: 0, behavior: 'instant' });
+};
 
 function handleSajuAnalysis() {
     try {
@@ -165,16 +201,37 @@ function handleSajuAnalysis() {
         const dateInput = document.querySelector('#birth-date');
         const timeInput = document.querySelector('#birth-time');
         const lonInput = document.querySelector('#custom-longitude');
+        const gender = document.getElementById('user-gender').value;
+
+        if (!gender) {
+            alert("성별을 선택해주세요.");
+            return;
+        }
 
         if (!dateInput.value || !timeInput.value) {
-            alert("생년월일과 태어난 시간을 입력해주세요.");
+            alert("생년월일과 태어난 정보를 모두 입력해주세요.");
+            return;
+        }
+
+        let dateStr = dateInput.value;
+        const yearStr = dateStr.split('-')[0];
+        if (yearStr.length > 4) {
+            alert("연도는 4자리까지만 입력 가능합니다.");
             return;
         }
 
         const name = nameInput.value || "방문자";
-        const dateStr = dateInput.value;
         const timeStr = timeInput.value;
         const customLon = parseFloat(lonInput?.value) || 126.97;
+
+        // 양력/음력 변환 로직 추가
+        const calendarType = document.querySelector('input[name="calendar-type"]:checked')?.value || 'solar';
+        if (calendarType !== 'solar') {
+            const [y, m, d] = dateStr.split('-').map(Number);
+            const isLeap = calendarType === 'leap';
+            const solarInfo = solarLunar.lunar2solar(y, m, d, isLeap);
+            dateStr = `${solarInfo.cYear}-${String(solarInfo.cMonth).padStart(2, '0')}-${String(solarInfo.cDay).padStart(2, '0')}`;
+        }
 
         const engine = window.sajuEngine;
         if (!engine || typeof engine.getSolarTime !== 'function') {
@@ -182,27 +239,51 @@ function handleSajuAnalysis() {
             return;
         }
 
-        const correctedDate = engine.getSolarTime(dateStr, timeStr, customLon);
+        // 시간 모름 처리
+        let correctedDate;
+        if (timeStr === 'unknown') {
+            // 시간이 모름인 경우 해당 날짜의 정오(12:00)를 기준으로 분석하되 엔진에서 시간 무시 로직 적용 권장
+            correctedDate = engine.getSolarTime(dateStr, "12:00", customLon);
+        } else {
+            correctedDate = engine.getSolarTime(dateStr, timeStr, customLon);
+        }
         const pillars = engine.calculatePillars(correctedDate);
+
+        // 인연 추가 모드인 경우
+        if (guestModal.getAttribute('data-mode') === 'add-friend') {
+            const timeUnknown = timeStr === 'unknown';
+            const newFriend = {
+                name: name,
+                gender: gender,
+                birthDate: dateStr,
+                birthTime: timeStr,
+                timeUnknown: timeUnknown,
+                pillars: pillars,
+                addedAt: new Date().toISOString()
+            };
+            friendList.push(newFriend);
+            localStorage.setItem('unse_friends', JSON.stringify(friendList));
+            renderFriendList();
+
+            guestModal.classList.add('hidden');
+            guestModal.classList.remove('flex');
+            return;
+        }
+
         window.lastPillars = pillars;
 
-        // Switch to Saju tab
-        const screens = document.querySelectorAll('.screen');
-        screens.forEach(s => s.classList.remove('active'));
-        document.getElementById('tab-saju').classList.add('active');
+        // 사용자 정보 저장
+        userSajuData = {
+            name: name,
+            gender: gender,
+            birthDate: dateStr,
+            birthTime: timeStr,
+            pillars: pillars
+        };
+        localStorage.setItem('unse_user_saju', JSON.stringify(userSajuData));
 
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(n => {
-            n.classList.remove('active');
-            const icon = n.querySelector('.material-symbols-outlined');
-            if (icon) icon.classList.remove('fill-icon');
-        });
-        const sajuTab = document.querySelector('[data-target="tab-saju"]');
-        if (sajuTab) {
-            sajuTab.classList.add('active');
-            const icon = sajuTab.querySelector('.material-symbols-outlined');
-            if (icon) icon.classList.add('fill-icon');
-        }
+        // Switch to Saju tab
+        window.switchTab('tab-saju');
 
         const theme = engine.getThemeColor(pillars.dayMaster);
         const dmHanja = pillars.dayMaster.split('(')[0];
@@ -216,7 +297,8 @@ function handleSajuAnalysis() {
 
         if (profileName) profileName.innerText = `${name}`;
         const year = dateStr.split('-')[0];
-        if (profileBirth) profileBirth.innerText = `${year}년생 · 진태양시 ${timeStr}`;
+        const displayTime = timeStr === 'unknown' ? '시간 모름' : `진태양시 ${timeStr}`;
+        if (profileBirth) profileBirth.innerText = `${year}년생 · ${displayTime}`;
         if (dmBadge) {
             dmBadge.innerText = dmElement.toUpperCase();
             dmBadge.style.background = theme.main;
@@ -1155,3 +1237,183 @@ window.downloadCompositeAmulet = function () {
         alert('이미지 저장에 실패했습니다. 다른 브라우저를 이용해주세요.');
     }
 };
+
+// 성별 선택 로직
+window.selectGender = function (gender) {
+    document.getElementById('user-gender').value = gender;
+    const maleBtn = document.getElementById('gender-male');
+    const femaleBtn = document.getElementById('gender-female');
+
+    // 스타일 초기화 후 선택된 것만 강조
+    [maleBtn, femaleBtn].forEach(btn => {
+        btn.classList.remove('border-primary', 'bg-primary/5', 'text-primary');
+        btn.classList.add('border-slate-100', 'bg-slate-50', 'text-slate-500');
+    });
+
+    const selectedBtn = gender === 'male' ? maleBtn : femaleBtn;
+    selectedBtn.classList.remove('border-slate-100', 'bg-slate-50', 'text-slate-500');
+    selectedBtn.classList.add('border-primary', 'bg-primary/5', 'text-primary');
+};
+
+// 시간 모름 토글
+window.toggleTimeUnknown = function (checkbox) {
+    const displayTime = document.getElementById('display-time');
+    if (checkbox.checked) {
+        displayTime.style.opacity = '0.4';
+        displayTime.style.pointerEvents = 'none';
+        document.getElementById('birth-time').value = 'unknown';
+        displayTime.innerText = '시간 모름 적용됨';
+    } else {
+        displayTime.style.opacity = '1';
+        displayTime.style.pointerEvents = 'auto';
+        document.getElementById('birth-time').value = '';
+        displayTime.innerHTML = '시간 선택 <span class="material-symbols-outlined text-[20px]">schedule</span>';
+    }
+};
+
+// 장소 모름 토글
+window.toggleLocationUnknown = function (checkbox) {
+    const container = document.getElementById('location-input-container');
+    const searchInput = document.getElementById('location-search');
+    const feedback = document.getElementById('longitude-feedback');
+
+    if (checkbox.checked) {
+        container.style.opacity = '0.4';
+        searchInput.disabled = true;
+        searchInput.value = '전국 공통 (표준시 적용)';
+        document.getElementById('custom-longitude').value = '127.5'; // 한국 표준 경도
+        if (feedback) feedback.classList.add('hidden');
+    } else {
+        container.style.opacity = '1';
+        searchInput.disabled = false;
+        searchInput.value = '';
+        document.getElementById('custom-longitude').value = '126.97';
+    }
+};
+
+// 인연 추가 모달 열기
+window.openAddFriendModal = function () {
+    resetGenderSelection();
+    const modal = document.getElementById('guest-login-modal');
+    if (!modal) return;
+
+    modal.querySelector('h3').innerText = "인연 추가";
+    const pTag = modal.querySelector('p');
+    if (pTag) pTag.innerText = "궁합을 분석할 지인의 정보를 입력하세요.";
+
+    const submitBtnSpan = modal.querySelector('button[type="submit"] span');
+    if (submitBtnSpan) submitBtnSpan.innerText = "인연 등록 및 분석";
+
+    modal.setAttribute('data-mode', 'add-friend');
+
+    const form = document.getElementById('saju-form');
+    if (form) form.reset();
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+};
+
+// 시너지 점수 계산 정밀화 (동일 점수 방지)
+function calculateSynergyScore(userPillars, friendPillars) {
+    if (!userPillars || !friendPillars) return 0;
+
+    const uEls = userPillars.elements;
+    const fEls = friendPillars.elements;
+
+    // 1. 부족한 오행 보완 점수 (가중치 1.8배)
+    let needed = Object.keys(uEls).reduce((a, b) => uEls[a] < uEls[b] ? a : b);
+    let synergy = (fEls[needed] || 0) * 1.8;
+
+    // 2. 일간 합/충 (고유 점수)
+    let base = 35;
+    const uDM = userPillars.dayMaster.charAt(0);
+    const fDM = friendPillars.dayMaster.charAt(0);
+    const combos = { "甲": "己", "己": "甲", "乙": "庚", "庚": "乙", "丙": "辛", "辛": "丙", "丁": "壬", "壬": "丁", "戊": "癸", "癸": "戊" };
+    if (combos[uDM] === fDM) base += 30;
+
+    // 3. 고유 시드값을 더해 점수 겹침 방지 (해당 인물의 사주 글자 활용)
+    const seed = (friendPillars.year.charCodeAt(0) + (friendPillars.day ? friendPillars.day.charCodeAt(0) : 0)) % 15;
+
+    return Math.min(99, Math.round(synergy + base + seed));
+}
+
+// 오행 배지 렌더링 포함 리스트 출력
+window.renderFriendList = function () {
+    const container = document.getElementById('friend-list-container');
+    const neededText = document.getElementById('my-needed-energy-text');
+    if (!container) return;
+
+    if (!userSajuData) {
+        if (neededText) neededText.innerHTML = "먼저 사주를 입력해주세요.";
+        return;
+    }
+
+    // 나의 부족한 기운 표시
+    const myScores = userSajuData.pillars.elements;
+    let minEl = Object.keys(myScores).reduce((a, b) => myScores[a] < myScores[b] ? a : b);
+    const elNames = { Wood: '목(木)', Fire: '화(火)', Earth: '토(土)', Metal: '금(金)', Water: '수(水)' };
+    if (neededText) {
+        neededText.innerHTML = `${userSajuData.name}님께 가장 필요한 기운은<br><span class="text-primary-light">${elNames[minEl]}</span>의 에너지입니다.`;
+    }
+
+    if (friendList.length === 0) {
+        container.innerHTML = `
+            <div class="py-16 text-center">
+                <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-inner">
+                    <span class="material-symbols-outlined text-slate-200 text-[40px]">group_add</span>
+                </div>
+                <p class="text-slate-400 text-sm font-medium leading-relaxed">아직 등록된 인연이 없습니다.<br>친구, 가족, 동료를 추가해보세요.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = friendList.map((friend, index) => {
+        const score = calculateSynergyScore(userSajuData.pillars, friend.pillars);
+        const elements = friend.pillars.elements;
+        const dominantKey = Object.keys(elements).reduce((a, b) => elements[a] > elements[b] ? a : b);
+
+        const elHnMap = { Wood: '목', Fire: '화', Earth: '토', Metal: '금', Water: '수' };
+        const colorMap = {
+            Wood: 'bg-[#4ade80]', Fire: 'bg-[#f87171]', Earth: 'bg-[#fbbf24]',
+            Metal: 'bg-[#94a3b8]', Water: 'bg-[#60a5fa]'
+        };
+
+        return `
+            <div class="bg-white border border-slate-100 rounded-[22px] p-5 flex items-center justify-between shadow-sm active:scale-[0.98] transition-all">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-slate-300">${friend.gender === 'male' ? 'male' : 'female'}</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h4 class="font-bold text-slate-800 text-[16px]">${friend.name}</h4>
+                            <span class="${colorMap[dominantKey]} text-white text-[12px] font-black px-2 py-0.5 rounded-lg shadow-sm">
+                                ${elHnMap[dominantKey]}
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 font-medium mt-1">에너지 시너지 분석 완료</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-[24px] font-black text-slate-900">${score}<span class="text-[10px] ml-0.5 text-slate-400">점</span></div>
+                    <div class="mt-1 px-2 py-0.5 bg-primary/5 rounded-full text-primary text-[9px] font-black uppercase tracking-tighter">Harmony</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+};
+// 성별 및 날짜 유형 초기화 함수
+function resetGenderSelection() {
+    const genderInput = document.getElementById('user-gender');
+    if (genderInput) genderInput.value = '';
+
+    document.querySelectorAll('.gender-btn').forEach(btn => {
+        btn.classList.remove('border-primary', 'bg-primary/5', 'text-primary');
+        btn.classList.add('border-slate-100', 'bg-slate-50', 'text-slate-500');
+    });
+    // 양력 라디오 버튼 초기화
+    const solarRadio = document.querySelector('input[name="calendar-type"][value="solar"]');
+    if (solarRadio) solarRadio.checked = true;
+}
+window.resetGenderSelection = resetGenderSelection;
