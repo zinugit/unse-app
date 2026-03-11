@@ -20,6 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function startAsGuest() {
+    // [추가] 브라우저 전체화면 요청 (사용자 클릭 시점에만 작동)
+    const doc = window.document;
+    const docEl = doc.documentElement;
+    const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+
+    if (requestFullScreen) {
+        requestFullScreen.call(docEl).catch(err => {
+            console.log("전체화면 요청이 거부되었습니다.");
+        });
+    }
+
     resetGenderSelection();
     const welcome = document.getElementById('welcome-screen');
     if (welcome) {
@@ -445,13 +456,12 @@ function updateModernTraitUI(pillars) {
     const top = (pillars.sipsung && pillars.sipsung.length > 0) ? pillars.sipsung[0] : null;
     if (top) {
         if (weaponTitle) weaponTitle.innerText = `나의 사회적 무기: ${top.relation}(${top.char})`;
-        if (weaponDesc) weaponDesc.innerText = `${top.meta.reinterpretation} 역량을 기반으로 한 '${top.meta.lifestyleExample}' 스타일입니다.`;
     }
 
-    const destinyTitle = document.getElementById('destiny-title');
-    const destinyDesc = document.getElementById('destiny-desc');
-    if (destinyTitle) destinyTitle.innerText = `${userName}님의 운명적 흐름`;
-    if (destinyDesc) destinyDesc.innerHTML = info.desc;
+    if (weaponDesc && info.socialWeapon) {
+        // 단어 중복 방지 및 엔진의 초개인화 문구 반영
+        weaponDesc.innerText = info.socialWeapon.replace(/역량 역량/g, "역량").trim();
+    }
 
     const traitProfileName = document.getElementById('trait-profile-name');
     const traitProfileDesc = document.getElementById('trait-profile-desc');
@@ -462,7 +472,8 @@ function updateModernTraitUI(pillars) {
     const traitSlogan = document.getElementById('trait-slogan');
     const traitSummary = document.getElementById('trait-summary');
     if (traitSlogan) traitSlogan.innerText = info.slogan || '-';
-    if (traitSummary) traitSummary.innerHTML = info.desc || '-';
+    // 기질 분석 탭 요약 중복 방지: info.desc 대신 info.comprehensiveDesc 사용
+    if (traitSummary) traitSummary.innerHTML = info.comprehensiveDesc || '-';
 
     const traitCoreHanja = document.getElementById('trait-core-hanja');
     const traitCoreDesc = document.getElementById('trait-core-desc');
@@ -486,14 +497,22 @@ function updateModernTraitUI(pillars) {
     const avatarImgs = document.querySelectorAll('#profile-avatar, #guide-profile-img');
     if (avatarImgs.length > 0 && info.dmElement) {
         const avatarMap = {
-            Wood: 'jia_wood_avatar_1772868155919.png',
-            Fire: 'fire_element_avatar_1772881275145.png',
-            Earth: 'earth_element_avatar_1772881290691.png',
+            Wood: 'wood_avatar.png',
+            Fire: 'fire_avatar.png',
+            Earth: 'earth_avatar.png',
             Metal: 'metal_avatar.png',
             Water: 'water_avatar.png'
         };
-        const src = avatarMap[info.dmElement] || 'jia_wood_avatar_1772868155919.png';
-        avatarImgs.forEach(img => img.src = src);
+
+        // 기본 이미지 설정 (파일이 없을 경우 대비)
+        const defaultAvatar = 'https://api.dicebear.com/9.x/avataaars/svg?seed=Felix';
+        const src = avatarMap[info.dmElement] || defaultAvatar;
+
+        avatarImgs.forEach(img => {
+            img.src = src;
+            // 이미지 로드 실패 시 기본 아바타로 교체하는 핸들러 추가
+            img.onerror = () => { img.src = defaultAvatar; };
+        });
     }
 }
 

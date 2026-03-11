@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNSE (운세)</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="UNSE">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#256af4">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
@@ -337,8 +343,8 @@
                     <div class="flex items-center gap-5 relative z-10">
                         <div class="relative">
                             <div class="w-20 h-20 rounded-full border-4 border-primary/20 p-1">
-                                <img id="profile-avatar" src="" alt=""
-                                    class="w-full h-full rounded-full object-cover bg-slate-100">
+                                <img id="profile-avatar" src="" alt="프로필"
+                                    class="w-full h-full rounded-full object-cover bg-slate-200 min-h-[72px]">
                             </div>
                             <div id="profile-element-badge"
                                 class="absolute -bottom-1 right-0 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white shadow-sm uppercase">
@@ -418,87 +424,7 @@
                     </div>
                 </div>
 
-                <!-- Destiny Flow -->
-                <div class="bg-primary/5 rounded-2xl p-6 border border-primary/10">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="material-symbols-outlined text-primary">auto_awesome</span>
-                        <h3 id="destiny-title" class="font-bold text-primary">000님의 운명적 흐름</h3>
-                    </div>
-                    <p id="destiny-desc" class="text-sm text-slate-700 leading-relaxed mb-4">-</p>
-                    <div class="grid grid-cols-2 gap-3 mb-6">
-                        <div class="bg-white p-3 rounded-lg border border-slate-100">
-                            <p class="text-[10px] text-slate-400 uppercase">주요 오행</p>
-                            <p id="dominant-element-card-text" class="font-bold text-sm">- 0%</p>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg border border-slate-100">
-                            <p class="text-[10px] text-slate-400 uppercase">조화로운 색</p>
-                            <p id="lucky-color-text" class="font-bold text-sm">-</p>
-                        </div>
-                    </div>
-                    <!-- Progress Bars -->
-                    <div class="space-y-3">
-                        <div class="space-y-1">
-                            <div class="flex justify-between text-xs font-bold">
-                                <div>
-                                    <span class="text-saju-wood">목 (Wood)</span><span id="status-wood"
-                                        class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold text-white tracking-wide"></span>
-                                </div>
-                                <span id="pct-wood" class="text-slate-500">0%</span>
-                            </div>
-                            <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                                <div id="bar-wood" class="h-full bg-saju-wood w-0 transition-all duration-1000"></div>
-                            </div>
-                        </div>
-                        <div class="space-y-1">
-                            <div class="flex justify-between text-xs font-bold">
-                                <div>
-                                    <span class="text-saju-fire">화 (Fire)</span><span id="status-fire"
-                                        class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold text-white tracking-wide"></span>
-                                </div>
-                                <span id="pct-fire" class="text-slate-500">0%</span>
-                            </div>
-                            <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                                <div id="bar-fire" class="h-full bg-saju-fire w-0 transition-all duration-1000"></div>
-                            </div>
-                        </div>
-                        <div class="space-y-1">
-                            <div class="flex justify-between text-xs font-bold">
-                                <div>
-                                    <span class="text-saju-earth">토 (Earth)</span><span id="status-earth"
-                                        class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold text-white tracking-wide"></span>
-                                </div>
-                                <span id="pct-earth" class="text-slate-500">0%</span>
-                            </div>
-                            <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                                <div id="bar-earth" class="h-full bg-saju-earth w-0 transition-all duration-1000"></div>
-                            </div>
-                        </div>
-                        <div class="space-y-1">
-                            <div class="flex justify-between text-xs font-bold">
-                                <div>
-                                    <span class="text-saju-metal">금 (Metal)</span><span id="status-metal"
-                                        class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold text-white tracking-wide"></span>
-                                </div>
-                                <span id="pct-metal" class="text-slate-500">0%</span>
-                            </div>
-                            <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                                <div id="bar-metal" class="h-full bg-saju-metal w-0 transition-all duration-1000"></div>
-                            </div>
-                        </div>
-                        <div class="space-y-1">
-                            <div class="flex justify-between text-xs font-bold">
-                                <div>
-                                    <span class="text-saju-water">수 (Water)</span><span id="status-water"
-                                        class="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold text-white tracking-wide"></span>
-                                </div>
-                                <span id="pct-water" class="text-slate-500">0%</span>
-                            </div>
-                            <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                                <div id="bar-water" class="h-full bg-saju-water w-0 transition-all duration-1000"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Destiny Flow REMOVED as requested -->
             </main>
         </section>
 
@@ -1359,6 +1285,13 @@
     <script src="https://cdn.jsdelivr.net/npm/solarlunar@2.0.7/dist/solarlunar.min.js"></script>
     <script src="engine.js"></script>
     <script src="ui.js?v=5"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log("서비스 워커 등록 완료"))
+                .catch(err => console.log("서비스 워커 등록 실패", err));
+        }
+    </script>
 </body>
 
 </html>

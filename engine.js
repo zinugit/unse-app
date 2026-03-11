@@ -66,15 +66,15 @@
     const MODERN_MAPPING = {
         "비견": { reinterpretation: "주체성 및 경쟁 우위", functionalValue: "비견(比肩)의 독립적 자아 흐름", lifestyleExample: "1인 창업가", flowDesc: "독립적인 의사결정력과 강한 주체성을 바탕으로, 타인에게 휘둘리지 않고 스스로 길을 개척하는 명확한 목표 달성 능력을 지녔습니다.", flowChips: ["주도적", "자기신뢰"] },
         "겁재": { reinterpretation: "도전과 경쟁의 파워", functionalValue: "겁재(劫財)의 치열한 돌파 흐름", lifestyleExample: "M&A 리더", flowDesc: "특유의 승부사 기질과 대담함을 통해 치열한 환경 속에서도 경쟁 우위를 점하며, 리스크를 감수하고 더 큰 성과를 쟁취합니다.", flowChips: ["승부사", "추진력"] },
-        "식신": { reinterpretation: "혁신 및 표현 역량", functionalValue: "식상생재(食傷生財)의 흐름", lifestyleExample: "콘텐츠 크리에이터", flowDesc: "나의 잠재력과 실행력이 완벽한 시너지를 내어, 창의적인 아이디어가 실제 결과와 성과로 부드럽게 이어지는 매우 긍정적인 흐름을 가졌습니다.", flowChips: ["창의적 영감", "실질적 결과"] },
+        "식신": { reinterpretation: "혁신 및 표현", functionalValue: "식상생재(食傷生財)의 흐름", lifestyleExample: "콘텐츠 크리에이터", flowDesc: "나의 잠재력과 실행력이 완벽한 시너지를 내어, 창의적인 아이디어가 실제 결과와 성과로 부드럽게 이어지는 매우 긍정적인 흐름을 가졌습니다.", flowChips: ["창의적 영감", "실질적 결과"] },
         "상관": { reinterpretation: "파괴적 혁신의 아이콘", functionalValue: "상관생재(傷官生財)의 흐름", lifestyleExample: "트렌드 세터", flowDesc: "기존의 틀을 깨는 폭발적인 창의력과 뛰어난 언변으로 트렌드를 주도하며, 번뜩이는 영감을 곧바로 가치 창출로 연결합니다.", flowChips: ["혁신적 기획", "가치 선도"] },
-        "편재": { reinterpretation: "자산 최적화 역량", functionalValue: "재생관(財生官)의 공간 확장 흐름", lifestyleExample: "플랫폼 리더", flowDesc: "공간 지각력과 시장 흐름을 꿰뚫어보는 직관으로, 자원과 네트워크를 적재적소에 활용하여 통 큰 성과를 달성해냅니다.", flowChips: ["네트워크형", "투자마인드"] },
+        "편재": { reinterpretation: "자산 최적화", functionalValue: "재생관(財生官)의 공간 확장 흐름", lifestyleExample: "플랫폼 리더", flowDesc: "공간 지각력과 시장 흐름을 꿰뚫어보는 직관으로, 자원과 네트워크를 적재적소에 활용하여 통 큰 성과를 달성해냅니다.", flowChips: ["네트워크형", "투자마인드"] },
         "정재": { reinterpretation: "안정적 부의 설계자", functionalValue: "세밀한 자산 관리와 축적의 흐름", lifestyleExample: "포트폴리오 매니저", flowDesc: "정확한 계산과 데이터를 바탕으로, 요행을 바라기보다 체계적이고 성실한 접근으로 견고한 결실을 만들어내는 타입입니다.", flowChips: ["치밀한 관리", "안정적 축적"] },
-        "편관": { reinterpretation: "카리스마 리더십", functionalValue: "살인상생(殺印相生)의 위기 돒파 흐름", lifestyleExample: "전략 본부장", flowDesc: "어려운 과제일수록 전투력이 상승하며, 강력한 카리스마와 책임감을 발휘하여 혼란을 수습하고 목표를 달성합니다.", flowChips: ["위기 극복", "카리스마 리더십"] },
-        "정관": { reinterpretation: "시스템 거버넌스 리더", functionalValue: "관인상생(官印相生)의 체계적 흐름", lifestyleExample: "대기업 임원", flowDesc: "합리적 원칙과 뛰어난 관리 능력을 활용하여 조직의 시스템을 체계화하고 효율적인 거버넌스를 이끄는 성과 달성 스타일입니다.", flowChips: ["신뢰 구축", "합리적 관리"] },
+        "편관": { reinterpretation: "카리스마 리더십", functionalValue: "살인상생(殺印상생)의 위기 돒파 흐름", lifestyleExample: "전략 본부장", flowDesc: "어려운 과제일수록 전투력이 상승하며, 강력한 카리스마와 책임감을 발휘하여 혼란을 수습하고 목표를 달성합니다.", flowChips: ["위기 극복", "카리스마 리더십"] },
+        "정관": { reinterpretation: "시스템 거버넌스 리더", functionalValue: "관인상생(官인상생)의 체계적 흐름", lifestyleExample: "대기업 임원", flowDesc: "합리적 원칙과 뛰어난 관리 능력을 활용하여 조직의 시스템을 체계화하고 효율적인 거버넌스를 이끄는 성과 달성 스타일입니다.", flowChips: ["신뢰 구축", "합리적 관리"] },
         "편인": { reinterpretation: "비전 기획자", functionalValue: "탁월한 전략 기획과 예지적 통찰 흐름", lifestyleExample: "특수 기획자", flowDesc: "남들이 보지 못하는 이면의 원리를 통찰하는 직관으로, 독창적인 기획안을 제시하고 장기적인 비전을 현실로 설계해냅니다.", flowChips: ["직관적 통찰", "전략 기획"] },
         "정인": { reinterpretation: "지식 수용 전문가", functionalValue: "인성(印星)의 지식 수용과 융합 흐름", lifestyleExample: "R&D 연구원", flowDesc: "탁월한 정보 흡수력과 사고력을 무기로 오랜 시간 축적한 지식을 기반으로 안정적이고 올바른 목표 달성 경로를 선보입니다.", flowChips: ["깊은 사고력", "지식 융합"] },
-        "역마": { reinterpretation: "글로벌 확장 역량", functionalValue: "공간적 제약을 넘는 무한한 확장성", lifestyleExample: "디지털 노마드, 해외 비즈니스 리더", flowDesc: "한 곳에 머무르기보다 다양한 환경과 문화를 넘나들며 폭발적인 시너지를 창출하는 뛰어난 활동력과 적응력을 지녔습니다.", flowChips: ["글로벌 역량", "프론티어"] }
+        "역마": { reinterpretation: "글로벌 확장", functionalValue: "공간적 제약을 넘는 무한한 확장성", lifestyleExample: "디지털 노마드, 해외 비즈니스 리더", flowDesc: "한 곳에 머무르기보다 다양한 환경과 문화를 넘나들며 폭발적인 시너지를 창출하는 뛰어난 활동력과 적응력을 지녔습니다.", flowChips: ["글로벌 역량", "프론티어"] }
     };
 
     // ═══════════════════════════════════════════════════
@@ -285,7 +285,7 @@
             // 동적 격국 판별: 일간의 건록지와 월지가 일치하면 건록격
             const monthJi = chars[3]; // 월지
             if (GEON_ROK[dm] === monthJi) {
-                results.unshift({
+                results.push({
                     char: monthJi,
                     relation: "건록격",
                     meta: {
@@ -307,7 +307,7 @@
             const matchedYeokma = jiList.find(ji => yeokmaChars.includes(ji));
 
             if (matchedYeokma) {
-                results.unshift({   // 건록격/결과 맨 앞에 추가
+                results.push({   // 결과를 맨 뒤에 추가 (unshift 대신 push)
                     char: matchedYeokma,
                     relation: "역마",
                     meta: MODERN_MAPPING["역마"],
@@ -644,9 +644,20 @@
                 ? `커리어 아키텍처: ${top.meta.reinterpretation}`
                 : "타고난 잠재력 분석";
 
-            const descStr = top
-                ? `${top.meta.reinterpretation} 역량을 바탕으로 목표를 향해 정교하게 나아가는 혁신가 타입입니다.`
-                : "자신의 강점을 분석해보세요.";
+            const uDM = pillars.dayMaster.charAt(0);
+            const WEAPON_MAP = {
+                "Wood": "성장을 멈추지 않는 추진력과 인자함",
+                "Fire": "상대를 매료시키는 열정과 화려한 언변",
+                "Earth": "흔들리지 않는 신용과 묵직한 포용력",
+                "Metal": "핵심을 꿰뚫는 냉철한 판단력과 결단력",
+                "Water": "유연하게 대처하는 지혜와 깊은 통찰력"
+            };
+
+            const weaponFeature = WEAPON_MAP[FIVE_ELEMENTS[uDM]] || "고유의 잠재된 에너지";
+            const reinterp = top ? top.meta.reinterpretation : "타고난 잠재";
+
+            // '역량' 단어를 한 번만 사용하도록 문장 재구성
+            const descStr = `${weaponFeature}을(를) 바탕으로 본인만의 '${reinterp}' 역량을 발휘하여 목표를 성취하는 타입입니다.`;
 
             // ─── 동적 해시태그 생성 로직 준비 ───
 
@@ -679,7 +690,7 @@
             if (pillars.elements) {
                 const sortedEls = Object.entries(pillars.elements).sort((a, b) => b[1] - a[1]);
                 dominantEl = sortedEls[0][0];
-                const domPct = sortedEls[0][1];
+                domPct = sortedEls[0][1]; // shadow 삭제
 
                 const dmElStr = EL_KR[dmElement];
                 const domElStr = EL_KR[dominantEl];
@@ -764,6 +775,7 @@
                 comprehensiveDesc: comprehensiveDesc,
                 hashtags: hashtags,
                 dmElement: dmElement,
+                socialWeapon: descStr,
                 sourceTag: "UNSE 동적 분석 엔진 · 자평진전 격국론"
             };
         },
