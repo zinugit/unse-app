@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.75rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<title>인연 네트워크</title>
+<style>
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Galaxy S24+ and modern mobile status bar optimization */
+        :root {
+            --safe-area-inset-top: env(safe-area-inset-top, 0px);
+            --header-height: 56px;
+        }
+        
+        .header-container {
+            height: calc(var(--header-height) + var(--safe-area-inset-top));
+            padding-top: var(--safe-area-inset-top);
+        }
+
+        /* Aspect ratio optimization for modern high-end phones like S24+ */
+        .app-container {
+            max-width: 450px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 font-display antialiased text-slate-900 dark:text-slate-100">
+<div class="relative flex min-h-screen w-full flex-col bg-white dark:bg-background-dark overflow-x-hidden mx-auto max-w-[450px] shadow-2xl">
+<!-- Updated Header -->
+<header class="sticky top-0 z-50 bg-white dark:bg-background-dark border-b border-slate-100 dark:border-slate-800 header-container px-4 flex items-center justify-between transition-all duration-200">
+<button class="p-2 -ml-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300 text-[24px]">menu</span>
+</button>
+<h1 class="text-[18px] font-bold tracking-tight absolute left-1/2 -translate-x-1/2">인연</h1>
+<button class="p-2 -mr-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300 text-[24px]">settings</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto no-scrollbar pb-32">
+<!-- My Needed Energy Card -->
+<section class="p-4 pt-6">
+<div class="flex flex-col items-stretch justify-start rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
+<div class="w-full bg-center bg-no-repeat aspect-[16/8] bg-cover bg-primary/10 flex items-center justify-center" style="background-image: linear-gradient(135deg, #256af4 0%, #60a5fa 100%);">
+<span class="material-symbols-outlined text-white text-6xl opacity-90" style="font-variation-settings: 'FILL' 1">park</span>
+</div>
+<div class="flex w-full flex-col items-stretch justify-center gap-1 p-6">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">Today's Guide</span>
+<p class="text-slate-400 dark:text-slate-500 text-sm font-medium">오늘의 가이드</p>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-bold leading-tight tracking-tight mt-1.5">목(木) 기운</p>
+<div class="flex items-center gap-3 justify-between mt-3">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal">나에게 가장 필요한 기운입니다</p>
+<button class="flex items-center justify-center rounded-full h-10 px-5 bg-primary text-white text-sm font-semibold transition-transform active:scale-95 shadow-md shadow-primary/20">
+<span class="truncate">자세히 보기</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Relationship List Section -->
+<section class="px-4 py-4">
+<h3 class="text-slate-900 dark:text-slate-100 text-[19px] font-bold leading-tight tracking-tight pb-5">나의 인연 리스트</h3>
+<!-- Empty State UI -->
+<div class="flex flex-col items-center justify-center py-20 px-8 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl bg-slate-50/40 dark:bg-slate-900/40">
+<div class="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-600 text-5xl" style="font-variation-settings: 'FILL' 0">group_off</span>
+</div>
+<p class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight text-center mb-2">등록된 인연이 없습니다</p>
+<p class="text-slate-500 dark:text-slate-400 text-[14px] font-normal leading-relaxed text-center mb-10">
+                        새로운 인연을 추가하고 사주 기반의<br/>맞춤형 네트워크를 관리해보세요.
+                    </p>
+<button class="flex min-w-[180px] items-center justify-center rounded-2xl h-14 px-8 bg-slate-100/80 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-[15px] font-bold transition-all hover:bg-slate-200 active:scale-[0.98]">
+<span class="material-symbols-outlined mr-2.5 text-xl">person_search</span>
+                        인연 찾기 시작
+                    </button>
+</div>
+</section>
+</main>
+<!-- Floating Action Button -->
+<div class="fixed bottom-28 right-6 z-40">
+<button class="flex h-15 w-15 items-center justify-center rounded-full bg-primary text-white shadow-xl shadow-primary/40 transition-transform active:scale-90 h-[60px] w-[60px]">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<!-- Updated Bottom Navigation Bar - Active: 인연 -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white/98 dark:bg-background-dark/98 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 px-2 pb-8 pt-3 flex justify-around items-center z-50 max-w-[450px] mx-auto">
+<a class="flex flex-col items-center gap-1.5 w-1/5 text-slate-400 dark:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]">calendar_today</span>
+<span class="text-[11px] font-medium">내 사주</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 w-1/5 text-slate-400 dark:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]">auto_awesome</span>
+<span class="text-[11px] font-medium">오늘 운세</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 w-1/5 text-primary" href="#">
+<div class="relative">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1">groups</span>
+<div class="absolute -top-1 -right-1 w-1.5 h-1.5 bg-primary rounded-full ring-2 ring-white dark:ring-background-dark"></div>
+</div>
+<span class="text-[11px] font-bold">인연</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 w-1/5 text-slate-400 dark:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]">psychology</span>
+<span class="text-[11px] font-medium">기질 분석</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 w-1/5 text-slate-400 dark:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]">magic_button</span>
+<span class="text-[11px] font-medium">부적</span>
+</a>
+</nav>
+</div>
+</body></html>

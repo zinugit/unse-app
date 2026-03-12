@@ -116,6 +116,17 @@
     //  엔진 본체
     // ═══════════════════════════════════════════════════
     window.sajuEngine = {
+        getElementScores: function (pillars) {
+            return pillars.elements;
+        },
+        getGanHangul: function (char) {
+            const idx = GAN_LIST.indexOf(char);
+            return idx !== -1 ? window.GAN_HANGUL[idx] : "";
+        },
+        getJiHangul: function (char) {
+            const idx = JI_LIST.indexOf(char);
+            return idx !== -1 ? window.JI_HANGUL[idx] : "";
+        },
 
         // ─── 1. 진태양시 보정 ────────────────────────
         getSolarTime: function (dateStr, timeStr, birthLongitude = 126.98) {
@@ -261,6 +272,10 @@
                 month: mGan + mJi,
                 day: dGan + dJi,
                 hour: hGan + hJi,
+                yearHangul: this.getGanHangul(yearGan) + this.getJiHangul(yearJi),
+                monthHangul: this.getGanHangul(mGan) + this.getJiHangul(mJi),
+                dayHangul: this.getGanHangul(dGan) + this.getJiHangul(dJi),
+                timeHangul: this.getGanHangul(hGan) + this.getJiHangul(hJi),
                 dayMaster: dGan + "(" + FIVE_ELEMENTS[dGan] + ")",
                 elements: this.countElements(fullChars),
                 sipsung: this.calculateSipsung(dGan, fullChars),
@@ -794,6 +809,70 @@
                 });
             }
             return results;
+        },
+
+        // ─── 6. 인연 아키텍처: 관계 분석 엔진 ───────
+        analyzeRelationship: function (myPillars, frPillars) {
+            if (!myPillars || !frPillars) return null;
+
+            const myDM = myPillars.dayMaster.charAt(0);
+            const frDM = frPillars.dayMaster.charAt(0);
+            const myEl = FIVE_ELEMENTS[myDM];
+            const frEl = FIVE_ELEMENTS[frDM];
+
+            // 1. Determine Sipsung Relationship (Orbits)
+            let orbit = 2; // Default
+            let sipsung = "비겁";
+            let role = "러닝메이트 (동식)";
+            let orbitName = "동료";
+
+            if (PRODUCE[frEl] === myEl) {
+                orbit = 1; sipsung = "인성"; role = "나를 생(生)하는 연료"; orbitName = "지원군";
+            } else if (frEl === myEl) {
+                orbit = 2; sipsung = "비겁"; role = "가치관을 공유하는 동반자"; orbitName = "동료";
+            } else if (PRODUCE[myEl] === frEl) {
+                orbit = 3; sipsung = "식상"; role = "내가 생(生)하는 파트너"; orbitName = "창의 파트너";
+            } else if (CONTROL[myEl] === frEl) {
+                orbit = 4; sipsung = "재성"; role = "내가 극(剋)하는 성과"; orbitName = "비즈니스 귀인";
+            } else if (CONTROL[frEl] === myEl) {
+                orbit = 5; sipsung = "관성"; role = "나를 다듬어주는 규율"; orbitName = "커리어 코치";
+            }
+
+            // 2. Harmony Score Calculation
+            let score = 75; // Base
+            if (orbit === 1) score += 12; // Supportive
+            if (orbit === 2) score += 8;  // Equal
+            if (orbit === 4) score += 15; // Result-oriented (High synergy)
+
+            // Elemental Synergy (Extra points for production)
+            if (PRODUCE[myEl] === frEl || PRODUCE[frEl] === myEl) score += 5;
+
+            // Random variation based on characters (Deterministic)
+            const seed = (myDM.charCodeAt(0) + frDM.charCodeAt(0)) % 7;
+            score += seed;
+
+            return {
+                orbit,
+                sipsung,
+                role,
+                orbitName,
+                score: Math.min(99, score),
+                frDM,
+                frEl,
+                frElColor: this.getElementColor(frEl)
+            };
+        },
+
+        getElementColor: function (el) {
+            const colors = {
+                Wood: "#10B981",    // Emerald
+                Fire: "#EF4444",    // Red
+                Earth: "#F59E0B",   // Amber
+                Metal: "#94A3B8",   // Slate/Slate
+                Water: "#3B82F6"    // Blue
+            };
+            return colors[el] || "#3B82F6";
         }
     };
+    window.SajuEngine = window.sajuEngine;
 })();

@@ -8,6 +8,7 @@ let trendChartInstance = null;
 // 데이터 관리 변수
 let userSajuData = JSON.parse(localStorage.getItem('unse_user_saju') || 'null');
 let friendList = JSON.parse(localStorage.getItem('unse_friends') || '[]');
+let currentLuckScores = null;
 
 // Initialization
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,26 +21,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function startAsGuest() {
-    // [추가] 브라우저 전체화면 요청 (사용자 클릭 시점에만 작동)
-    const doc = window.document;
-    const docEl = doc.documentElement;
-    const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-
-    if (requestFullScreen) {
-        requestFullScreen.call(docEl).catch(err => {
-            console.log("전체화면 요청이 거부되었습니다.");
-        });
-    }
+    // 전체 화면 관련 코드(requestFullscreen) 삭제
 
     resetGenderSelection();
     const welcome = document.getElementById('welcome-screen');
     if (welcome) {
         welcome.style.display = 'none';
     }
+
+    // 원래 ID로 복구
     const modal = document.getElementById('guest-login-modal');
     if (modal) {
         // 모드 및 텍스트 리셋
         modal.querySelector('h3').innerText = "정보 입력";
+        const pTag = modal.querySelector('p');
+        if (pTag) pTag.innerText = "정확한 분석을 위해 상세히 입력해주세요.";
+
         const submitBtnSpan = modal.querySelector('button[type="submit"] span');
         if (submitBtnSpan) submitBtnSpan.innerText = "분석 시작하기";
         modal.removeAttribute('data-mode');
@@ -78,10 +75,16 @@ function setupEventListeners() {
     const correctionMsg = document.querySelector('#correction-msg');
 
     if (birthDateInput) {
-        // 연도 4자리 초과 입력 방지 (YYYY-MM-DD 형식 유지)
+        // 연도 4자리 초과 입력 철저 방지 (브라우저 특성 대응)
         birthDateInput.addEventListener('input', (e) => {
-            if (e.target.value.length > 10) {
-                e.target.value = e.target.value.slice(0, 10);
+            const val = e.target.value; // YYYY-MM-DD
+            if (!val) return;
+
+            const parts = val.split('-');
+            if (parts[0] && parts[0].length > 4) {
+                // 연도가 4자리를 넘으면 강제로 자르고 재조합
+                const correctedYear = parts[0].slice(0, 4);
+                e.target.value = correctedYear + (parts[1] ? '-' + parts[1] : '') + (parts[2] ? '-' + parts[2] : '');
             }
         });
 
@@ -91,10 +94,9 @@ function setupEventListeners() {
             const yearStr = val.split('-')[0];
             const year = parseInt(yearStr);
 
-            // 연도 4자리 초과 시 강제 보정 (HTML max 속성 백업)
+            // 최종 제출 전 한 번 더 검증
             if (yearStr.length > 4) {
-                const corrected = yearStr.slice(0, 4) + val.slice(yearStr.length);
-                e.target.value = corrected;
+                e.target.value = yearStr.slice(0, 4) + val.slice(yearStr.length);
                 return;
             }
 
@@ -183,16 +185,28 @@ window.switchTab = function (tabId) {
     if (targetScreen) targetScreen.classList.add('active');
 
     navLinks.forEach(n => {
-        n.classList.remove('active');
+        n.classList.remove('active', 'text-primary');
+        n.classList.add('text-slate-400', 'dark:text-slate-500');
         const icon = n.querySelector('.material-symbols-outlined');
-        if (icon) icon.classList.remove('fill-icon');
+        if (icon) icon.classList.remove('fill-1');
+        const text = n.querySelector('.nav-text');
+        if (text) {
+            text.classList.remove('font-bold');
+            text.classList.add('font-medium');
+        }
     });
 
     const activeLink = document.querySelector(`.nav-link[data-target="${tabId}"]`);
     if (activeLink) {
-        activeLink.classList.add('active');
+        activeLink.classList.add('active', 'text-primary');
+        activeLink.classList.remove('text-slate-400', 'dark:text-slate-500');
         const activeIcon = activeLink.querySelector('.material-symbols-outlined');
-        if (activeIcon) activeIcon.classList.add('fill-icon');
+        if (activeIcon) activeIcon.classList.add('fill-1');
+        const activeText = activeLink.querySelector('.nav-text');
+        if (activeText) {
+            activeText.classList.remove('font-medium');
+            activeText.classList.add('font-bold');
+        }
     }
 
     if (tabId === 'tab-network') renderFriendList();
@@ -235,44 +249,81 @@ function handleSajuAnalysis() {
         const timeStr = timeInput.value;
         const customLon = parseFloat(lonInput?.value) || 126.97;
 
-        // 양력/음력 변환 로직 추가
+        // 양력/음력 변환 로직 보강
         const calendarType = document.querySelector('input[name="calendar-type"]:checked')?.value || 'solar';
         if (calendarType !== 'solar') {
+            let sl = window.solarLunar || window.solarlunar;
+            if (sl && sl.default) sl = sl.default; // CDN 모듈 대응
+
+            if (!sl || typeof sl.lunar2solar !== 'function') {
+                console.error("Lunar conversion library (solarLunar) is missing or invalid.");
+                alert("음력 변환 시스템이 로드되지 않았습니다. 페이지를 새로고침 해주세요.");
+                return;
+            }
+
             const [y, m, d] = dateStr.split('-').map(Number);
             const isLeap = calendarType === 'leap';
-            const solarInfo = solarLunar.lunar2solar(y, m, d, isLeap);
-            dateStr = `${solarInfo.cYear}-${String(solarInfo.cMonth).padStart(2, '0')}-${String(solarInfo.cDay).padStart(2, '0')}`;
+
+            try {
+                const solarInfo = sl.lunar2solar(y, m, d, isLeap);
+                if (!solarInfo || !solarInfo.cYear) {
+                    throw new Error("Invalid conversion result");
+                }
+                dateStr = `${solarInfo.cYear}-${String(solarInfo.cMonth).padStart(2, '0')}-${String(solarInfo.cDay).padStart(2, '0')}`;
+                console.log(`Lunar (${calendarType}) converted to Solar: ${dateStr}`);
+            } catch (err) {
+                console.error("Lunar conversion error:", err);
+                if (isLeap) {
+                    alert("해당 월에는 윤달이 없습니다. 음력(평달)으로 선택하거나 날짜를 확인해주세요.");
+                } else {
+                    alert("음력 변환 중 오류가 발생했습니다. 정확한 음력 날짜인지 확인해주세요.");
+                }
+                return;
+            }
         }
 
         const engine = window.sajuEngine;
         if (!engine || typeof engine.getSolarTime !== 'function') {
             console.error("SajuEngine not loaded correctly.");
+            alert("시스템 초기화 중 오류가 발생했습니다. 페이지를 새로고침 해주세요.");
             return;
         }
 
         // 시간 모름 처리
         let correctedDate;
-        if (timeStr === 'unknown') {
-            // 시간이 모름인 경우 해당 날짜의 정오(12:00)를 기준으로 분석하되 엔진에서 시간 무시 로직 적용 권장
+        if (timeStr === 'unknown' || !timeStr) {
             correctedDate = engine.getSolarTime(dateStr, "12:00", customLon);
         } else {
             correctedDate = engine.getSolarTime(dateStr, timeStr, customLon);
         }
-        const pillars = engine.calculatePillars(correctedDate);
 
-        // 인연 추가 모드인 경우
-        if (guestModal.getAttribute('data-mode') === 'add-friend') {
-            const timeUnknown = timeStr === 'unknown';
-            const newFriend = {
+        const pillars = engine.calculatePillars(correctedDate);
+        if (!pillars) {
+            throw new Error("Pillars calculation failed");
+        }
+
+        // 인연 추가/수정 모드인 경우
+        const mode = guestModal.getAttribute('data-mode');
+        if (mode === 'add-friend' || mode === 'edit-friend') {
+            const timeUnknown = timeStr === 'unknown' || !timeStr;
+            const friendData = {
                 name: name,
                 gender: gender,
                 birthDate: dateStr,
-                birthTime: timeStr,
+                birthTime: timeStr || "12:00",
                 timeUnknown: timeUnknown,
+                isLunar: calendarType !== 'solar',
                 pillars: pillars,
-                addedAt: new Date().toISOString()
+                addedAt: mode === 'edit-friend' ? friendList[parseInt(guestModal.getAttribute('data-edit-index'))].addedAt : new Date().toISOString()
             };
-            friendList.push(newFriend);
+
+            if (mode === 'edit-friend') {
+                const editIdx = parseInt(guestModal.getAttribute('data-edit-index'));
+                friendList[editIdx] = friendData;
+            } else {
+                friendList.push(friendData);
+            }
+
             localStorage.setItem('unse_friends', JSON.stringify(friendList));
             renderFriendList();
 
@@ -288,7 +339,7 @@ function handleSajuAnalysis() {
             name: name,
             gender: gender,
             birthDate: dateStr,
-            birthTime: timeStr,
+            birthTime: timeStr || "12:00",
             pillars: pillars
         };
         localStorage.setItem('unse_user_saju', JSON.stringify(userSajuData));
@@ -301,45 +352,39 @@ function handleSajuAnalysis() {
         const dmHangul = window.GAN_HANGUL[window.GAN_LIST.indexOf(dmHanja)];
         const dmElement = pillars.dayMaster.split('(')[1].replace(')', '');
 
-        const profileName = document.querySelector('#profile-name');
-        const profileBirth = document.querySelector('#profile-birth');
-        const dmBadge = document.querySelector('#profile-element-badge');
-        const coreEnergyTitle = document.querySelector('#core-energy-title');
+        const profileName = document.querySelector('#display-user-name');
+        const profileBirth = document.querySelector('#display-birth-info');
+        const dmBadge = document.querySelector('#display-dm-badge'); // 수정된 ID 사용
 
         if (profileName) profileName.innerText = `${name}`;
         const year = dateStr.split('-')[0];
-        const displayTime = timeStr === 'unknown' ? '시간 모름' : `진태양시 ${timeStr}`;
+        const displayTime = (timeStr === 'unknown' || !timeStr) ? '시간 모름' : `진태양시 ${timeStr}`;
         if (profileBirth) profileBirth.innerText = `${year}년생 · ${displayTime}`;
-        if (dmBadge) {
-            dmBadge.innerText = dmElement.toUpperCase();
-            dmBadge.style.background = theme.main;
-        }
 
-        const elHnMap = { Wood: '목', Fire: '화', Earth: '토', Metal: '금', Water: '수' };
-        if (coreEnergyTitle) coreEnergyTitle.innerText = `나의 코어 에너지: ${dmHanja} (${dmHangul}${elHnMap[dmElement] || dmElement})`;
-
-        updatePillarCircles(pillars);
-        updateElementBars(pillars.elements);
+        // dmBadge는 updateModernTraitUI에서도 처리하지만 여기서도 배경색 등 초기화 가능
 
         const scores = engine.getLuckScores(pillars);
-        updateScoresUI(scores);
-        updateModernTraitUI(pillars);
-        updateGoalStyle(pillars.sipsung);
+        renderLuckScores(scores);
 
-        generateDailySuggestions(scores.dailyTip);
+        const modernInfo = window.sajuEngine.getModernAnalysis(pillars);
+        updateModernTraitUI(modernInfo);
+
+        if (typeof updateGoalStyle === 'function') updateGoalStyle(pillars.sipsung);
+
+        generateDailySuggestions(scores);
         updateLuckyItems(scores.luckyItems);
+        currentLuckScores = scores;
         updateGuideHeader(name);
 
         const trendData = engine.getWeeklyTrend(pillars);
         updateTrendChart(trendData);
 
         replaceBrandName();
-
         lucide.createIcons();
         window.scrollTo(0, 0);
     } catch (err) {
-        console.error("Analysis Error:", err);
-        alert("분석 도중 오류가 발생했습니다. 입력을 확인해주세요.");
+        console.error("Analysis Error Details:", err);
+        alert(`분석 도중 오류가 발생했습니다. (${err.message})`);
     }
 }
 
@@ -371,150 +416,248 @@ function closeScoreDetail() {
     window.scrollTo(0, 0);
 }
 
-function updateScoresUI(scores) {
-    const total = document.getElementById('guide-total-score');
-    if (total) total.innerText = scores.total;
+window.openSmartSuggestionsModal = function () {
+    const modal = document.getElementById('smart-suggestions-modal');
+    const content = modal.querySelector('div');
+    if (!modal || !currentLuckScores) return;
 
-    const shortSummaryEl = document.getElementById('guide-short-summary');
-    if (shortSummaryEl && scores.shortSummary) {
-        shortSummaryEl.innerText = scores.shortSummary;
+    // 데이터 채우기
+    const tipEl = document.getElementById('modal-daily-tip');
+    if (tipEl) tipEl.innerText = currentLuckScores.dailyTip || "활기찬 하루 보내세요!";
+
+    const detailContainer = document.getElementById('modal-luck-details');
+    if (detailContainer) {
+        const categories = [
+            { key: 'money', label: '재물운', emoji: '💰', desc: currentLuckScores.moneyDesc, color: 'text-amber-500' },
+            { key: 'career', label: '직업운', emoji: '💼', desc: currentLuckScores.careerDesc, color: 'text-blue-500' },
+            { key: 'health', label: '건강운', emoji: '💚', desc: currentLuckScores.healthDesc, color: 'text-emerald-500' },
+            { key: 'love', label: '애정운', emoji: '💘', desc: currentLuckScores.loveDesc, color: 'text-rose-500' }
+        ];
+
+        detailContainer.innerHTML = categories.map(cat => `
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-100 dark:border-slate-700">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">${cat.emoji}</span>
+                        <span class="text-sm font-bold text-slate-800 dark:text-slate-100">${cat.label}</span>
+                    </div>
+                    <span class="text-sm font-black ${cat.color}">${currentLuckScores[cat.key]}점</span>
+                </div>
+                <p class="text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed break-keep">
+                    ${cat.desc}
+                </p>
+            </div>
+        `).join('');
     }
 
-    const moneyScore = document.getElementById('score-money');
-    const moneyBar = document.getElementById('bar-money');
-    if (moneyScore) moneyScore.innerText = scores.money;
-    if (moneyBar) moneyBar.style.width = scores.money + '%';
+    const numEl = document.getElementById('modal-luck-number');
+    const dirEl = document.getElementById('modal-luck-direction');
+    if (numEl) numEl.innerText = currentLuckScores.luckyItems?.number || "--";
+    if (dirEl) dirEl.innerText = currentLuckScores.luckyItems?.direction || "--";
 
-    const careerScore = document.getElementById('score-career');
-    const careerBar = document.getElementById('bar-career');
-    if (careerScore) careerScore.innerText = scores.career;
-    if (careerBar) careerBar.style.width = scores.career + '%';
+    // 모달 표시
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => {
+        content.classList.remove('translate-y-full');
+    }, 10);
+};
 
-    const healthScore = document.getElementById('score-health');
-    const healthBar = document.getElementById('bar-health');
-    if (healthScore) healthScore.innerText = scores.health;
-    if (healthBar) healthBar.style.width = scores.health + '%';
+window.closeSmartSuggestionsModal = function () {
+    const modal = document.getElementById('smart-suggestions-modal');
+    const content = modal.querySelector('div');
+    if (!modal) return;
 
-    const loveScore = document.getElementById('score-love');
-    const loveBar = document.getElementById('bar-love');
-    if (loveScore) loveScore.innerText = scores.love;
-    if (loveBar) loveBar.style.width = scores.love + '%';
+    content.classList.add('translate-y-full');
+    setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }, 300);
+};
 
-    // Update 2x2 grid summaries
-    const sMoneySum = document.getElementById('score-money-summary');
-    const sMoneyShort = document.getElementById('short-money');
-    if (sMoneySum) sMoneySum.innerText = scores.money;
-    if (sMoneyShort) sMoneyShort.innerText = scores.moneyShort || '-';
+function renderLuckScores(scores) {
+    if (!scores) return;
 
-    const sCareerSum = document.getElementById('score-career-summary');
-    const sCareerShort = document.getElementById('short-career');
-    if (sCareerSum) sCareerSum.innerText = scores.career;
-    if (sCareerShort) sCareerShort.innerText = scores.careerShort || '-';
+    // 1. 메인 총점 및 총평
+    const totalScoreEl = document.getElementById('luck-total-score');
+    const summaryTextEl = document.getElementById('luck-summary-text');
+    const totalTrendEl = document.getElementById('luck-total-trend');
 
-    const sLoveSum = document.getElementById('score-love-summary');
-    const sLoveShort = document.getElementById('short-love');
-    if (sLoveSum) sLoveSum.innerText = scores.love;
-    if (sLoveShort) sLoveShort.innerText = scores.loveShort || '-';
+    if (totalScoreEl) totalScoreEl.innerText = `${scores.total}점`;
+    // shortSummary가 있으면 그것을, 없으면 일반 summary를 사용
+    if (summaryTextEl) summaryTextEl.innerText = scores.shortSummary || scores.summary || "분석 완료";
 
-    const sHealthSum = document.getElementById('score-health-summary');
-    const sHealthShort = document.getElementById('short-health');
-    if (sHealthSum) sHealthSum.innerText = scores.health;
-    if (sHealthShort) sHealthShort.innerText = scores.healthShort || '-';
+    // 트렌드 (어제 대비 % 계산)
+    if (totalTrendEl && userSajuData) {
+        const trendData = window.SajuEngine ? window.SajuEngine.getWeeklyTrend(userSajuData.pillars) : [];
+        if (trendData.length >= 3) {
+            const diff = trendData[2].score - trendData[1].score;
+            const sign = diff >= 0 ? "arrow_upward" : "arrow_downward";
+            const color = diff >= 0 ? "text-emerald-500" : "text-rose-500";
+            totalTrendEl.className = `${color} text-sm font-bold flex items-center`;
+            totalTrendEl.innerHTML = `<span class="material-symbols-outlined text-sm">${sign}</span>${Math.abs(diff)}%`;
+        }
+    }
 
-    // Descriptions
-    const moneyDesc = document.getElementById('desc-money');
-    if (moneyDesc && scores.moneyDesc) moneyDesc.innerText = scores.moneyDesc;
+    // 2. 상세 지표 매핑 (바 + 텍스트)
+    const indicators = [
+        { key: 'money', scoreId: 'luck-money-score', barId: 'luck-money-bar' },
+        { key: 'career', scoreId: 'luck-work-score', barId: 'luck-work-bar' },
+        { key: 'health', scoreId: 'luck-health-score', barId: 'luck-health-bar' },
+        { key: 'love', scoreId: 'luck-love-score', barId: 'luck-love-bar' }
+    ];
 
-    const careerDesc = document.getElementById('desc-career');
-    if (careerDesc && scores.careerDesc) careerDesc.innerText = scores.careerDesc;
-
-    const healthDesc = document.getElementById('desc-health');
-    if (healthDesc && scores.healthDesc) healthDesc.innerText = scores.healthDesc;
-
-    const loveDesc = document.getElementById('desc-love');
-    if (loveDesc && scores.loveDesc) loveDesc.innerText = scores.loveDesc;
+    indicators.forEach(item => {
+        const val = scores[item.key] || 0;
+        const sEl = document.getElementById(item.scoreId);
+        const bEl = document.getElementById(item.barId);
+        if (sEl) sEl.innerText = `${val}%`;
+        if (bEl) bEl.style.width = `${val}%`;
+    });
 }
 
-function updateModernTraitUI(pillars) {
-    const info = window.sajuEngine.getModernAnalysis(pillars);
-    const nameEl = document.querySelector('#user-name');
-    const userName = nameEl?.value || '방문자';
+function updateModernTraitUI(info) {
+    if (!userSajuData || !info) return;
 
-    const dmHanja = pillars.dayMaster.split('(')[0];
-    const dmHangul = window.GAN_HANGUL[window.GAN_LIST.indexOf(dmHanja)];
-    const dmElement = pillars.dayMaster.split('(')[1].replace(')', '');
-    const elLabelMap = { Wood: '木', Fire: '火', Earth: '土', Metal: '金', Water: '水' };
+    // 이름 및 배지 매핑
+    const nameEl = document.getElementById('display-user-name');
+    if (nameEl) nameEl.innerText = userSajuData.name;
 
-    const coreTitle = document.getElementById('core-title');
-    const coreDesc = document.getElementById('core-desc');
-    const weaponTitle = document.getElementById('weapon-title');
-    const weaponDesc = document.getElementById('weapon-desc');
+    const dmBadgeEl = document.getElementById('display-dm-badge');
+    if (dmBadgeEl) dmBadgeEl.innerText = info.title;
 
-    if (coreTitle) coreTitle.innerText = `나의 코어 에너지: ${dmHanja}(${dmHangul})`;
-    if (coreDesc) coreDesc.innerText = info.coreDesc;
-
-    const top = (pillars.sipsung && pillars.sipsung.length > 0) ? pillars.sipsung[0] : null;
-    if (top) {
-        if (weaponTitle) weaponTitle.innerText = `나의 사회적 무기: ${top.relation}(${top.char})`;
+    const birthInfoEl = document.getElementById('display-birth-info');
+    if (birthInfoEl) {
+        birthInfoEl.innerText = `${userSajuData.birthDate} · ${userSajuData.gender === 'male' ? '남성' : '여성'}`;
     }
 
-    if (weaponDesc && info.socialWeapon) {
-        // 단어 중복 방지 및 엔진의 초개인화 문구 반영
-        weaponDesc.innerText = info.socialWeapon.replace(/역량 역량/g, "역량").trim();
+    const pillarsTextEl = document.getElementById('display-pillars-text');
+    if (pillarsTextEl) {
+        pillarsTextEl.innerText = `${userSajuData.pillars.yearHangul}년 ${userSajuData.pillars.monthHangul}월 ${userSajuData.pillars.dayHangul}일 ${userSajuData.pillars.timeHangul}시`;
     }
 
-    const traitProfileName = document.getElementById('trait-profile-name');
-    const traitProfileDesc = document.getElementById('trait-profile-desc');
-
-    if (traitProfileName) traitProfileName.innerText = `${userName}님`;
-    if (traitProfileDesc) traitProfileDesc.innerText = `보석처럼 빛나는 ${dmHangul}(${dmHanja}${elLabelMap[dmElement]}) 기질`;
-
-    const traitSlogan = document.getElementById('trait-slogan');
-    const traitSummary = document.getElementById('trait-summary');
-    if (traitSlogan) traitSlogan.innerText = info.slogan || '-';
-    // 기질 분석 탭 요약 중복 방지: info.desc 대신 info.comprehensiveDesc 사용
-    if (traitSummary) traitSummary.innerHTML = info.comprehensiveDesc || '-';
-
-    const traitCoreHanja = document.getElementById('trait-core-hanja');
-    const traitCoreDesc = document.getElementById('trait-core-desc');
-    const traitComprehensive = document.getElementById('trait-comprehensive');
-
-    if (traitCoreHanja) traitCoreHanja.innerText = dmHanja;
-    if (traitCoreDesc) traitCoreDesc.innerHTML = `나의 코어 에너지인 <span class="font-bold text-primary">${dmHanja}(${dmHangul})</span>은(는) ${info.coreDesc}`;
-    if (traitComprehensive) traitComprehensive.innerText = info.comprehensiveDesc || '-';
-
-    const traitKeywords = document.getElementById('trait-keywords');
-    if (traitKeywords && info.hashtags) {
-        traitKeywords.innerHTML = '';
-        info.hashtags.forEach(tag => {
-            const span = document.createElement('span');
-            span.className = 'px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium';
-            span.innerText = tag;
-            traitKeywords.appendChild(span);
-        });
+    // 슬로건 줄바꿈 처리
+    const sloganContainer = document.getElementById('display-user-slogan');
+    if (sloganContainer && info.slogan) {
+        const rawSlogan = info.slogan;
+        if (rawSlogan.includes(':')) {
+            const parts = rawSlogan.split(':');
+            sloganContainer.innerHTML = `${parts[0].trim()}:<br>${parts[1].trim()}`;
+        } else {
+            sloganContainer.innerText = rawSlogan;
+        }
     }
 
-    const avatarImgs = document.querySelectorAll('#profile-avatar, #guide-profile-img');
-    if (avatarImgs.length > 0 && info.dmElement) {
-        const avatarMap = {
-            Wood: 'wood_avatar.png',
-            Fire: 'fire_avatar.png',
-            Earth: 'earth_avatar.png',
-            Metal: 'metal_avatar.png',
-            Water: 'water_avatar.png'
-        };
+    const summaryEl = document.getElementById('saju-comprehensive-summary');
+    if (summaryEl) {
+        summaryEl.innerHTML = `<span class="font-bold text-primary">총평:</span> ${info.comprehensiveDesc}`;
+    }
 
-        // 기본 이미지 설정 (파일이 없을 경우 대비)
+    // 나머지 데이터 렌더링 호출
+    renderSajuGrid(userSajuData.pillars);
+    renderElementBalance(userSajuData.pillars);
+
+    const avatarImg = document.getElementById('profile-avatar');
+    if (avatarImg && info.dmElement) {
+        const avatarMap = { Wood: 'wood_avatar.png', Fire: 'fire_avatar.png', Earth: 'earth_avatar.png', Metal: 'metal_avatar.png', Water: 'water_avatar.png' };
         const defaultAvatar = 'https://api.dicebear.com/9.x/avataaars/svg?seed=Felix';
-        const src = avatarMap[info.dmElement] || defaultAvatar;
-
-        avatarImgs.forEach(img => {
-            img.src = src;
-            // 이미지 로드 실패 시 기본 아바타로 교체하는 핸들러 추가
-            img.onerror = () => { img.src = defaultAvatar; };
-        });
+        avatarImg.src = avatarMap[info.dmElement] || defaultAvatar;
+        avatarImg.onerror = () => { avatarImg.src = defaultAvatar; };
     }
 }
+
+function renderSajuGrid(pillars) {
+    const container = document.getElementById('saju-grid-container');
+    if (!container) return;
+
+    const titles = ["시주", "일주", "월주", "연주"];
+    const heaven = [pillars.hour.charAt(0), pillars.day.charAt(0), pillars.month.charAt(0), pillars.year.charAt(0)];
+    const earth = [pillars.hour.charAt(1), pillars.day.charAt(1), pillars.month.charAt(1), pillars.year.charAt(1)];
+
+    const getElementColorClass = (char) => {
+        const el = window.FIVE_ELEMENTS[char];
+        if (el === 'Fire') return 'text-[#f87171]';
+        if (el === 'Water') return 'text-[#60a5fa]';
+        if (el === 'Wood') return 'text-[#4ade80]';
+        if (el === 'Earth') return 'text-[#fbbf24]';
+        return 'text-[#94a3b8]';
+    };
+
+    const getElementKr = (char) => {
+        const el = window.FIVE_ELEMENTS[char];
+        const map = { Wood: '목', Fire: '화', Earth: '토', Metal: '금', Water: '수' };
+        return map[el] || "";
+    };
+
+    let html = titles.map((t, i) => `
+        <div class="text-center text-[13px] font-bold ${i === 1 ? 'text-primary underline decoration-2 underline-offset-8' : 'text-slate-400'} py-2">
+            ${t}
+        </div>
+    `).join('');
+
+    // 천간 4개
+    heaven.forEach((char, i) => {
+        const colorClass = getElementColorClass(char);
+        html += `
+            <div class="aspect-square bg-white border ${i === 1 ? 'border-primary ring-1 ring-primary/20 shadow-md' : 'border-slate-100 shadow-sm'} rounded-[24px] flex flex-col items-center justify-center transition-transform active:scale-95">
+                <span class="${colorClass} font-black text-[26px] leading-none mb-1">${char}</span>
+                <span class="text-[11px] font-bold ${i === 1 ? 'text-primary' : 'text-slate-300'}">${window.SajuEngine.getGanHangul(char)}${getElementKr(char)}</span>
+            </div>`;
+    });
+
+    // 지지 4개
+    earth.forEach((char, i) => {
+        const colorClass = getElementColorClass(char);
+        html += `
+            <div class="aspect-square bg-white border ${i === 1 ? 'border-primary ring-1 ring-primary/20 shadow-md' : 'border-slate-100 shadow-sm'} rounded-[24px] flex flex-col items-center justify-center transition-transform active:scale-95">
+                <span class="${colorClass} font-black text-[26px] leading-none mb-1">${char}</span>
+                <span class="text-[11px] font-bold ${i === 1 ? 'text-primary' : 'text-slate-300'}">${window.SajuEngine.getJiHangul(char)}${getElementKr(char)}</span>
+            </div>`;
+    });
+
+    container.innerHTML = html;
+}
+
+function renderElementBalance(pillars) {
+    const scores = window.SajuEngine.getElementScores(pillars);
+    const container = document.getElementById('element-balance-list');
+    if (!container) return;
+
+    const elConfig = [
+        { key: 'Wood', name: '목(木)', icon: 'park', color: 'bg-[#4ade80]', text: 'text-[#166534]' },
+        { key: 'Fire', name: '화(火)', icon: 'local_fire_department', color: 'bg-[#f87171]', text: 'text-[#991b1b]' },
+        { key: 'Earth', name: '토(土)', icon: 'terrain', color: 'bg-[#fbbf24]', text: 'text-[#854d0e]' },
+        { key: 'Metal', name: '금(金)', icon: 'circle', color: 'bg-[#94a3b8]', text: 'text-[#475569]' },
+        { key: 'Water', name: '수(水)', icon: 'water_drop', color: 'bg-[#60a5fa]', text: 'text-[#1e40af]' }
+    ];
+
+    container.innerHTML = elConfig.map(el => {
+        const score = scores[el.key] || 0;
+        const count = Math.round(score / 12.5);
+        let status = "적정";
+        let statusClass = "bg-primary/5 text-primary border-primary/20";
+        if (count === 0) { status = "고립"; statusClass = "bg-purple-50 text-purple-600 border-purple-100"; }
+        else if (count <= 1) { status = "부족"; statusClass = "bg-slate-100 text-slate-500 border-slate-200"; }
+        else if (count >= 4) { status = "과다"; statusClass = "bg-red-50 text-red-600 border-red-100"; }
+
+        return `
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2.5">
+                        <span class="material-symbols-outlined text-[20px] ${el.text}">${el.icon}</span>
+                        <span class="text-[15px] font-black ${el.text}">${el.name}</span>
+                    </div>
+                    <span class="text-[11px] font-bold ${statusClass} px-2 py-0.5 rounded-full border">
+                        ${status} (${count})
+                    </span>
+                </div>
+                <div class="w-full bg-slate-100 h-[7px] rounded-full overflow-hidden">
+                    <div class="${el.color} h-full rounded-full transition-all duration-1000" style="width: ${Math.max(4, score)}%"></div>
+                </div>
+            </div>`;
+    }).join('');
+}
+
 
 function updateGoalStyle(sipsungArr) {
     if (!sipsungArr || sipsungArr.length === 0) return;
@@ -673,43 +816,85 @@ function updateElementBars(elements) {
     if (wName) wName.innerText = `${elHn[weak]} (부족한 에너지)`;
 }
 
-function generateDailySuggestions(dailyTip) {
-    const target = document.getElementById('guide-daily-tip');
-    if (!target) return;
-    target.innerText = dailyTip || '-';
+function generateDailySuggestions(scores) {
+    const container = document.getElementById('smart-suggestions-container');
+    if (!container || !scores) return;
+
+    // 점수에 따른 맞춤 제안 생성
+    const suggestions = [];
+
+    if (scores.money >= 80) {
+        suggestions.push({
+            title: "재테크 관련 정보를 수집해보세요",
+            desc: "금전운이 좋아 새로운 투자처를 찾기에 적합합니다.",
+            icon: "trending_up",
+            color: "bg-slate-200"
+        });
+    }
+
+    if (scores.career >= 80) {
+        suggestions.push({
+            title: "중요한 미팅은 오후에 배치하세요",
+            desc: "오늘 커리어 운의 흐름이 오후에 가장 강력합니다.",
+            icon: "lightbulb",
+            color: "bg-primary text-white"
+        });
+    } else {
+        suggestions.push({
+            title: "서류 정리에 집중하기 좋은 날입니다",
+            desc: "새로운 도전보다는 기존 업무를 마무리하는 것이 길합니다.",
+            icon: "edit_document",
+            color: "bg-slate-200"
+        });
+    }
+
+    if (scores.love >= 80) {
+        suggestions.push({
+            title: "먼저 연락을 건네보세요",
+            desc: "인복과 애정운이 상승하여 따뜻한 반응을 얻을 수 있습니다.",
+            icon: "favorite",
+            color: "bg-rose-100"
+        });
+    }
+
+    container.innerHTML = suggestions.slice(0, 2).map((s, idx) => `
+        <div class="flex items-center gap-4 p-4 ${idx === 0 ? 'bg-primary/5 border-primary/10' : 'bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700'} rounded-xl border">
+            <div class="size-10 shrink-0 ${s.color} rounded-full flex items-center justify-center">
+                <span class="material-symbols-outlined text-[20px]">${s.icon}</span>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm font-bold text-slate-900 dark:text-slate-100">${s.title}</p>
+                <p class="text-[11px] text-slate-500 mt-1">${s.desc}</p>
+            </div>
+        </div>
+    `).join('');
 }
 
 function updateLuckyItems(luckyItems) {
     if (!luckyItems) return;
 
-    const color = document.getElementById('guide-lucky-color');
-    const chip = document.getElementById('guide-lucky-chip');
+    const colorEl = document.getElementById('luck-color-value');
+    const timeEl = document.getElementById('luck-time-value');
+    const foodEl = document.getElementById('luck-food-value');
 
-    if (color) color.innerText = luckyItems.color.name;
-    if (chip) chip.style.backgroundColor = luckyItems.color.hex;
-
-    const time = document.getElementById('guide-lucky-time');
-    if (time) time.innerText = luckyItems.business.time;
-
-    const food = document.getElementById('guide-lucky-food');
-    if (food) food.innerText = luckyItems.food.name;
-
-    const numberContainer = document.getElementById('guide-lucky-number');
-    if (numberContainer) {
-        numberContainer.innerHTML = '';
-        if (luckyItems.number) {
-            const numbers = luckyItems.number.split(',').map(n => n.trim());
-            numbers.forEach(num => {
-                const span = document.createElement('span');
-                span.className = 'w-7 h-7 rounded-full bg-white flex items-center justify-center text-xs font-bold text-purple-600 shadow-sm';
-                span.innerText = num;
-                numberContainer.appendChild(span);
-            });
+    if (colorEl) colorEl.innerText = luckyItems.color.name;
+    if (timeEl) {
+        const timeStr = luckyItems.business.time || "--:--";
+        if (timeStr.includes('시')) {
+            const match = timeStr.match(/(\d+)시/);
+            if (match) {
+                let hour = parseInt(match[1]);
+                if (timeStr.includes('오후') && hour < 12) hour += 12;
+                if (timeStr.includes('오전') && hour === 12) hour = 0;
+                timeEl.innerText = `${hour.toString().padStart(2, '0')}:00`;
+            } else {
+                timeEl.innerText = timeStr;
+            }
+        } else {
+            timeEl.innerText = timeStr;
         }
     }
-
-    const direction = document.getElementById('guide-lucky-direction');
-    if (direction) direction.innerText = luckyItems.direction;
+    if (foodEl) foodEl.innerText = luckyItems.food.name;
 }
 
 function updateRadarChart(elements) {
@@ -739,46 +924,49 @@ function updateRadarChart(elements) {
 }
 
 function updateTrendChart(trendData) {
-    const ctx = document.getElementById('trendChart')?.getContext('2d');
-    if (!ctx) return;
+    const svgFill = document.getElementById('trend-svg-fill');
+    const svgLine = document.getElementById('trend-svg-line');
+    const pointsGroup = document.getElementById('trend-svg-points');
+    if (!svgFill || !svgLine) return;
 
-    if (trendChartInstance) {
-        trendChartInstance.destroy();
+    // ViewBox width: 400, height: 120
+    const mapY = (score) => 100 - (score / 100 * 80); // 0~100 scores -> 100~20 Y values
+    const xPositions = [0, 100, 200, 300, 400];
+    const points = trendData.map((d, i) => ({ x: xPositions[i], y: mapY(d.score) }));
+
+    // Cubic Bezier Path 생성
+    let pathD = `M ${points[0].x},${points[0].y}`;
+    for (let i = 0; i < points.length - 1; i++) {
+        const p0 = points[i];
+        const p1 = points[i + 1];
+        const cp1x = p0.x + 50;
+        const cp2x = p1.x - 50;
+        pathD += ` C ${cp1x},${p0.y} ${cp2x},${p1.y} ${p1.x},${p1.y}`;
     }
 
-    trendChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: trendData.map(d => d.label),
-            datasets: [{
-                data: trendData.map(d => d.score),
-                borderColor: '#256af4',
-                backgroundColor: 'rgba(37, 106, 244, 0.1)',
-                fill: true,
-                tension: 0.4,
-                borderWidth: 2,
-                pointBackgroundColor: (context) => context.dataIndex === 2 ? '#256af4' : '#ffffff',
-                pointBorderColor: '#256af4',
-                pointBorderWidth: 2,
-                pointRadius: (context) => context.dataIndex === 2 ? 6 : 4,
-                pointHoverRadius: 8
-            }]
-        },
-        options: {
-            scales: {
-                y: { min: 40, max: 100, display: false },
-                x: {
-                    grid: { display: false, drawBorder: false },
-                    ticks: { color: '#64748b', font: { size: 12, weight: 'bold' } }
-                }
-            },
-            plugins: {
-                legend: { display: false },
-                tooltip: { displayColors: false, callbacks: { label: (ctx) => ctx.raw + '점' } }
-            },
-            maintainAspectRatio: false
-        }
-    });
+    svgLine.setAttribute('d', pathD);
+    svgFill.setAttribute('d', `${pathD} V 120 H 0 Z`);
+
+    // 데이터 포인트 드로잉
+    if (pointsGroup) {
+        pointsGroup.innerHTML = '';
+        points.forEach((p, i) => {
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute('cx', p.x);
+            circle.setAttribute('cy', p.y);
+            circle.style.transition = "all 0.5s ease-in-out";
+            if (i === 2) { // 오늘
+                circle.setAttribute('r', '7');
+                circle.setAttribute('fill', '#256af4');
+            } else {
+                circle.setAttribute('r', '4');
+                circle.setAttribute('fill', 'white');
+                circle.setAttribute('stroke', '#256af4');
+                circle.setAttribute('stroke-width', '1.5');
+            }
+            pointsGroup.appendChild(circle);
+        });
+    }
 }
 
 // Time Picker Interactive Logic
@@ -1332,96 +1520,346 @@ window.openAddFriendModal = function () {
     modal.classList.add('flex');
 };
 
-// 시너지 점수 계산 정밀화 (동일 점수 방지)
-function calculateSynergyScore(userPillars, friendPillars) {
-    if (!userPillars || !friendPillars) return 0;
+// 시너지 갤럭시 상태 관리
+let currentGalaxyFilter = 'all';
 
-    const uEls = userPillars.elements;
-    const fEls = friendPillars.elements;
+window.setGalaxyFilter = function (filter) {
+    currentGalaxyFilter = filter;
 
-    // 1. 부족한 오행 보완 점수 (가중치 1.8배)
-    let needed = Object.keys(uEls).reduce((a, b) => uEls[a] < uEls[b] ? a : b);
-    let synergy = (fEls[needed] || 0) * 1.8;
+    // UI 업데이트
+    document.querySelectorAll('.galaxy-filter-chip').forEach(chip => {
+        chip.classList.remove('active', 'text-white', 'bg-primary/20', 'border-primary/30');
+        chip.classList.add('text-white/40', 'bg-white/10', 'border-white/5');
 
-    // 2. 일간 합/충 (고유 점수)
-    let base = 35;
-    const uDM = userPillars.dayMaster.charAt(0);
-    const fDM = friendPillars.dayMaster.charAt(0);
-    const combos = { "甲": "己", "己": "甲", "乙": "庚", "庚": "乙", "丙": "辛", "辛": "丙", "丁": "壬", "壬": "丁", "戊": "癸", "癸": "戊" };
-    if (combos[uDM] === fDM) base += 30;
+        if (chip.getAttribute('data-filter') === filter) {
+            chip.classList.add('active', 'text-white', 'bg-primary/20', 'border-primary/30');
+            chip.classList.remove('text-white/40', 'bg-white/10', 'border-white/5');
+        }
+    });
 
-    // 3. 고유 시드값을 더해 점수 겹침 방지 (해당 인물의 사주 글자 활용)
-    const seed = (friendPillars.year.charCodeAt(0) + (friendPillars.day ? friendPillars.day.charCodeAt(0) : 0)) % 15;
+    renderFriendList(); // 다시 그리기 유도
+};
 
-    return Math.min(99, Math.round(synergy + base + seed));
+window.openOrbitGlossary = function () {
+    const modal = document.getElementById('orbit-glossary-modal');
+    const content = modal?.querySelector('.relative');
+    if (!modal) return;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => {
+        content?.classList.remove('translate-y-full');
+    }, 10);
+};
+
+window.closeOrbitGlossary = function () {
+    const modal = document.getElementById('orbit-glossary-modal');
+    const content = modal?.querySelector('.relative');
+
+    content?.classList.add('translate-y-full');
+    setTimeout(() => {
+        modal?.classList.remove('flex');
+        modal?.classList.add('hidden');
+    }, 500);
+};
+
+// 시너지 갤럭시 시각화 엔진 (Ultra Premium v2.0)
+window.renderSynergyGalaxy = function (friends) {
+    const canvas = document.getElementById('galaxy-canvas');
+    const sunEl = document.getElementById('user-sun');
+    if (!canvas || !userSajuData) return;
+
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const orbits = [45, 75, 115, 155, 195];
+    const orbitNames = ["든든한 지원군", "러닝메이트", "창의적 파트너", "비즈니스 귀인", "커리어 코치"];
+
+    const userDM = userSajuData.pillars.dayMaster.charAt(0);
+    const userEl = FIVE_ELEMENTS[userDM];
+    const userColor = SajuEngine.getElementColor(userEl);
+
+    if (sunEl) {
+        sunEl.style.backgroundColor = userColor;
+        sunEl.style.boxShadow = `0 0 60px ${userColor}CC`;
+        const sunDMText = document.getElementById('user-sun-dm');
+        if (sunDMText) sunDMText.innerText = userDM;
+    }
+
+    ctx.clearRect(0, 0, rect.width, rect.height);
+
+    const time = Date.now() * 0.001;
+
+    // Draw Orbits based on filter
+    orbits.forEach((r, i) => {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
+
+        ctx.lineWidth = 1;
+        if (currentGalaxyFilter === 'challenge' && (i === 3 || i === 4)) {
+            ctx.setLineDash([2, 6]);
+            ctx.strokeStyle = 'rgba(255, 165, 0, 0.15)';
+        } else {
+            ctx.setLineDash([]);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        }
+        ctx.stroke();
+    });
+    ctx.setLineDash([]);
+
+    // Draw Friends with Density Awareness
+    friends.forEach((f, idx) => {
+        const analysis = SajuEngine.analyzeRelationship(userSajuData.pillars, f.pillars);
+        if (!analysis) return;
+
+        // Filter Logic
+        let displayAlpha = 1.0;
+        if (currentGalaxyFilter === 'boost' && !(analysis.orbit === 1 || analysis.orbit === 3)) displayAlpha = 0.15;
+        if (currentGalaxyFilter === 'challenge' && !(analysis.orbit === 4 || analysis.orbit === 5)) displayAlpha = 0.15;
+
+        const orbitIdx = analysis.orbit - 1;
+        const radius = orbits[orbitIdx];
+        const angle = (idx * (360 / Math.max(1, friends.length)) + (time * 3)) * (Math.PI / 180);
+
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+
+        // Density-based Size (Score affects size and brightness)
+        const densityFactor = analysis.score / 100;
+        const starSize = 3 + (densityFactor * 3);
+        const glowRadius = 12 + (densityFactor * 8);
+
+        // Energy Flow (Boost Mode Only)
+        if (currentGalaxyFilter === 'boost' && displayAlpha > 0.5) {
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.quadraticCurveTo(centerX + radius / 2 * Math.cos(angle - 0.2), centerY + radius / 2 * Math.sin(angle - 0.2), x, y);
+            ctx.strokeStyle = `${analysis.frElColor}22`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+
+        // Glow
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, glowRadius);
+        gradient.addColorStop(0, analysis.frElColor);
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.globalAlpha = (0.4 + Math.sin(time * 2 + idx) * 0.1) * displayAlpha;
+        ctx.beginPath();
+        ctx.arc(x, y, glowRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Core star
+        ctx.globalAlpha = displayAlpha;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(x, y, starSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Label
+        if (displayAlpha > 0.5) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.font = 'bold 10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(f.name, x, y + 22);
+        }
+    });
+
+    if (document.getElementById('tab-network').classList.contains('active')) {
+        requestAnimationFrame(() => renderSynergyGalaxy(friends));
+    }
 }
 
-// 오행 배지 렌더링 포함 리스트 출력
+// 오행 배지 렌더링 포함 리스트 출력 (Galaxy Version)
 window.renderFriendList = function () {
     const container = document.getElementById('friend-list-container');
-    const neededText = document.getElementById('my-needed-energy-text');
+    const insightTitle = document.getElementById('synergy-insight-title');
+    const insightDesc = document.getElementById('synergy-insight-desc');
+
     if (!container) return;
 
     if (!userSajuData) {
-        if (neededText) neededText.innerHTML = "먼저 사주를 입력해주세요.";
+        if (insightTitle) insightTitle.innerText = "먼저 사주를 입력해주세요.";
         return;
     }
 
-    // 나의 부족한 기운 표시
-    const myScores = userSajuData.pillars.elements;
-    let minEl = Object.keys(myScores).reduce((a, b) => myScores[a] < myScores[b] ? a : b);
+    // AI Insight Logic
+    const myElements = userSajuData.pillars.elements;
+    const weakestEl = Object.keys(myElements).reduce((a, b) => myElements[a] < myElements[b] ? a : b);
     const elNames = { Wood: '목(木)', Fire: '화(火)', Earth: '토(土)', Metal: '금(金)', Water: '수(水)' };
-    if (neededText) {
-        neededText.innerHTML = `${userSajuData.name}님께 가장 필요한 기운은<br><span class="text-primary-light">${elNames[minEl]}</span>의 에너지입니다.`;
+
+    const missingLinkFriends = friendList.filter(f => {
+        const fElements = f.pillars.elements;
+        const fStrongest = Object.keys(fElements).reduce((a, b) => fElements[a] > fElements[b] ? a : b);
+        return fStrongest === weakestEl;
+    });
+
+    if (insightTitle) {
+        if (missingLinkFriends.length > 0) {
+            insightTitle.innerText = `${userSajuData.name}님의 부족한 ${elNames[weakestEl]} 기운을 채워줄 귀인이 있습니다.`;
+            insightDesc.innerText = `${missingLinkFriends[0].name}님과 소통하면 시너지 효과가 극대화됩니다.`;
+        } else {
+            insightTitle.innerText = `${userSajuData.name}님의 시너지 갤럭시가 확장 중입니다.`;
+            insightDesc.innerText = `현재 가장 필요한 기운은 ${elNames[weakestEl]}입니다. 이 기운을 가진 분들을 초대해보세요.`;
+        }
     }
 
     if (friendList.length === 0) {
         container.innerHTML = `
-            <div class="py-16 text-center">
-                <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-inner">
-                    <span class="material-symbols-outlined text-slate-200 text-[40px]">group_add</span>
-                </div>
-                <p class="text-slate-400 text-sm font-medium leading-relaxed">아직 등록된 인연이 없습니다.<br>친구, 가족, 동료를 추가해보세요.</p>
+            <div class="py-10 text-center">
+                <p class="text-white/20 text-sm">등록된 인연이 없습니다.</p>
             </div>
         `;
+        renderSynergyGalaxy([]);
         return;
     }
 
-    container.innerHTML = friendList.map((friend, index) => {
-        const score = calculateSynergyScore(userSajuData.pillars, friend.pillars);
-        const elements = friend.pillars.elements;
-        const dominantKey = Object.keys(elements).reduce((a, b) => elements[a] > elements[b] ? a : b);
+    // Render Galaxy
+    renderSynergyGalaxy(friendList);
 
-        const elHnMap = { Wood: '목', Fire: '화', Earth: '토', Metal: '금', Water: '수' };
-        const colorMap = {
-            Wood: 'bg-[#4ade80]', Fire: 'bg-[#f87171]', Earth: 'bg-[#fbbf24]',
-            Metal: 'bg-[#94a3b8]', Water: 'bg-[#60a5fa]'
-        };
+    // Render Smart List
+    container.innerHTML = friendList.map((friend, index) => {
+        const analysis = SajuEngine.analyzeRelationship(userSajuData.pillars, friend.pillars);
+        if (!analysis) return '';
 
         return `
-            <div class="bg-white border border-slate-100 rounded-[22px] p-5 flex items-center justify-between shadow-sm active:scale-[0.98] transition-all">
+            <div onclick="openSynergyReport(${index})" class="bg-white/5 backdrop-blur-md border border-white/5 rounded-[24px] p-5 flex items-center justify-between active:scale-[0.98] transition-all">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-slate-300">${friend.gender === 'male' ? 'male' : 'female'}</span>
+                    <div class="size-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
+                        <span class="material-symbols-outlined text-white/30">${friend.gender === 'male' ? 'face' : 'face_3'}</span>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h4 class="font-bold text-slate-800 text-[16px]">${friend.name}</h4>
-                            <span class="${colorMap[dominantKey]} text-white text-[12px] font-black px-2 py-0.5 rounded-lg shadow-sm">
-                                ${elHnMap[dominantKey]}
-                            </span>
+                            <h4 class="font-bold text-white text-[16px]">${friend.name}</h4>
+                            <span class="text-white/40 text-[10px] bg-white/5 px-2 py-0.5 rounded-lg border border-white/5">Orbit ${analysis.orbit}</span>
                         </div>
-                        <p class="text-[11px] text-slate-400 font-medium mt-1">에너지 시너지 분석 완료</p>
+                        <div class="flex items-center gap-1.5 mt-1">
+                            <span class="size-2 rounded-full" style="background-color: ${analysis.frElColor}"></span>
+                            <p class="text-[11px] text-white/40 font-bold">${analysis.sipsung} - ${analysis.orbitName}</p>
+                        </div>
                     </div>
                 </div>
                 <div class="text-right">
-                    <div class="text-[24px] font-black text-slate-900">${score}<span class="text-[10px] ml-0.5 text-slate-400">점</span></div>
-                    <div class="mt-1 px-2 py-0.5 bg-primary/5 rounded-full text-primary text-[9px] font-black uppercase tracking-tighter">Harmony</div>
+                    <div class="text-[22px] font-black text-white">${analysis.score}<span class="text-[10px] ml-0.5 text-white/30">점</span></div>
+                    <div class="mt-1 px-2 py-0.5 bg-primary/20 rounded-full text-primary-light text-[9px] font-black uppercase tracking-widest">Synergy</div>
                 </div>
             </div>
         `;
     }).join('');
 };
+
+window.openSynergyReport = function (index) {
+    const friend = friendList[index];
+    if (!friend || !userSajuData) return;
+
+    const analysis = SajuEngine.analyzeRelationship(userSajuData.pillars, friend.pillars);
+    const modal = document.getElementById('synergy-report-modal');
+    const content = modal?.querySelector('.relative');
+
+    if (!analysis || !modal) return;
+
+    // Fill Data
+    document.getElementById('report-orbit-label').innerText = `Orbit ${analysis.orbit}`;
+    document.getElementById('report-title').innerText = `${userSajuData.name} & ${friend.name}`;
+    document.getElementById('report-score').innerHTML = `${analysis.score}<span class="text-xs ml-0.5 text-white/30">점</span>`;
+    document.getElementById('report-role-name').innerText = `${analysis.orbitName} (${analysis.sipsung})`;
+
+    // Custom Description
+    const elKr = { Wood: '목(木)', Fire: '화(火)', Earth: '토(토)', Metal: '금(金)', Water: '수(水)' };
+    const myElements = userSajuData.pillars.elements;
+    const weakestEl = Object.keys(myElements).reduce((a, b) => myElements[a] < myElements[b] ? a : b);
+    const frElements = friend.pillars.elements;
+    const frStrongest = Object.keys(frElements).reduce((a, b) => frElements[a] > frElements[b] ? a : b);
+
+    let desc = `${friend.name}님은 ${userSajuData.name}님에게 부족한 '${elKr[weakestEl]}' 기운을 보완해주는 탁월한 ${analysis.orbitName}입니다. `;
+    if (frStrongest === weakestEl) {
+        desc += `특히 ${friend.name}님의 강력한 ${elKr[frStrongest]} 에너지는 사용자님의 운명적 결함을 완벽하게 메워주는 'Missing Link' 역할을 합니다.`;
+    } else {
+        desc += `서로의 가치관을 존중하며 함께할 때 더 큰 시너지를 발휘할 수 있는 관계입니다.`;
+    }
+
+    document.getElementById('report-desc').innerText = desc;
+    document.getElementById('report-energy-type').innerText = `${elKr[FIVE_ELEMENTS[userSajuData.pillars.dayMaster.charAt(0)]]} ↔ ${elKr[analysis.frEl]}`;
+    document.getElementById('report-tag').innerText = analysis.orbit === 4 ? "비즈니스 기회" : analysis.orbit === 1 ? "정서적 안정" : "함께 성장";
+
+    // Setup Edit / Delete Listeners
+    const editBtn = document.getElementById('report-edit-btn');
+    const deleteBtn = document.getElementById('report-delete-btn');
+
+    if (editBtn) editBtn.onclick = () => editFriend(index);
+    if (deleteBtn) deleteBtn.onclick = () => deleteFriend(index);
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => {
+        content?.classList.remove('translate-y-full');
+    }, 10);
+}
+
+window.deleteFriend = function (index) {
+    if (!confirm("이 인연을 정말로 삭제하시겠습니까?")) return;
+
+    friendList.splice(index, 1);
+    localStorage.setItem('unse_friends', JSON.stringify(friendList));
+    renderFriendList();
+    closeSynergyReport();
+}
+
+window.editFriend = function (index) {
+    const friend = friendList[index];
+    if (!friend) return;
+
+    closeSynergyReport();
+    openAddFriendModal(); // Reset and Open
+
+    const modal = document.getElementById('guest-login-modal');
+    modal.setAttribute('data-mode', 'edit-friend');
+    modal.setAttribute('data-edit-index', index);
+    modal.querySelector('h3').innerText = "인연 정보 수정";
+    modal.querySelector('button[type="submit"] span').innerText = "수정 완료 및 재분석";
+
+    // Fill Existing Info
+    document.querySelector('#user-name').value = friend.name;
+    document.querySelector('#birth-date').value = friend.birthDate;
+    document.querySelector('#birth-time').value = friend.birthTime || "12:00";
+    document.getElementById('user-gender').value = friend.gender;
+
+    // Set Visual Selecteds for UI consistency
+    document.querySelectorAll('.gender-btn').forEach(btn => {
+        // Remove 'selected' from all first
+        btn.classList.remove('border-primary', 'bg-primary/5', 'text-primary');
+        btn.classList.add('border-slate-100', 'bg-slate-50', 'text-slate-500');
+
+        if (btn.dataset.gender === friend.gender) {
+            btn.classList.add('border-primary', 'bg-primary/5', 'text-primary');
+            btn.classList.remove('border-slate-100', 'bg-slate-50', 'text-slate-500');
+        }
+    });
+
+    // Set calendar type
+    const calendarType = friend.isLunar ? 'lunar' : 'solar';
+    document.querySelector(`input[name="calendar-type"][value="${calendarType}"]`).checked = true;
+}
+
+window.closeSynergyReport = function () {
+    const modal = document.getElementById('synergy-report-modal');
+    const content = modal?.querySelector('.relative');
+    if (!modal || !content) return;
+
+    content.classList.add('translate-y-full');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }, 400);
+}
+
 // 성별 및 날짜 유형 초기화 함수
 function resetGenderSelection() {
     const genderInput = document.getElementById('user-gender');

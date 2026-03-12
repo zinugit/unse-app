@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', 'Noto Sans KR', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        :root {
+            --safe-area-inset-top: env(safe-area-inset-top, 0px);
+            --header-height: 56px;
+        }
+        
+        .header-container {
+            height: calc(var(--header-height) + var(--safe-area-inset-top));
+            padding-top: var(--safe-area-inset-top);
+        }
+
+        /* Galaxy S24+ Aspect Ratio Optimization (approx 19.5:9) */
+        .mobile-container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+        }
+        @media (min-width: 480px) {
+            .mobile-container {
+                aspect-ratio: 9 / 19.5;
+                height: 100vh;
+                max-height: 960px;
+                border-radius: 2rem;
+                overflow: hidden;
+                margin: 2rem auto;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="mobile-container relative shadow-2xl overflow-hidden bg-white dark:bg-slate-900">
+<!-- Unified Header -->
+<header class="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 header-container px-4 flex items-center justify-between">
+<button class="p-2 -ml-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300 text-[24px]">menu</span>
+</button>
+<h1 class="text-[17px] font-bold tracking-tight absolute left-1/2 -translate-x-1/2">기질 분석</h1>
+<button class="p-2 -mr-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300 text-[24px]">settings</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto no-scrollbar pb-24">
+<!-- Hero Card (Personality Theme) -->
+<div class="p-4">
+<div class="relative overflow-hidden bg-primary rounded-2xl aspect-[16/9] shadow-lg group">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Abstract dark blue and purple geometric waves representing precision" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDGzdhUjUs5byBI6yJc5NNx7p20GMJ2hm1PanrGt4JVH6l95sKsJJtvdlLkAjbt9eseypO3e4p4XKNZ4Q3JPWskbocYF_5AfOC0GbP-PI9qwxqAbCXbjWm4lzH2v0jZUFJbhOaN9ibnKhyL5056l8u_YV1QjRDLGEzWKXsjIuPZahd_vcicVAGYJXVn4SmmTHgDMden_j2LGjbuXyoS3FsyTwCDMums27YHeBWpH6wGa2sm9Y-SEJgieOASIGPYPRYBWUlWaHfgEWY');"></div>
+<div class="absolute bottom-0 left-0 w-full p-5 z-20">
+<span class="inline-block px-2.5 py-1 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-wider mb-2">당신의 성격 테마</span>
+<p class="text-white text-xl font-bold leading-tight">어둠을 가르는 명확한<br/>결과의 칼날</p>
+</div>
+</div>
+</div>
+<!-- Core Energy Section -->
+<div class="px-4 py-2">
+<h3 class="text-slate-900 dark:text-white text-xl font-bold mb-4 flex items-center gap-2">
+<span class="size-2 rounded-full bg-primary"></span>
+                    코어 에너지 분석
+                </h3>
+<div class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800">
+<div class="flex items-baseline justify-between mb-8">
+<div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">에너지 분포</p>
+<p class="text-slate-900 dark:text-white text-4xl font-extrabold tracking-tight">88<span class="text-primary text-2xl">%</span></p>
+</div>
+<div class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">최적화 상태</div>
+</div>
+<div class="grid grid-cols-4 gap-4 items-end h-36 px-2">
+<div class="flex flex-col items-center gap-2 h-full justify-end">
+<div class="w-full bg-slate-200 dark:bg-slate-700 rounded-t-lg relative" style="height: 40%;">
+<div class="absolute inset-x-0 top-0 h-1 bg-primary/40 rounded-t-lg"></div>
+</div>
+<span class="text-slate-500 dark:text-slate-400 text-[11px] font-bold">집중력</span>
+</div>
+<div class="flex flex-col items-center gap-2 h-full justify-end">
+<div class="w-full bg-primary rounded-t-lg relative" style="height: 90%;">
+<div class="absolute inset-x-0 top-0 h-1 bg-white/30 rounded-t-lg"></div>
+</div>
+<span class="text-primary text-[11px] font-bold">실행력</span>
+</div>
+<div class="flex flex-col items-center gap-2 h-full justify-end">
+<div class="w-full bg-slate-200 dark:bg-slate-700 rounded-t-lg relative" style="height: 15%;"></div>
+<span class="text-slate-500 dark:text-slate-400 text-[11px] font-bold">회복력</span>
+</div>
+<div class="flex flex-col items-center gap-2 h-full justify-end">
+<div class="w-full bg-primary/60 rounded-t-lg relative" style="height: 75%;"></div>
+<span class="text-slate-500 dark:text-slate-400 text-[11px] font-bold">통찰력</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Description Section -->
+<div class="px-4 py-6 space-y-6">
+<div class="flex gap-4">
+<div class="size-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">target</span>
+</div>
+<div>
+<h4 class="text-slate-900 dark:text-white font-bold text-base">목표 달성 스타일</h4>
+<p class="text-slate-600 dark:text-slate-400 text-[14px] leading-relaxed mt-1">
+                            정교한 계획보다는 압도적인 실행력으로 결과를 만들어냅니다. 모호함을 싫어하며 확실한 데이터와 논리에 기반해 빠르게 움직입니다.
+                        </p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="size-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">bolt</span>
+</div>
+<div>
+<h4 class="text-slate-900 dark:text-white font-bold text-base">핵심 기질 강점</h4>
+<p class="text-slate-600 dark:text-slate-400 text-[14px] leading-relaxed mt-1">
+                            위기 상황에서 더욱 빛나는 직관력과 추진력을 보유하고 있습니다. 장애물을 정면으로 돌파하는 에너지가 타인에게 영감을 줍니다.
+                        </p>
+</div>
+</div>
+</div>
+<!-- Tags -->
+<div class="px-4 py-2 flex flex-wrap gap-2">
+<span class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium border border-slate-200 dark:border-slate-700">#결과중심</span>
+<span class="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20">#압도적실행력</span>
+<span class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium border border-slate-200 dark:border-slate-700">#직관적판단</span>
+<span class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium border border-slate-200 dark:border-slate-700">#현실주의자</span>
+<span class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium border border-slate-200 dark:border-slate-700">#명확한소통</span>
+</div>
+</main>
+<!-- Bottom Navigation Bar: Unified Style from IMAGE_88 -->
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white/98 dark:bg-slate-900/98 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 pb-safe pt-2 px-2 flex justify-between items-center z-50">
+<a class="flex flex-col items-center gap-1.5 w-full py-1 text-[#a0aec0] dark:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]">calendar_today</span>
+<span class="text-[11px] font-medium">내 사주</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 w-full py-1 text-[#a0aec0] dark:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]">auto_awesome</span>
+<span class="text-[11px] font-medium">오늘 운세</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 w-full py-1 text-[#a0aec0] dark:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]">groups</span>
+<span class="text-[11px] font-medium">인연</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 w-full py-1 text-primary" href="#">
+<span class="material-symbols-outlined text-[26px] font-variation-fill" style="font-variation-settings: 'FILL' 1">psychology</span>
+<span class="text-[11px] font-bold">기질 분석</span>
+</a>
+<a class="flex flex-col items-center gap-1.5 w-full py-1 text-[#a0aec0] dark:text-slate-500 transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]">magic_button</span>
+<span class="text-[11px] font-medium">부적</span>
+</a>
+</nav>
+</div>
+</body></html>

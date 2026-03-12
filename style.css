@@ -21,12 +21,34 @@
     --water: #60a5fa;
 }
 
+.bg-saju-wood {
+    background-color: var(--wood);
+}
+
+.bg-saju-fire {
+    background-color: var(--fire);
+}
+
+.bg-saju-earth {
+    background-color: var(--earth);
+}
+
+.bg-saju-metal {
+    background-color: var(--metal);
+}
+
+.bg-saju-water {
+    background-color: var(--water);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     font-family: 'Inter', 'Noto Sans KR', sans-serif;
     -webkit-tap-highlight-color: transparent;
+    word-break: keep-all;
+    overflow-wrap: break-word;
 }
 
 body {

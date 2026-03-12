@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>내 사주 - 운세 인사이트</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.75rem", 
+                        "lg": "1rem", 
+                        "xl": "1.5rem", 
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body { 
+            font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Galaxy S24+ and modern mobile status bar optimization */
+        :root {
+            --safe-area-inset-top: env(safe-area-inset-top, 0px);
+            --header-height: 56px;
+        }
+        
+        .header-container {
+            height: calc(var(--header-height) + var(--safe-area-inset-top));
+            padding-top: var(--safe-area-inset-top);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Standardized Header - Optimized for S24+ -->
+<header class="sticky top-0 z-50 bg-white dark:bg-background-dark border-b border-slate-200 dark:border-slate-800 header-container px-4 flex items-center justify-between transition-all duration-200">
+<button class="p-2 -ml-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300 text-[24px]">menu</span>
+</button>
+<h1 class="text-[17px] font-bold tracking-tight absolute left-1/2 -translate-x-1/2">내 사주</h1>
+<button class="p-2 -mr-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300 text-[24px]">settings</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto pb-24 no-scrollbar">
+<!-- Profile Section -->
+<section class="p-6 bg-white dark:bg-slate-900 mb-2 border-b border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-5">
+<div class="relative">
+<div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm">
+<div class="w-full h-full bg-gradient-to-br from-slate-200 via-slate-400 to-slate-300 dark:from-slate-700 dark:via-slate-500 dark:to-slate-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-4xl" style="font-variation-settings: 'FILL' 1, 'wght' 200;">circle</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<h2 class="text-2xl font-bold tracking-tight">박진호님</h2>
+<span class="bg-primary/10 text-primary text-xs px-2.5 py-1 rounded-full font-bold tracking-tight border border-primary/20">정화(丁火)</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 mt-1">1978년 5월 12일 · 남성</p>
+<p class="text-xs text-slate-400 mt-0.5">무오년 정사월 정축일 임인시</p>
+</div>
+</div>
+</section>
+<!-- Saju Grid -->
+<section class="px-4 py-4">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold">사주명식</h3>
+<span class="text-xs text-primary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">info</span> 만세력 기준
+            </span>
+</div>
+<div class="grid grid-cols-4 gap-2">
+<div class="text-center text-xs font-bold text-slate-400 py-1">시주</div>
+<div class="text-center text-xs font-bold text-primary py-1 underline decoration-2 underline-offset-4">일주</div>
+<div class="text-center text-xs font-bold text-slate-400 py-1">월주</div>
+<div class="text-center text-xs font-bold text-slate-400 py-1">연주</div>
+<!-- Heaven (천간) -->
+<div class="aspect-square bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center shadow-sm">
+<span class="text-blue-500 font-bold text-xl">壬</span>
+<span class="text-[10px] text-slate-400">임수</span>
+</div>
+<div class="aspect-square bg-primary/5 dark:bg-primary/20 rounded-xl border-2 border-primary flex flex-col items-center justify-center shadow-md">
+<span class="text-red-500 font-black text-2xl">丁</span>
+<span class="text-[10px] text-primary font-bold">정화</span>
+</div>
+<div class="aspect-square bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center shadow-sm">
+<span class="text-red-500 font-bold text-xl">丁</span>
+<span class="text-[10px] text-slate-400">정화</span>
+</div>
+<div class="aspect-square bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center shadow-sm">
+<span class="text-amber-600 font-bold text-xl">戊</span>
+<span class="text-[10px] text-slate-400">무토</span>
+</div>
+<!-- Earth (지지) -->
+<div class="aspect-square bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center shadow-sm">
+<span class="text-green-600 font-bold text-xl">寅</span>
+<span class="text-[10px] text-slate-400">인목</span>
+</div>
+<div class="aspect-square bg-primary/5 dark:bg-primary/20 rounded-xl border-2 border-primary flex flex-col items-center justify-center shadow-md">
+<span class="text-amber-600 font-black text-2xl">丑</span>
+<span class="text-[10px] text-primary font-bold">축토</span>
+</div>
+<div class="aspect-square bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center shadow-sm">
+<span class="text-red-500 font-bold text-xl">巳</span>
+<span class="text-[10px] text-slate-400">사화</span>
+</div>
+<div class="aspect-square bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center shadow-sm">
+<span class="text-red-500 font-bold text-xl">午</span>
+<span class="text-[10px] text-slate-400">오화</span>
+</div>
+</div>
+</section>
+<!-- Element Balance Analysis -->
+<section class="px-4 py-6">
+<div class="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-800">
+<h3 class="font-bold text-base mb-6 flex items-center gap-2">
+<span class="bg-primary/10 text-primary text-xs px-2.5 py-1 rounded-full font-bold tracking-tight border border-primary/20">정화(丁火)</span> 오행 밸런스 상세 분석
+            </h3>
+<div class="space-y-5">
+<div class="space-y-1.5">
+<div class="flex justify-between items-end">
+<span class="text-sm font-semibold flex items-center gap-1.5 text-green-700 dark:text-green-500">
+<span class="material-symbols-outlined text-[18px]">park</span> 목(木)
+                        </span>
+<span class="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-500">부족 (1)</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+<div class="bg-green-500 h-full rounded-full" style="width: 15%"></div>
+</div>
+</div>
+<div class="space-y-1.5">
+<div class="flex justify-between items-end">
+<span class="text-sm font-semibold flex items-center gap-1.5 text-red-600 dark:text-red-400">
+<span class="material-symbols-outlined text-[18px]">fire_extinguisher</span> 화(火)
+                        </span>
+<span class="text-xs bg-red-100 dark:bg-red-900/40 px-2 py-0.5 rounded text-red-600">과다 (4)</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+<div class="bg-red-500 h-full rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<div class="space-y-1.5">
+<div class="flex justify-between items-end">
+<span class="text-sm font-semibold flex items-center gap-1.5 text-amber-600 dark:text-amber-500">
+<span class="material-symbols-outlined text-[18px]">landscape</span> 토(土)
+                        </span>
+<span class="text-xs bg-primary/10 px-2 py-0.5 rounded text-primary">적정 (2)</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+<div class="bg-amber-500 h-full rounded-full" style="width: 45%"></div>
+</div>
+</div>
+<div class="space-y-1.5">
+<div class="flex justify-between items-end">
+<span class="text-sm font-semibold flex items-center gap-1.5 text-slate-400">
+<span class="material-symbols-outlined text-[18px]">circle</span> 금(金)
+                        </span>
+<span class="text-xs bg-red-100 dark:bg-red-900/40 px-2 py-0.5 rounded text-red-600">고립 (0)</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+<div class="bg-slate-300 h-full rounded-full" style="width: 5%"></div>
+</div>
+</div>
+<div class="space-y-1.5">
+<div class="flex justify-between items-end">
+<span class="text-sm font-semibold flex items-center gap-1.5 text-blue-600 dark:text-blue-400">
+<span class="material-symbols-outlined text-[18px]">water_drop</span> 수(水)
+                        </span>
+<span class="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-500">부족 (1)</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+<div class="bg-blue-500 h-full rounded-full" style="width: 20%"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 p-4 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/10">
+<p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+<span class="font-bold text-primary">총평:</span> 박진호님은 화(火) 기운이 매우 강한 사주입니다. 열정적이고 추진력이 좋으나, 금(金) 기운이 부족하여 마무리가 약할 수 있습니다. 수(水)를 가까이 하여 화기를 조절하는 것이 좋습니다.
+                </p>
+</div>
+</div>
+</section>
+</main>
+<!-- Unified Bottom Navigation Bar - 5 Tabs (Icon Style from Image 88) -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-background-dark/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-1 pb-[env(safe-area-inset-bottom,20px)] pt-3 flex justify-around items-center z-50">
+<a class="flex flex-col items-center gap-1 flex-1 text-primary" href="#">
+<span class="material-symbols-outlined text-[26px]" style="font-variation-settings: 'FILL' 0, 'wght' 300;">calendar_today</span>
+<span class="text-[11px] font-bold">내 사주</span>
+</a>
+<a class="flex flex-col items-center gap-1 flex-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]" style="font-variation-settings: 'FILL' 0, 'wght' 300;">auto_awesome</span>
+<span class="text-[11px] font-medium">오늘의 운세</span>
+</a>
+<a class="flex flex-col items-center gap-1 flex-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]" style="font-variation-settings: 'FILL' 0, 'wght' 300;">group</span>
+<span class="text-[11px] font-medium">인연</span>
+</a>
+<a class="flex flex-col items-center gap-1 flex-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]" style="font-variation-settings: 'FILL' 0, 'wght' 300;">psychology</span>
+<span class="text-[11px] font-medium">기질 분석</span>
+</a>
+<a class="flex flex-col items-center gap-1 flex-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[26px]" style="font-variation-settings: 'FILL' 0, 'wght' 300;">magic_button</span>
+<span class="text-[11px] font-medium">부적</span>
+</a>
+</nav>
+</body></html>
