@@ -1391,3 +1391,33 @@ textarea#user-concern {
     display: inline-block !important;
     color: #ffffff !important;
 }
+
+/* [Galaxy Sun Enhancement] */
+@keyframes sun-pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 40px var(--sun-color);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.03);
+        box-shadow: 0 0 70px var(--sun-color);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 40px var(--sun-color);
+        opacity: 0.8;
+    }
+}
+
+#user-sun {
+    animation: sun-pulse 4s infinite ease-in-out !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
