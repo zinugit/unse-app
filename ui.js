@@ -1592,19 +1592,20 @@ window.renderSynergyGalaxy = function (friends) {
     const userColor = SajuEngine.getElementColor(userEl);
 
     if (sunEl) {
-        sunEl.style.setProperty('--sun-color', userColor + '88'); // CSS 변수 전달 (박동 효과용)
+        // CSS 변수명 통일 (--sun-glow) 및 배경색 설정
+        sunEl.style.setProperty('--sun-glow', userColor);
         sunEl.style.backgroundColor = userColor;
 
-        // 태양 내부에 한자(userDM) 유지
+        // 태양 내부에 한자 유지
         const sunDMText = document.getElementById('user-sun-dm');
         if (sunDMText) sunDMText.innerText = userDM;
 
-        // 이름 라벨 추가 (태양 바로 아래)
+        // 태양 외부: 이름 라벨 추가 (중복 방지 로직 포함)
         let nameLabel = document.getElementById('sun-name-label');
         if (!nameLabel) {
             nameLabel = document.createElement('div');
             nameLabel.id = 'sun-name-label';
-            nameLabel.className = 'absolute top-full mt-2 text-white/70 text-[11px] font-black whitespace-nowrap drop-shadow-sm';
+            nameLabel.className = 'absolute top-full mt-2 text-white font-black text-[12px] whitespace-nowrap drop-shadow-md';
             sunEl.appendChild(nameLabel);
         }
         nameLabel.innerText = userSajuData.name;
