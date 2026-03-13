@@ -1590,22 +1590,23 @@ window.renderSynergyGalaxy = function (friends) {
     const userDM = userSajuData.pillars.dayMaster.charAt(0);
     const userEl = FIVE_ELEMENTS[userDM];
     const userColor = SajuEngine.getElementColor(userEl);
+    const sunEl = document.getElementById('user-sun');
 
     if (sunEl) {
-        // CSS 변수명 통일 (--sun-glow) 및 배경색 설정
+        // 1. CSS 애니메이션에 색상 전달
         sunEl.style.setProperty('--sun-glow', userColor);
         sunEl.style.backgroundColor = userColor;
 
-        // 태양 내부에 한자 유지
+        // 2. 한자(일간) 설정
         const sunDMText = document.getElementById('user-sun-dm');
         if (sunDMText) sunDMText.innerText = userDM;
 
-        // 태양 외부: 이름 라벨 추가 (중복 방지 로직 포함)
+        // 3. 이름 라벨 (태양 하단 고정)
         let nameLabel = document.getElementById('sun-name-label');
         if (!nameLabel) {
             nameLabel = document.createElement('div');
             nameLabel.id = 'sun-name-label';
-            nameLabel.className = 'absolute top-full mt-2 text-white font-black text-[12px] whitespace-nowrap drop-shadow-md';
+            nameLabel.className = 'absolute top-full mt-3 text-white font-black text-[13px] whitespace-nowrap drop-shadow-lg';
             sunEl.appendChild(nameLabel);
         }
         nameLabel.innerText = userSajuData.name;
