@@ -1592,10 +1592,23 @@ window.renderSynergyGalaxy = function (friends) {
     const userColor = SajuEngine.getElementColor(userEl);
 
     if (sunEl) {
-        sunEl.style.backgroundColor = userColor;
+        // [중요] CSS 변수 전달 및 배경색만 설정 (boxShadow 설정 코드는 삭제)
         sunEl.style.setProperty('--sun-color', userColor);
+        sunEl.style.backgroundColor = userColor;
+
+        // 한자 표시
         const sunDMText = document.getElementById('user-sun-dm');
         if (sunDMText) sunDMText.innerText = userDM;
+
+        // 태양 하단 이름 라벨
+        let nameLabel = document.getElementById('sun-name-label');
+        if (!nameLabel) {
+            nameLabel = document.createElement('div');
+            nameLabel.id = 'sun-name-label';
+            nameLabel.className = 'absolute top-full mt-3 text-white font-black text-[13px] whitespace-nowrap drop-shadow-lg';
+            sunEl.appendChild(nameLabel);
+        }
+        nameLabel.innerText = userSajuData.name;
     }
 
     ctx.clearRect(0, 0, rect.width, rect.height);
