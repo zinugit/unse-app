@@ -288,8 +288,9 @@
     </style>
 </head>
 
-<body class="bg-background-light text-slate-900 flex justify-center w-full min-h-screen">
-    <div id="app" class="w-full max-w-md bg-white shadow-xl relative min-h-screen flex flex-col pt-14 pb-20">
+<body class="bg-background-light text-slate-900 flex justify-center w-full min-h-screen overflow-x-hidden">
+    <div id="app"
+        class="w-full max-w-md bg-white shadow-xl relative min-h-screen flex flex-col pt-14 pb-20 overflow-x-hidden">
 
         <!-- ========================================== -->
         <!-- WELCOME SCREEN (ui_0)                      -->
@@ -353,9 +354,9 @@
         <!-- ========================================== -->
         <!-- TAB 1: 내 사주 (Stitch ui_1)                 -->
         <!-- ========================================== -->
-        <section id="tab-saju" class="screen pb-24 overflow-y-auto no-scrollbar relative bg-white">
+        <section id="tab-saju" class="screen active pb-24 overflow-y-auto no-scrollbar relative bg-white">
             <header
-                class="fixed top-0 left-0 right-0 z-[60] bg-white/98 backdrop-blur-md border-b border-slate-100 px-4 flex items-center justify-between"
+                class="fixed top-0 left-1/2 -translate-x-1/2 z-[60] w-full max-w-md bg-white/98 backdrop-blur-md border-b border-slate-100 px-4 flex items-center justify-between"
                 style="height: calc(56px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top);">
                 <button class="p-2 -ml-2 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined text-slate-700 text-[24px]">menu</span>
@@ -425,7 +426,7 @@
         <!-- ========================================== -->
         <section id="tab-trait" class="screen pb-24 overflow-y-auto no-scrollbar relative bg-white hidden">
             <header
-                class="fixed top-0 left-0 right-0 z-[60] bg-white/98 backdrop-blur-md border-b border-slate-100 px-4 flex items-center justify-between"
+                class="fixed top-0 left-1/2 -translate-x-1/2 z-[60] w-full max-w-md bg-white/98 backdrop-blur-md border-b border-slate-100 px-4 flex items-center justify-between"
                 style="height: calc(56px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top);">
                 <button class="p-2 -ml-2 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined text-slate-700 text-[24px]">menu</span>
@@ -553,7 +554,7 @@
         <!-- ========================================== -->
         <section id="tab-guide" class="screen pb-24 overflow-y-auto no-scrollbar relative bg-white hidden">
             <header
-                class="fixed top-0 left-0 right-0 z-[60] bg-white/98 backdrop-blur-md border-b border-slate-100 px-4 flex items-center justify-between"
+                class="fixed top-0 left-1/2 -translate-x-1/2 z-[60] w-full max-w-md bg-white/98 backdrop-blur-md border-b border-slate-100 px-4 flex items-center justify-between"
                 style="height: calc(56px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top);">
                 <button class="p-2 -ml-2 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined text-slate-700 text-[24px]">menu</span>
@@ -913,508 +914,573 @@
         <!-- ========================================== -->
         <!-- TAB 4: 인연 네트워크 (Stitch ui_network)        -->
         <!-- ========================================== -->
-        <section id="tab-network" class="screen pb-24 overflow-y-auto no-scrollbar bg-slate-950 hidden">
+        <section id="tab-network" class="screen pb-24 overflow-y-auto no-scrollbar bg-slate-950 hidden relative">
             <header
-                class="fixed top-0 left-0 right-0 z-[60] bg-slate-950/80 backdrop-blur-md border-b border-white/5 px-4 flex items-center justify-between"
+                class="fixed top-0 left-1/2 -translate-x-1/2 z-[60] w-full max-w-md bg-slate-950/80 backdrop-blur-md border-b border-white/5 px-4 flex items-center justify-between"
                 style="height: calc(56px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top);">
                 <button class="p-2 -ml-2 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined text-white/70 text-[24px]">menu</span>
                 </button>
                 <h1 class="text-[17px] font-bold tracking-tight absolute left-1/2 -translate-x-1/2 text-white">시너지 갤럭시
                 </h1>
+                <button onclick="openOrbitGlossary()" class="p-2 -mr-2 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white/70 text-[24px]">info</span>
+                </button>
+            </header>
+
+            <div class="flex flex-col flex-1" style="padding-top: calc(56px + env(safe-area-inset-top));">
+                <!-- Galaxy Controls -->
+                <div class="px-6 py-4">
+                    <div class="flex gap-2 overflow-x-auto no-scrollbar">
+                        <button onclick="setGalaxyFilter('all')" data-filter="all"
+                            class="galaxy-filter-chip active shrink-0 px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold transition-all">전체</button>
+                        <button onclick="setGalaxyFilter('boost')" data-filter="boost"
+                            class="galaxy-filter-chip shrink-0 px-4 py-2 rounded-xl bg-white/5 text-white/40 text-[12px] font-bold border border-white/5 transition-all flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>상생 (에너지)
+                        </button>
+                        <button onclick="setGalaxyFilter('challenge')" data-filter="challenge"
+                            class="galaxy-filter-chip shrink-0 px-4 py-2 rounded-xl bg-white/5 text-white/40 text-[12px] font-bold border border-white/5 transition-all flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span>상극 (성취)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- [A] Galaxy View Container -->
+                <div id="galaxy-view-container"
+                    class="relative w-full aspect-square flex items-center justify-center overflow-hidden">
+                    <canvas id="galaxy-canvas" class="absolute inset-0 w-full h-full z-0"></canvas>
+
+                    <!-- Central Sun -->
+                    <div id="user-sun"
+                        class="relative z-20 size-14 rounded-full flex items-center justify-center transition-all duration-1000">
+                        <span id="user-sun-dm" class="text-white font-black text-xl drop-shadow-md">--</span>
+                    </div>
+
+                    <!-- Orbit Rings (Visual Guide) -->
+                    <div id="orbit-container"
+                        class="absolute inset-0 pointer-events-none flex items-center justify-center z-10 opacity-20">
+                        <div class="w-[90px] h-[90px] rounded-full border border-white/30"></div>
+                        <div class="w-[150px] h-[150px] rounded-full border border-white/30"></div>
+                        <div class="w-[230px] h-[230px] rounded-full border border-white/30"></div>
+                        <div class="w-[310px] h-[310px] rounded-full border border-white/30"></div>
+                        <div class="w-[390px] h-[390px] rounded-full border border-white/30"></div>
+                    </div>
+                </div>
+
+                <!-- [B] Insight & List -->
+                <div class="px-6 -mt-6 relative z-30">
+                    <div id="synergy-insight-card"
+                        class="bg-white/5 backdrop-blur-xl rounded-[24px] p-5 mb-8 border border-white/10 shadow-2xl">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="material-symbols-outlined text-primary text-[20px]">psychology</span>
+                            <span class="text-white/40 text-[10px] font-black uppercase tracking-widest">AI 시너지
+                                가이드</span>
+                        </div>
+                        <h3 id="synergy-insight-title" class="text-white text-base font-bold mb-1">분석 대기 중...</h3>
+                        <p id="synergy-insight-desc" class="text-white/40 text-[12px]">인연을 추가하여 시너지를 확인해보세요.</p>
+                    </div>
+
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-white text-sm font-black uppercase tracking-widest">인연 리스트</h4>
+                        <button onclick="openAddFriendModal()"
+                            class="size-9 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition-all">
+                            <span class="material-symbols-outlined text-[20px]">add</span>
+                        </button>
+                    </div>
+
+                    <div id="friend-list-container" class="space-y-3 pb-10">
+                        <!-- Dynamic Friend List Content -->
+                        <div class="py-10 text-center">
+                            <p class="text-white/20 text-sm">등록된 인연이 없습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orbit Glossary Modal (Bottom Sheet) -->
+            <div id="orbit-glossary-modal" class="fixed inset-0 z-[130] hidden items-end justify-center">
+                <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeOrbitGlossary()"></div>
+                <div
+                    class="relative w-full max-w-md bg-slate-900 rounded-t-[32px] p-8 shadow-2xl border-t border-white/10 transform translate-y-full transition-transform duration-500 ease-out">
+                    <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8"></div>
+                    <h3 class="text-2xl font-black text-white mb-2 tracking-tight">인연 궤도 가이드</h3>
+                    <p class="text-white/40 text-sm mb-8">UNSE가 분석한 5단계 운명적 관계</p>
+                    <div class="space-y-6 max-h-[60vh] overflow-y-auto no-scrollbar">
+                        <div class="flex gap-4">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shrink-0 text-primary-light font-black text-sm">
+                                O1</div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1 text-sm">든든한 지원군 (인성)</h4>
+                                <p class="text-white/50 text-[11px] leading-relaxed">나에게 조건 없는 사랑과 에너지를 주는 멘토입니다.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 text-white/50 font-black text-sm">
+                                O2</div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1 text-sm">러닝메이트 (비겁)</h4>
+                                <p class="text-white/50 text-[11px] leading-relaxed">함께 경쟁하며 성장하는 친구 같은 동료입니다.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 font-black text-sm">
+                                O3</div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1 text-sm">창의적 파트너 (식상)</h4>
+                                <p class="text-white/50 text-[11px] leading-relaxed">내가 에너지를 쏟아 키우고 결과를 만드는 파트너입니다.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center shrink-0 text-orange-400 font-black text-sm">
+                                O4</div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1 text-sm">비즈니스 귀인 (재성)</h4>
+                                <p class="text-white/50 text-[11px] leading-relaxed">나를 자극하여 부와 성과를 가져오는 귀한 인연입니다.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-rose-500/20 flex items-center justify-center shrink-0 text-rose-400 font-black text-sm">
+                                O5</div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1 text-sm">커리어 코치 (관성)</h4>
+                                <p class="text-white/50 text-[11px] leading-relaxed">나를 리드하고 사회적 지위를 높여주는 리더입니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="closeOrbitGlossary()"
+                        class="w-full mt-8 py-4 text-white/30 font-bold rounded-2xl active:scale-95 transition-all">닫기</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- INITIAL INPUT SCREEN                       -->
+        <!-- ========================================== -->
+        <div id="guest-login-modal" class="fixed inset-0 z-[150] bg-white hidden flex-col h-[100dvh] overflow-hidden">
+            <div class="px-6 pb-4 text-center flex-shrink-0"
+                style="padding-top: calc(24px + env(safe-area-inset-top));">
+                <h3 class="text-2xl font-black text-slate-900 tracking-tight">정보 입력</h3>
+                <p class="text-slate-500 text-sm mt-1 font-medium">정확한 분석을 위해 상세히 입력해주세요.</p>
+            </div>
+
+            <form id="saju-form" class="flex-1 flex flex-col px-6 pb-8 overflow-y-auto">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2 ml-1">이름</label>
+                        <input type="text" id="user-name" placeholder="이름을 입력하세요" required
+                            class="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-primary/20 text-[16px]">
+                    </div>
+
+                    <div>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2 ml-1">성별</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="button" id="gender-male" onclick="selectGender('male')"
+                                class="gender-btn flex items-center justify-center gap-2 py-3.5 rounded-2xl border-2 border-slate-100 bg-slate-50 text-slate-500 font-bold transition-all">
+                                <span class="material-symbols-outlined text-[20px]">male</span>남성
+                            </button>
+                            <button type="button" id="gender-female" onclick="selectGender('female')"
+                                class="gender-btn flex items-center justify-center gap-2 py-3.5 rounded-2xl border-2 border-slate-100 bg-slate-50 text-slate-500 font-bold transition-all">
+                                <span class="material-symbols-outlined text-[20px]">female</span>여성
+                            </button>
+                        </div>
+                        <input type="hidden" id="user-gender" value="">
+                    </div>
+
+                    <div>
+                        <label class="block text-[14px] font-bold text-slate-700 mb-2 ml-1">생년월일</label>
+                        <input type="date" id="birth-date" required max="9999-12-31"
+                            class="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-primary/20 text-[15px]">
+                        <div class="flex gap-2 mt-2.5 ml-1">
+                            <label class="flex-1 cursor-pointer group">
+                                <input type="radio" name="calendar-type" value="solar" checked class="hidden peer">
+                                <div
+                                    class="py-2.5 rounded-xl bg-slate-50 text-slate-400 text-[12px] font-bold text-center border border-transparent peer-checked:bg-primary/5 peer-checked:text-primary peer-checked:border-primary/20 transition-all group-active:scale-95">
+                                    ☀️ 양력</div>
+                            </label>
+                            <label class="flex-1 cursor-pointer group">
+                                <input type="radio" name="calendar-type" value="lunar" class="hidden peer">
+                                <div
+                                    class="py-2.5 rounded-xl bg-slate-50 text-slate-400 text-[12px] font-bold text-center border border-transparent peer-checked:bg-primary/5 peer-checked:text-primary peer-checked:border-primary/20 transition-all group-active:scale-95">
+                                    🌙 음력(평달)</div>
+                            </label>
+                            <label class="flex-1 cursor-pointer group">
+                                <input type="radio" name="calendar-type" value="leap" class="hidden peer">
+                                <div
+                                    class="py-2.5 rounded-xl bg-slate-50 text-slate-400 text-[12px] font-bold text-center border border-transparent peer-checked:bg-primary/5 peer-checked:text-primary peer-checked:border-primary/20 transition-all group-active:scale-95">
+                                    🍀 음력(윤달)</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-2 ml-1">
+                            <label class="text-[14px] font-bold text-slate-700">태어난 시간</label>
+                            <label
+                                class="flex items-center gap-1.5 text-[12px] text-slate-400 font-medium cursor-pointer">
+                                <input type="checkbox" id="time-unknown" onchange="toggleTimeUnknown(this)"
+                                    class="rounded-sm border-slate-300 text-primary focus:ring-primary">
+                                시간 모름
+                            </label>
+                        </div>
+                        <div onclick="openTimePicker()" id="display-time"
+                            class="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-400 text-[15px] cursor-pointer flex items-center justify-between transition-opacity">
+                            시간 선택
+                            <span class="material-symbols-outlined text-[20px]">schedule</span>
+                        </div>
+                        <input type="hidden" id="birth-time" value="">
+                    </div>
+
+                    <div class="relative">
+                        <div class="flex justify-between items-center mb-2 ml-1">
+                            <label class="text-[14px] font-bold text-slate-700">태어난 지역 검색</label>
+                            <label
+                                class="flex items-center gap-1.5 text-[12px] text-slate-400 font-medium cursor-pointer">
+                                <input type="checkbox" id="location-unknown" onchange="toggleLocationUnknown(this)"
+                                    class="rounded-sm border-slate-300 text-primary focus:ring-primary">
+                                장소 모름
+                            </label>
+                        </div>
+                        <div class="relative transition-opacity" id="location-input-container">
+                            <span
+                                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+                            <input type="text" id="location-search" list="korea-cities-data"
+                                placeholder="시/군/구 검색 (예: 서울, 부산)"
+                                class="w-full bg-slate-50 border-none rounded-2xl pl-11 pr-4 py-3.5 focus:ring-2 focus:ring-primary/20 text-[15px]">
+                        </div>
+                        <datalist id="korea-cities-data"></datalist>
+                        <input type="hidden" id="custom-longitude" value="126.97">
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-10 pb-6">
+                    <button type="submit"
+                        class="w-full h-16 bg-primary hover:bg-primary/90 text-white text-[18px] font-bold rounded-2xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+                        <span>분석 시작하기</span>
+                        <span class="text-xl">✨</span>
+                    </button>
+                    <button type="button"
+                        onclick="document.getElementById('guest-login-modal').classList.add('hidden'); document.getElementById('guest-login-modal').classList.remove('flex');"
+                        class="w-full mt-3 text-slate-400 text-[14px] font-medium py-3">
+                        닫기
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: 프리미엄 맞춤 부적 생성               -->
+        <!-- ========================================== -->
+        <section id="tab-amulet"
+            class="screen h-[calc(100dvh-20px)] overflow-y-auto pb-[130px] bg-white flex flex-col relative w-full h-full hidden">
+            <header
+                class="fixed top-0 left-1/2 -translate-x-1/2 z-[60] w-full max-w-md bg-white/98 backdrop-blur-md border-b border-slate-100 px-4 flex items-center justify-between"
+                style="height: calc(56px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top);">
+                <button class="p-2 -ml-2 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined text-slate-700 text-[24px]">menu</span>
+                </button>
+                <h1 class="text-[17px] font-bold tracking-tight absolute left-1/2 -translate-x-1/2 text-slate-900">맞춤 부적
+                </h1>
                 <button class="p-2 -mr-2 rounded-full flex items-center justify-center">
-                    <span class="material-symbols-outlined text-white/70 text-[24px]">settings</span>
+                    <span class="material-symbols-outlined text-slate-700 text-[24px]">settings</span>
                 </button>
             </header>
 
-            <div class="flex flex-col flex-1 overflow-y-auto no-scrollbar"
-                style="padding-top: calc(56px + env(safe-area-inset-top));">
-
-                <!-- [A] The Galaxy View Container (Deep Space Immersion) -->
-                <div
-                    class="relative w-full aspect-square max-h-[420px] flex items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-600/20 via-slate-950 to-slate-950">
-                </div>
-            </div>
-
-            <!-- Orbit Rings (Visual Guide) -->
-            <div id="orbit-container"
-                class="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
-                <div class="size-[120px] rounded-full border border-white/5"></div>
-                <div class="size-[200px] rounded-full border border-white/5"></div>
-                <div class="size-[280px] rounded-full border border-white/5"></div>
-                <div class="size-[360px] rounded-full border border-white/5"></div>
-            </div>
-    </div>
-
-    <div class="px-6 -mt-10 relative z-30">
-        <!-- [B] Insight Card (AI Discovery) -->
-        <div id="synergy-insight-card"
-            class="bg-white/10 backdrop-blur-xl rounded-[24px] p-5 mb-8 border border-white/10 shadow-2xl">
-            <div class="flex items-center gap-3 mb-3">
-                <div class="size-8 bg-primary/20 rounded-lg flex items-center justify-center text-primary-light">
-                    <span class="material-symbols-outlined text-[20px]">psychology</span>
-                </div>
-                <span class="text-white/60 text-[11px] font-black uppercase tracking-widest">AI 시너지
-                    가이드</span>
-            </div>
-            <h3 id="synergy-insight-title" class="text-white text-base font-bold leading-tight mb-2">분석 데이터를
-                불러오는 중...</h3>
-            <p id="synergy-insight-desc" class="text-white/40 text-[12px] break-keep">인연들을 추가하여 나만의 운명 지도를
-                완성해보세요.</p>
-        </div>
-
-        <!-- [C] Smart List Control -->
-        <div class="flex items-center justify-between mb-4">
-            <h4 class="text-white text-sm font-black uppercase tracking-widest">인연 리스트</h4>
-            <div class="flex gap-2">
-                <button onclick="openAddFriendModal()"
-                    class="size-9 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition-all">
-                    <span class="material-symbols-outlined text-[20px]">add</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Filter Chips -->
-        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2">
-            <button class="shrink-0 px-4 py-2 rounded-full bg-primary text-white text-xs font-bold">전체</button>
-            <button
-                class="shrink-0 px-4 py-2 rounded-full bg-white/5 text-white/60 text-xs font-bold border border-white/5">궁합
-                90+</button>
-            <button
-                class="shrink-0 px-4 py-2 rounded-full bg-white/5 text-white/60 text-xs font-bold border border-white/5">부족기운
-                보완</button>
-            <button
-                class="shrink-0 px-4 py-2 rounded-full bg-white/5 text-white/60 text-xs font-bold border border-white/5">비즈니스</button>
-        </div>
-
-        <!-- Friend Cards Grid -->
-        <div id="friend-list-container" class="space-y-3 pb-10">
-            <!-- Dynamic Content: Friend Cards will be rendered here -->
-            <div class="py-10 text-center">
-                <p class="text-white/20 text-sm">등록된 인연이 없습니다.</p>
-            </div>
-        </div>
-    </div>
-    </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- INITIAL INPUT SCREEN                       -->
-    <!-- ========================================== -->
-    <div id="guest-login-modal" class="fixed inset-0 z-[150] bg-white hidden flex-col h-[100dvh] overflow-hidden">
-        <div class="px-6 pb-4 text-center flex-shrink-0" style="padding-top: calc(24px + env(safe-area-inset-top));">
-            <h3 class="text-2xl font-black text-slate-900 tracking-tight">정보 입력</h3>
-            <p class="text-slate-500 text-sm mt-1 font-medium">정확한 분석을 위해 상세히 입력해주세요.</p>
-        </div>
-
-        <form id="saju-form" class="flex-1 flex flex-col px-6 pb-8 overflow-y-auto">
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-[14px] font-bold text-slate-700 mb-2 ml-1">이름</label>
-                    <input type="text" id="user-name" placeholder="이름을 입력하세요" required
-                        class="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-primary/20 text-[16px]">
-                </div>
-
-                <div>
-                    <label class="block text-[14px] font-bold text-slate-700 mb-2 ml-1">성별</label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button type="button" id="gender-male" onclick="selectGender('male')"
-                            class="gender-btn flex items-center justify-center gap-2 py-3.5 rounded-2xl border-2 border-slate-100 bg-slate-50 text-slate-500 font-bold transition-all">
-                            <span class="material-symbols-outlined text-[20px]">male</span>남성
-                        </button>
-                        <button type="button" id="gender-female" onclick="selectGender('female')"
-                            class="gender-btn flex items-center justify-center gap-2 py-3.5 rounded-2xl border-2 border-slate-100 bg-slate-50 text-slate-500 font-bold transition-all">
-                            <span class="material-symbols-outlined text-[20px]">female</span>여성
-                        </button>
-                    </div>
-                    <input type="hidden" id="user-gender" value="">
-                </div>
-
-                <div>
-                    <label class="block text-[14px] font-bold text-slate-700 mb-2 ml-1">생년월일</label>
-                    <input type="date" id="birth-date" required max="9999-12-31"
-                        class="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-primary/20 text-[15px]">
-                    <div class="flex gap-2 mt-2.5 ml-1">
-                        <label class="flex-1 cursor-pointer group">
-                            <input type="radio" name="calendar-type" value="solar" checked class="hidden peer">
-                            <div
-                                class="py-2.5 rounded-xl bg-slate-50 text-slate-400 text-[12px] font-bold text-center border border-transparent peer-checked:bg-primary/5 peer-checked:text-primary peer-checked:border-primary/20 transition-all group-active:scale-95">
-                                ☀️ 양력</div>
-                        </label>
-                        <label class="flex-1 cursor-pointer group">
-                            <input type="radio" name="calendar-type" value="lunar" class="hidden peer">
-                            <div
-                                class="py-2.5 rounded-xl bg-slate-50 text-slate-400 text-[12px] font-bold text-center border border-transparent peer-checked:bg-primary/5 peer-checked:text-primary peer-checked:border-primary/20 transition-all group-active:scale-95">
-                                🌙 음력(평달)</div>
-                        </label>
-                        <label class="flex-1 cursor-pointer group">
-                            <input type="radio" name="calendar-type" value="leap" class="hidden peer">
-                            <div
-                                class="py-2.5 rounded-xl bg-slate-50 text-slate-400 text-[12px] font-bold text-center border border-transparent peer-checked:bg-primary/5 peer-checked:text-primary peer-checked:border-primary/20 transition-all group-active:scale-95">
-                                🍀 음력(윤달)</div>
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-center mb-2 ml-1">
-                        <label class="text-[14px] font-bold text-slate-700">태어난 시간</label>
-                        <label class="flex items-center gap-1.5 text-[12px] text-slate-400 font-medium cursor-pointer">
-                            <input type="checkbox" id="time-unknown" onchange="toggleTimeUnknown(this)"
-                                class="rounded-sm border-slate-300 text-primary focus:ring-primary">
-                            시간 모름
-                        </label>
-                    </div>
-                    <div onclick="openTimePicker()" id="display-time"
-                        class="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-slate-400 text-[15px] cursor-pointer flex items-center justify-between transition-opacity">
-                        시간 선택
-                        <span class="material-symbols-outlined text-[20px]">schedule</span>
-                    </div>
-                    <input type="hidden" id="birth-time" value="">
-                </div>
-
-                <div class="relative">
-                    <div class="flex justify-between items-center mb-2 ml-1">
-                        <label class="text-[14px] font-bold text-slate-700">태어난 지역 검색</label>
-                        <label class="flex items-center gap-1.5 text-[12px] text-slate-400 font-medium cursor-pointer">
-                            <input type="checkbox" id="location-unknown" onchange="toggleLocationUnknown(this)"
-                                class="rounded-sm border-slate-300 text-primary focus:ring-primary">
-                            장소 모름
-                        </label>
-                    </div>
-                    <div class="relative transition-opacity" id="location-input-container">
-                        <span
-                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
-                        <input type="text" id="location-search" list="korea-cities-data"
-                            placeholder="시/군/구 검색 (예: 서울, 부산)"
-                            class="w-full bg-slate-50 border-none rounded-2xl pl-11 pr-4 py-3.5 focus:ring-2 focus:ring-primary/20 text-[15px]">
-                    </div>
-                    <datalist id="korea-cities-data"></datalist>
-                    <input type="hidden" id="custom-longitude" value="126.97">
-                </div>
-            </div>
-
-            <div class="mt-auto pt-10 pb-6">
-                <button type="submit"
-                    class="w-full h-16 bg-primary hover:bg-primary/90 text-white text-[18px] font-bold rounded-2xl shadow-lg shadow-primary/30 flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
-                    <span>분석 시작하기</span>
-                    <span class="text-xl">✨</span>
-                </button>
-                <button type="button"
-                    onclick="document.getElementById('guest-login-modal').classList.add('hidden'); document.getElementById('guest-login-modal').classList.remove('flex');"
-                    class="w-full mt-3 text-slate-400 text-[14px] font-medium py-3">
-                    닫기
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- TAB 4: 프리미엄 맞춤 부적 생성               -->
-    <!-- ========================================== -->
-    <section id="tab-amulet"
-        class="screen h-[calc(100dvh-20px)] overflow-y-auto pb-[130px] bg-white flex flex-col relative w-full h-full hidden">
-        <header
-            class="fixed top-0 left-0 right-0 z-[60] bg-white/98 backdrop-blur-md border-b border-slate-100 px-4 flex items-center justify-between"
-            style="height: calc(56px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top);">
-            <button class="p-2 -ml-2 rounded-full flex items-center justify-center">
-                <span class="material-symbols-outlined text-slate-700 text-[24px]">menu</span>
-            </button>
-            <h1 class="text-[17px] font-bold tracking-tight absolute left-1/2 -translate-x-1/2 text-slate-900">맞춤 부적
-            </h1>
-            <button class="p-2 -mr-2 rounded-full flex items-center justify-center">
-                <span class="material-symbols-outlined text-slate-700 text-[24px]">settings</span>
-            </button>
-        </header>
-
-        <!-- 상단 PREVIEW 이미지 및 메인 타이틀 -->
-        <div class="flex flex-col flex-1" style="padding-top: calc(16px + env(safe-area-inset-top));">
-            <div class="flex justify-center px-5 mb-5 mt-1">
-                <div class="relative w-40 h-40">
-                    <div class="relative w-full h-full rounded-full overflow-hidden border-[4px] border-slate-800 shadow-[0_0_20px_rgba(212,175,55,0.15)]"
-                        style="background: linear-gradient(180deg, #0f172a 0%, #080e1a 50%, #000000 100%);">
-                        <div class="absolute inset-0"
-                            style="background: radial-gradient(circle at center, rgba(212, 175, 55, 0.25) 0%, transparent 65%);">
+            <!-- 상단 PREVIEW 이미지 및 메인 타이틀 -->
+            <div class="flex flex-col flex-1" style="padding-top: calc(16px + env(safe-area-inset-top));">
+                <div class="flex justify-center px-5 mb-5 mt-1">
+                    <div class="relative w-40 h-40">
+                        <div class="relative w-full h-full rounded-full overflow-hidden border-[4px] border-slate-800 shadow-[0_0_20px_rgba(212,175,55,0.15)]"
+                            style="background: linear-gradient(180deg, #0f172a 0%, #080e1a 50%, #000000 100%);">
+                            <div class="absolute inset-0"
+                                style="background: radial-gradient(circle at center, rgba(212, 175, 55, 0.25) 0%, transparent 65%);">
+                            </div>
+                            <div class="absolute inset-0 w-full h-full bg-center transition-transform duration-700 hover:scale-105"
+                                style="background-image: url('./assets/amulets/재왕부_gold.png'); background-size: 70%; background-repeat: no-repeat;">
+                            </div>
                         </div>
-                        <div class="absolute inset-0 w-full h-full bg-center transition-transform duration-700 hover:scale-105"
-                            style="background-image: url('./assets/amulets/재왕부_gold.png'); background-size: 70%; background-repeat: no-repeat;">
+                        <div
+                            class="absolute -bottom-3 left-1/2 -translate-x-1/2 z-10 rounded-full bg-primary px-4 py-1 text-[11px] font-bold tracking-wide text-white shadow-md">
+                            PREVIEW
                         </div>
                     </div>
+                </div>
+                <h2 class="text-[20px] text-slate-800 font-bold leading-snug mb-5 text-center">
+                    현재 가장 간절히 바라는<br>소망은 무엇인가요?
+                </h2>
+            </div>
+
+            <!-- 10개 키워드 2열 그리드 영역 -->
+            <div class="px-5 flex-1 flex flex-col mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-sm font-bold text-slate-500">소망 키워드 선택</span>
+                    <span class="text-xs font-medium text-primary">1개 선택 가능</span>
+                </div>
+                <div id="amulet-keyword-chips" class="grid grid-cols-2 gap-4 sm:grid-cols-2">
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="money">
+                        <span>#재물</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="business">
+                        <span>#사업</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="job">
+                        <span>#취업/직장</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="love_new">
+                        <span>#새로운연애</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="love_reunion">
+                        <span>#재회</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="family">
+                        <span>#가정/결혼</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="health">
+                        <span>#건강</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="study">
+                        <span>#학업/시험</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="protect">
+                        <span>#액막이/평안</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                    <button
+                        class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
+                        data-keyword="wish">
+                        <span>#소원성취</span>
+                        <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 하단 고정 CTA 버튼 -->
+            <div
+                class="fixed bottom-[60px] max-w-md w-full z-20 px-4 pb-4 pt-8 bg-gradient-to-t from-white via-white via-70% to-transparent pointer-events-none">
+                <div class="relative pointer-events-auto w-full mx-auto px-1">
                     <div
-                        class="absolute -bottom-3 left-1/2 -translate-x-1/2 z-10 rounded-full bg-primary px-4 py-1 text-[11px] font-bold tracking-wide text-white shadow-md">
-                        PREVIEW
+                        class="absolute -top-3 left-6 z-30 flex items-center gap-1 rounded-md bg-[#f1c40f] px-2 py-0.5 shadow-sm">
+                        <span class="material-symbols-outlined text-[10px] text-[#1e293b]">diamond</span>
+                        <span class="text-[10px] font-black text-[#1e293b]">PREMIUM</span>
+                    </div>
+                    <button id="amulet-generate-btn"
+                        class="flex h-[60px] w-full items-center justify-center gap-2 rounded-[24px] bg-[#3b82f6] text-white shadow-lg transition-all active:scale-[0.98] opacity-50 pointer-events-none"
+                        disabled>
+                        <span class="text-[16px] font-bold tracking-tight">나만의 맞춤 부적 생성하기</span>
+                        <span class="material-symbols-outlined text-xl">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- BOTTOM NAVIGATION                          -->
+        <!-- ========================================== -->
+        <nav
+            class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 px-2 pb-6 pt-3 flex justify-around items-center z-50">
+            <button type="button"
+                class="nav-link active flex flex-col items-center gap-1.5 px-2 py-1 text-primary animate-in fade-in zoom-in duration-300"
+                data-target="tab-saju">
+                <span class="material-symbols-outlined text-[26px] fill-1">calendar_today</span>
+                <span class="nav-text text-[11px] font-bold">내 사주</span>
+            </button>
+            <button type="button"
+                class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
+                data-target="tab-guide">
+                <span class="material-symbols-outlined text-[28px]">auto_awesome</span>
+                <span class="nav-text text-[11px] font-medium">오늘의 운세</span>
+            </button>
+            <button type="button"
+                class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
+                data-target="tab-network">
+                <span class="material-symbols-outlined text-[26px]">groups</span>
+                <span class="nav-text text-[11px] font-medium">인연</span>
+            </button>
+            <button type="button"
+                class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
+                data-target="tab-trait">
+                <span class="material-symbols-outlined text-[26px]">psychology</span>
+                <span class="nav-text text-[11px] font-medium">기질 분석</span>
+            </button>
+            <button type="button"
+                class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
+                data-target="tab-amulet">
+                <span class="material-symbols-outlined text-[26px]">magic_button</span>
+                <span class="nav-text text-[11px] font-medium">부적</span>
+            </button>
+        </nav>
+
+        <!-- Amulet Premium Result Modal (Fullscreen) -->
+        <div id="amulet-detail-modal"
+            class="fixed inset-0 z-[100] bg-slate-900 hidden opacity-0 transition-opacity duration-300 overflow-y-auto">
+            <div class="min-h-[100dvh] flex flex-col items-center px-5 py-6">
+                <div class="flex-1 flex flex-col items-center justify-center w-full mt-4">
+                    <div class="w-full max-w-[340px] flex-shrink-0" style="max-height: 65vh;">
+                        <canvas id="amulet-composite-canvas"
+                            class="w-full rounded-2xl shadow-[0_0_40px_rgba(251,191,36,0.2)]"
+                            style="aspect-ratio: 9/16;">
+                        </canvas>
                     </div>
                 </div>
-            </div>
-            <h2 class="text-[20px] text-slate-800 font-bold leading-snug mb-5 text-center">
-                현재 가장 간절히 바라는<br>소망은 무엇인가요?
-            </h2>
-        </div>
-
-        <!-- 10개 키워드 2열 그리드 영역 -->
-        <div class="px-5 flex-1 flex flex-col mb-4">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-sm font-bold text-slate-500">소망 키워드 선택</span>
-                <span class="text-xs font-medium text-primary">1개 선택 가능</span>
-            </div>
-            <div id="amulet-keyword-chips" class="grid grid-cols-2 gap-4 sm:grid-cols-2">
-                <button
-                    class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
-                    data-keyword="money">
-                    <span>#재물</span>
-                    <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
-                </button>
-                <button
-                    class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
-                    data-keyword="business">
-                    <span>#사업</span>
-                    <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
-                </button>
-                <button
-                    class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
-                    data-keyword="job">
-                    <span>#취업/직장</span>
-                    <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
-                </button>
-                <button
-                    class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
-                    data-keyword="love_new">
-                    <span>#새로운연애</span>
-                    <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
-                </button>
-                <button
-                    class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
-                    data-keyword="love_reunion">
-                    <span>#재회</span>
-                    <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
-                </button>
-                <button
-                    class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
-                    data-keyword="family">
-                    <span>#가정/결혼</span>
-                    <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
-                </button>
-                <button
-                    class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
-                    data-keyword="health">
-                    <span>#건강</span>
-                    <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
-                </button>
-                <button
-                    class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
-                    data-keyword="study">
-                    <span>#학업/시험</span>
-                    <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
-                </button>
-                <button
-                    class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
-                    data-keyword="protect">
-                    <span>#액막이/평안</span>
-                    <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
-                </button>
-                <button
-                    class="amulet-keyword-chip flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-3.5 text-base font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-95"
-                    data-keyword="wish">
-                    <span>#소원성취</span>
-                    <span class="check-icon hidden material-symbols-outlined !text-[18px]">check_circle</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- 하단 고정 CTA 버튼 -->
-        <div
-            class="fixed bottom-[60px] max-w-md w-full z-20 px-4 pb-4 pt-8 bg-gradient-to-t from-white via-white via-70% to-transparent pointer-events-none">
-            <div class="relative pointer-events-auto w-full mx-auto px-1">
-                <div
-                    class="absolute -top-3 left-6 z-30 flex items-center gap-1 rounded-md bg-[#f1c40f] px-2 py-0.5 shadow-sm">
-                    <span class="material-symbols-outlined text-[10px] text-[#1e293b]">diamond</span>
-                    <span class="text-[10px] font-black text-[#1e293b]">PREMIUM</span>
-                </div>
-                <button id="amulet-generate-btn"
-                    class="flex h-[60px] w-full items-center justify-center gap-2 rounded-[24px] bg-[#3b82f6] text-white shadow-lg transition-all active:scale-[0.98] opacity-50 pointer-events-none"
-                    disabled>
-                    <span class="text-[16px] font-bold tracking-tight">나만의 맞춤 부적 생성하기</span>
-                    <span class="material-symbols-outlined text-xl">arrow_forward</span>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- BOTTOM NAVIGATION                          -->
-    <!-- ========================================== -->
-    <nav
-        class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 px-2 pb-6 pt-3 flex justify-around items-center z-50">
-        <button type="button"
-            class="nav-link active flex flex-col items-center gap-1.5 px-2 py-1 text-primary animate-in fade-in zoom-in duration-300"
-            data-target="tab-saju">
-            <span class="material-symbols-outlined text-[26px] fill-1">calendar_today</span>
-            <span class="nav-text text-[11px] font-bold">내 사주</span>
-        </button>
-        <button type="button"
-            class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
-            data-target="tab-guide">
-            <span class="material-symbols-outlined text-[28px]">auto_awesome</span>
-            <span class="nav-text text-[11px] font-medium">오늘의 운세</span>
-        </button>
-        <button type="button"
-            class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
-            data-target="tab-network">
-            <span class="material-symbols-outlined text-[26px]">groups</span>
-            <span class="nav-text text-[11px] font-medium">인연</span>
-        </button>
-        <button type="button"
-            class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
-            data-target="tab-trait">
-            <span class="material-symbols-outlined text-[26px]">psychology</span>
-            <span class="nav-text text-[11px] font-medium">기질 분석</span>
-        </button>
-        <button type="button"
-            class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
-            data-target="tab-amulet">
-            <span class="material-symbols-outlined text-[26px]">magic_button</span>
-            <span class="nav-text text-[11px] font-medium">부적</span>
-        </button>
-    </nav>
-
-    <!-- Amulet Premium Result Modal (Fullscreen) -->
-    <div id="amulet-detail-modal"
-        class="fixed inset-0 z-[100] bg-slate-900 hidden opacity-0 transition-opacity duration-300 overflow-y-auto">
-        <div class="min-h-[100dvh] flex flex-col items-center px-5 py-6">
-            <div class="flex-1 flex flex-col items-center justify-center w-full mt-4">
-                <div class="w-full max-w-[340px] flex-shrink-0" style="max-height: 65vh;">
-                    <canvas id="amulet-composite-canvas"
-                        class="w-full rounded-2xl shadow-[0_0_40px_rgba(251,191,36,0.2)]" style="aspect-ratio: 9/16;">
-                    </canvas>
+                <div class="w-full max-w-[340px] mt-auto pt-8 pb-2 flex-shrink-0">
+                    <button id="amulet-save-btn" onclick="downloadCompositeAmulet()"
+                        class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg active:scale-[0.98] transition-all text-[16px] flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path
+                                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+                                stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        맞춤 부적 저장
+                    </button>
+                    <button
+                        class="w-full mt-3 text-slate-400 text-sm font-medium hover:text-slate-200 transition-colors py-3"
+                        onclick="closeAmuletModal()">
+                        닫기
+                    </button>
                 </div>
             </div>
-            <div class="w-full max-w-[340px] mt-auto pt-8 pb-2 flex-shrink-0">
-                <button id="amulet-save-btn" onclick="downloadCompositeAmulet()"
-                    class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg active:scale-[0.98] transition-all text-[16px] flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path
-                            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-                            stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                    맞춤 부적 저장
-                </button>
-                <button
-                    class="w-full mt-3 text-slate-400 text-sm font-medium hover:text-slate-200 transition-colors py-3"
-                    onclick="closeAmuletModal()">
+        </div>
+
+        <!-- Time Picker Modal -->
+        <div id="time-picker-modal" class="modal">
+            <div class="bg-white rounded-3xl p-8 w-full max-w-[320px] shadow-xl">
+                <header class="text-center mb-6"><span class="text-sm font-semibold text-slate-500">시간 선택</span>
+                </header>
+                <div class="flex items-center justify-center gap-4 mb-8">
+                    <div id="hour-box" class="time-box active" onclick="switchPickerMode('hour')">12</div>
+                    <span class="text-4xl text-slate-300">:</span>
+                    <div id="minute-box" class="time-box" onclick="switchPickerMode('minute')">00</div>
+                    <div class="flex flex-col gap-2">
+                        <button id="am-btn"
+                            class="bg-slate-900 text-white border-none w-12 h-9 rounded-lg font-bold text-xs"
+                            onclick="selectAmPm('AM')">오전</button>
+                        <button id="pm-btn"
+                            class="bg-slate-100 text-slate-500 border-none w-12 h-9 rounded-lg font-bold text-xs"
+                            onclick="selectAmPm('PM')">오후</button>
+                    </div>
+                </div>
+                <div class="flex justify-center mb-6">
+                    <div id="clock-face" class="clock-face">
+                        <div class="clock-hand" id="clock-hand">
+                            <div class="hand-tip"></div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="flex justify-end gap-2">
+                    <button class="px-5 py-2 rounded-lg text-slate-500 font-bold text-sm"
+                        onclick="closeTimePicker()">취소</button>
+                    <button class="px-5 py-2 rounded-lg text-primary font-bold text-sm"
+                        onclick="applyTime()">확인</button>
+                </footer>
+            </div>
+        </div>
+
+        <script src="amulet_data.js?v=5"></script>
+        <script src="cities.js"></script>
+        <script src="engine.js"></script>
+        <script src="ui.js?v=5"></script>
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(() => console.log("서비스 워커 등록 완료"))
+                    .catch(err => console.log("서비스 워커 등록 실패", err));
+            }
+        </script>
+        <!-- Synergy Report Modal (1:1 Deep Dive) -->
+        <div id="synergy-report-modal" class="fixed inset-0 z-[120] hidden items-end justify-center">
+            <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onclick="closeSynergyReport()"></div>
+            <div
+                class="relative w-full max-w-md bg-slate-900 rounded-t-[32px] p-6 shadow-2xl border-t border-white/10 transform translate-y-full transition-transform duration-500 ease-out animate-in slide-in-from-bottom fill-mode-forwards">
+                <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-6"></div>
+
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <span id="report-orbit-label"
+                            class="text-[10px] font-black text-primary-light uppercase tracking-widest bg-primary/10 px-2 py-1 rounded-md">Orbit
+                            1</span>
+                        <h3 id="report-title" class="text-2xl font-black text-white mt-2 tracking-tight">피터 & 김철수</h3>
+                    </div>
+                    <div class="text-right">
+                        <div id="report-score" class="text-3xl font-black text-white">98<span
+                                class="text-xs ml-0.5 text-white/30">점</span></div>
+                        <div class="text-[10px] font-black text-white/30 uppercase tracking-widest">Synergy Harmony
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/5">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="material-symbols-outlined text-primary-light">star_half</span>
+                            <h4 id="report-role-name" class="text-sm font-bold text-white">지원군 (연료) - 인성</h4>
+                        </div>
+                        <p id="report-desc" class="text-white/60 text-[13px] leading-relaxed break-keep">
+                            이 친구는 피터님에게 부족한 '금(金)' 기운을 채워주는 귀인입니다. 피터님의 아이디어를 구체적인 결과물로 만들어주는 환상의 짝꿍입니다.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white/5 p-4 rounded-xl border border-white/5">
+                            <div class="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">상생 기운</div>
+                            <div id="report-energy-type" class="text-white font-bold">나무(木) → 불(火)</div>
+                        </div>
+                        <div class="bg-white/5 p-4 rounded-xl border border-white/5">
+                            <div class="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">시너지 특징
+                            </div>
+                            <div id="report-tag" class="text-white font-bold">추진력 상승</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mt-8">
+                    <button id="report-edit-btn"
+                        class="py-4 bg-white/5 text-white/70 font-bold rounded-2xl active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                        정보 수정
+                    </button>
+                    <button id="report-delete-btn"
+                        class="py-4 bg-red-500/10 text-red-400 font-bold rounded-2xl active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                        인연 삭제
+                    </button>
+                </div>
+
+                <button onclick="closeSynergyReport()"
+                    class="w-full mt-3 py-4 text-white/30 font-bold rounded-2xl active:scale-95 transition-all">
                     닫기
                 </button>
             </div>
         </div>
-    </div>
-
-    <!-- Time Picker Modal -->
-    <div id="time-picker-modal" class="modal">
-        <div class="bg-white rounded-3xl p-8 w-full max-w-[320px] shadow-xl">
-            <header class="text-center mb-6"><span class="text-sm font-semibold text-slate-500">시간 선택</span>
-            </header>
-            <div class="flex items-center justify-center gap-4 mb-8">
-                <div id="hour-box" class="time-box active" onclick="switchPickerMode('hour')">12</div>
-                <span class="text-4xl text-slate-300">:</span>
-                <div id="minute-box" class="time-box" onclick="switchPickerMode('minute')">00</div>
-                <div class="flex flex-col gap-2">
-                    <button id="am-btn"
-                        class="bg-slate-900 text-white border-none w-12 h-9 rounded-lg font-bold text-xs"
-                        onclick="selectAmPm('AM')">오전</button>
-                    <button id="pm-btn"
-                        class="bg-slate-100 text-slate-500 border-none w-12 h-9 rounded-lg font-bold text-xs"
-                        onclick="selectAmPm('PM')">오후</button>
-                </div>
-            </div>
-            <div class="flex justify-center mb-6">
-                <div id="clock-face" class="clock-face">
-                    <div class="clock-hand" id="clock-hand">
-                        <div class="hand-tip"></div>
-                    </div>
-                </div>
-            </div>
-            <footer class="flex justify-end gap-2">
-                <button class="px-5 py-2 rounded-lg text-slate-500 font-bold text-sm"
-                    onclick="closeTimePicker()">취소</button>
-                <button class="px-5 py-2 rounded-lg text-primary font-bold text-sm" onclick="applyTime()">확인</button>
-            </footer>
-        </div>
-    </div>
-    </div>
-
-    <script src="amulet_data.js?v=5"></script>
-    <script src="cities.js"></script>
-    <script src="engine.js"></script>
-    <script src="ui.js?v=5"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(() => console.log("서비스 워커 등록 완료"))
-                .catch(err => console.log("서비스 워커 등록 실패", err));
-        }
-    </script>
-    <!-- Synergy Report Modal (1:1 Deep Dive) -->
-    <div id="synergy-report-modal" class="fixed inset-0 z-[120] hidden items-end justify-center">
-        <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onclick="closeSynergyReport()"></div>
-        <div
-            class="relative w-full max-w-md bg-slate-900 rounded-t-[32px] p-6 shadow-2xl border-t border-white/10 transform translate-y-full transition-transform duration-500 ease-out animate-in slide-in-from-bottom fill-mode-forwards">
-            <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-6"></div>
-
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <span id="report-orbit-label"
-                        class="text-[10px] font-black text-primary-light uppercase tracking-widest bg-primary/10 px-2 py-1 rounded-md">Orbit
-                        1</span>
-                    <h3 id="report-title" class="text-2xl font-black text-white mt-2 tracking-tight">피터 & 김철수</h3>
-                </div>
-                <div class="text-right">
-                    <div id="report-score" class="text-3xl font-black text-white">98<span
-                            class="text-xs ml-0.5 text-white/30">점</span></div>
-                    <div class="text-[10px] font-black text-white/30 uppercase tracking-widest">Synergy Harmony</div>
-                </div>
-            </div>
-
-            <div class="space-y-6">
-                <div class="bg-white/5 rounded-2xl p-5 border border-white/5">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="material-symbols-outlined text-primary-light">star_half</span>
-                        <h4 id="report-role-name" class="text-sm font-bold text-white">지원군 (연료) - 인성</h4>
-                    </div>
-                    <p id="report-desc" class="text-white/60 text-[13px] leading-relaxed break-keep">
-                        이 친구는 피터님에게 부족한 '금(金)' 기운을 채워주는 귀인입니다. 피터님의 아이디어를 구체적인 결과물로 만들어주는 환상의 짝꿍입니다.
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-white/5 p-4 rounded-xl border border-white/5">
-                        <div class="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">상생 기운</div>
-                        <div id="report-energy-type" class="text-white font-bold">나무(木) → 불(火)</div>
-                    </div>
-                    <div class="bg-white/5 p-4 rounded-xl border border-white/5">
-                        <div class="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">시너지 특징</div>
-                        <div id="report-tag" class="text-white font-bold">추진력 상승</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 mt-8">
-                <button id="report-edit-btn"
-                    class="py-4 bg-white/5 text-white/70 font-bold rounded-2xl active:scale-95 transition-all flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-[20px]">edit</span>
-                    정보 수정
-                </button>
-                <button id="report-delete-btn"
-                    class="py-4 bg-red-500/10 text-red-400 font-bold rounded-2xl active:scale-95 transition-all flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-[20px]">delete</span>
-                    인연 삭제
-                </button>
-            </div>
-
-            <button onclick="closeSynergyReport()"
-                class="w-full mt-3 py-4 text-white/30 font-bold rounded-2xl active:scale-95 transition-all">
-                닫기
-            </button>
-        </div>
-    </div>
     </div>
 </body>
 
