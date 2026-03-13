@@ -1592,23 +1592,27 @@ window.renderSynergyGalaxy = function (friends) {
     const userColor = SajuEngine.getElementColor(userEl);
 
     if (sunEl) {
-        // [중요] CSS 변수 전달 및 배경색만 설정 (boxShadow 설정 코드는 삭제)
-        sunEl.style.setProperty('--sun-color', userColor);
+        // 1. 맥동 수치 계산 (별들과 싱크를 맞추기 위해 time 변수 활용)
+        const sunPulse = Math.sin(time * 2) * 10; // ±10px 범위로 숨쉼
+        const sunBrightness = 0.6 + Math.sin(time * 2) * 0.2; // 밝기 자동 조절
+
+        // 2. Metal(금) 오행 보정: 너무 탁하지 않게 화이트를 섞음
+        let glowColor = userColor;
+        if (userDM === '庚' || userDM === '辛') glowColor = '#E2E8F0';
+
         sunEl.style.backgroundColor = userColor;
+        // 3. 3중 중첩 그림자로 태양 광원 효과 극대화
+        sunEl.style.boxShadow = `
+            0 0 ${20 + sunPulse}px #FFFFFFCC,             /* 중심부: 화이트 광원 */
+            0 0 ${40 + sunPulse * 2}px ${glowColor}AA,    /* 중간부: 오행 고유광 */
+            0 0 ${80 + sunPulse * 4}px ${glowColor}44     /* 외곽부: 은은한 잔상 */
+        `;
 
-        // 한자 표시
         const sunDMText = document.getElementById('user-sun-dm');
-        if (sunDMText) sunDMText.innerText = userDM;
-
-        // 태양 하단 이름 라벨
-        let nameLabel = document.getElementById('sun-name-label');
-        if (!nameLabel) {
-            nameLabel = document.createElement('div');
-            nameLabel.id = 'sun-name-label';
-            nameLabel.className = 'absolute top-full mt-3 text-white font-black text-[13px] whitespace-nowrap drop-shadow-lg';
-            sunEl.appendChild(nameLabel);
+        if (sunDMText) {
+            sunDMText.innerText = userDM;
+            sunDMText.style.opacity = sunBrightness; // 글자도 같이 맥동
         }
-        nameLabel.innerText = userSajuData.name;
     }
 
     ctx.clearRect(0, 0, rect.width, rect.height);
