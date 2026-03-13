@@ -1521,6 +1521,7 @@ window.openAddFriendModal = function () {
 };
 
 // 시너지 갤럭시 상태 관리
+const SECTOR_COLORS = ["#34D399", "#60A5FA", "#F87171", "#FBBF24", "#A78BFA"];
 let currentGalaxyFilter = 'all';
 let listSectorFilter = 'all'; // 리스트 탭 필터 (전체, 1~5 섹터)
 window.highlightedSector = null; // 리스트 섹션 터치 시 하이라이트용
@@ -1689,8 +1690,8 @@ window.renderSynergyGalaxy = function (friends) {
 
         const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 200);
         grad.addColorStop(0, 'transparent');
-        const glowColor = currentGalaxyFilter === 'boost' ? 'rgba(52, 211, 153, 0.15)' : 'rgba(251, 191, 36, 0.15)';
-        grad.addColorStop(1, glowColor);
+        const sColor = SECTOR_COLORS[sIdx] || "#ffffff";
+        grad.addColorStop(1, `${sColor}20`); // Unified sector glow with 12.5% opacity
         ctx.fillStyle = grad;
         ctx.fill();
     });
@@ -1771,9 +1772,10 @@ window.renderSynergyGalaxy = function (friends) {
         // Glow (Enhanced for active modes)
         const glowMult = isModeActive ? 1.5 : 1.0;
         const activeGlow = glowRadius * glowMult;
+        const sColor = SECTOR_COLORS[analysis.orbit - 1] || "#ffffff";
 
         const gradient = ctx.createRadialGradient(x, y, 0, x, y, activeGlow);
-        gradient.addColorStop(0, analysis.frElColor);
+        gradient.addColorStop(0, sColor);
         if (currentGalaxyFilter === 'challenge' && isModeActive) {
             gradient.addColorStop(0.3, '#fbbf24'); // Gold spark for Challenge mode
         }
@@ -1935,9 +1937,6 @@ window.renderFriendList = function () {
     // Render Galaxy Canvas
     renderSynergyGalaxy(friendList);
 
-    // 섹터 정의 (색상 등 참조용)
-    const sectorColors = ["#34D399", "#60A5FA", "#F87171", "#FBBF24", "#A78BFA"];
-
     // 1. 데이터 분석 및 점수순 정렬
     const analyzedFriends = friendList.map((f, idx) => {
         const analysis = SajuEngine.analyzeRelationship(userSajuData.pillars, f.pillars);
@@ -1963,7 +1962,7 @@ window.renderFriendList = function () {
     container.innerHTML = filtered.map(item => {
         const f = item;
         const ani = item.analysis;
-        const sColor = sectorColors[ani.orbit - 1];
+        const sColor = SECTOR_COLORS[ani.orbit - 1] || "#ffffff";
 
         return `
             <div onclick="openSynergyReport(${f.originalIndex})" 
@@ -1975,8 +1974,8 @@ window.renderFriendList = function () {
                         <div class="size-11 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
                             <span class="material-symbols-outlined text-white/30 text-[20px]">${f.gender === 'male' ? 'face' : 'face_3'}</span>
                         </div>
-                        <!-- 작은 오행 배지 -->
-                        <span class="absolute -bottom-1 -right-1 size-3.5 rounded-full border-2 border-slate-900" style="background-color: ${ani.frElColor}"></span>
+                        <!-- 섹터 컬러 배지 (통일) -->
+                        <span class="absolute -bottom-1 -right-1 size-3.5 rounded-full border-2 border-slate-900" style="background-color: ${sColor}"></span>
                     </div>
 
                     <!-- Info Area -->
@@ -2015,8 +2014,7 @@ window.openSynergyReport = function (index) {
     if (!analysis || !modal) return;
 
     // Fill Data
-    const sectorColors = ["#34D399", "#60A5FA", "#F87171", "#FBBF24", "#A78BFA"];
-    const sColor = sectorColors[analysis.orbit - 1] || "#34D399";
+    const sColor = SECTOR_COLORS[analysis.orbit - 1] || "#ffffff";
     const sectorLabel = document.getElementById('report-sector-label');
     const roleIcon = document.getElementById('report-role-icon');
 
