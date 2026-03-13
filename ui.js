@@ -1615,6 +1615,11 @@ window.renderSynergyGalaxy = function (friends) {
             sunDMText.style.zIndex = "30"; // 광원 효과보다 위에 배치
             sunDMText.style.opacity = "1"; // 항상 선명하게 유지
         }
+
+        const sunNameText = document.getElementById('user-sun-name');
+        if (sunNameText && userSajuData.name) {
+            sunNameText.innerText = userSajuData.name;
+        }
     }
 
     ctx.clearRect(0, 0, rect.width, rect.height);
