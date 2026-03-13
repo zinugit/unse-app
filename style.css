@@ -1394,38 +1394,45 @@ textarea#user-concern {
 
 /* [Galaxy Enhancement] */
 #galaxy-view-container {
-    background: radial-gradient(circle at center, #111827 0%, #05070A 100%) !important;
+    background: radial-gradient(circle at center, #1e293b 0%, #020617 100%) !important;
     position: relative;
     overflow: hidden;
 }
 
-@keyframes sun-pulse {
+@keyframes sun-pulse-premium {
     0% {
         transform: scale(1);
-        box-shadow: 0 0 30px var(--sun-glow), 0 0 15px rgba(255, 255, 255, 0.1);
-        opacity: 0.9;
+        box-shadow: 0 0 30px var(--sun-glow), 0 0 15px rgba(255, 255, 255, 0.4);
     }
 
     50% {
-        transform: scale(1.15);
-        box-shadow: 0 0 80px var(--sun-glow), 0 0 30px rgba(255, 255, 255, 0.3);
-        opacity: 1;
+        transform: scale(1.1);
+        box-shadow: 0 0 70px var(--sun-glow), 0 0 30px rgba(255, 255, 255, 0.6);
     }
 
     100% {
         transform: scale(1);
-        box-shadow: 0 0 30px var(--sun-glow), 0 0 15px rgba(255, 255, 255, 0.1);
-        opacity: 0.9;
+        box-shadow: 0 0 30px var(--sun-glow), 0 0 15px rgba(255, 255, 255, 0.4);
     }
 }
 
 #user-sun {
-    animation: sun-pulse 3s infinite ease-in-out !important;
+    animation: sun-pulse-premium 3s infinite ease-in-out !important;
+    /* 애니메이션 강제 연결 */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
-    z-index: 50 !important;
-    transition: background-color 0.5s ease;
+    z-index: 100 !important;
+    /* 캔버스보다 위로 배치 */
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+#user-sun-dm {
+    font-size: 20px;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
