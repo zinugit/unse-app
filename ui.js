@@ -1819,6 +1819,13 @@ window.renderSynergyGalaxy = function (friends) {
         tooltip.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
         tooltip.classList.add('opacity-100', 'scale-100');
 
+        // 터치/클릭 시 즉시 숨기기 (사용자 요청)
+        tooltip.onclick = () => {
+            tooltip.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+            tooltip.classList.remove('opacity-100', 'scale-100');
+            if (window.tooltipTimer) clearTimeout(window.tooltipTimer);
+        };
+
         // 4초 후 자동 숨김
         if (window.tooltipTimer) clearTimeout(window.tooltipTimer);
         window.tooltipTimer = setTimeout(() => {
