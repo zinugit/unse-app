@@ -2015,13 +2015,27 @@ window.openSynergyReport = function (index) {
     if (!analysis || !modal) return;
 
     // Fill Data
-    document.getElementById('report-sector-label').innerText = `Sector ${analysis.orbit}`;
+    const sectorColors = ["#34D399", "#60A5FA", "#F87171", "#FBBF24", "#A78BFA"];
+    const sColor = sectorColors[analysis.orbit - 1] || "#34D399";
+    const sectorLabel = document.getElementById('report-sector-label');
+    const roleIcon = document.getElementById('report-role-icon');
+
+    if (sectorLabel) {
+        sectorLabel.innerText = `Sector ${analysis.orbit}`;
+        sectorLabel.style.color = sColor;
+        sectorLabel.style.backgroundColor = `${sColor}20`;
+    }
+
+    if (roleIcon) {
+        roleIcon.style.color = sColor;
+    }
+
     document.getElementById('report-title').innerText = `${userSajuData.name} & ${friend.name}`;
     document.getElementById('report-score').innerHTML = `${analysis.score}<span class="text-xs ml-0.5 text-white/30">점</span>`;
     document.getElementById('report-role-name').innerText = `${analysis.orbitName} (${analysis.sipsung})`;
 
     // Custom Description
-    const elKr = { Wood: '목(木)', Fire: '화(火)', Earth: '토(토)', Metal: '금(金)', Water: '수(水)' };
+    const elKr = { Wood: '목(木)', Fire: '화(火)', Earth: '토(土)', Metal: '금(金)', Water: '수(水)' };
     const myElements = userSajuData.pillars.elements;
     const weakestEl = Object.keys(myElements).reduce((a, b) => myElements[a] < myElements[b] ? a : b);
     const frElements = friend.pillars.elements;
