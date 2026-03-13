@@ -1602,38 +1602,7 @@ window.renderSynergyGalaxy = function (friends) {
 
     const time = Date.now() * 0.001;
 
-    // Draw Score Tier Rings (Gravity Gauges)
-    tiers.forEach((tier) => {
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, tier.r, 0, Math.PI * 2);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-        ctx.setLineDash([2, 4]);
-        ctx.stroke();
 
-        // Tier Label
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-        ctx.font = 'bold 8px sans-serif';
-        ctx.fillText(tier.label, centerX, centerY - tier.r - 5);
-    });
-
-    const sectorLabels = ['지원군', '동료', '창의', '성과', '성장'];
-    for (let i = 0; i < 5; i++) {
-        const lineAngle = (-90 + (i * 72)) * (Math.PI / 180);
-        const labelAngle = (-90 + (i * 72) + 36) * (Math.PI / 180);
-        ctx.beginPath();
-        ctx.setLineDash([2, 6]);
-        ctx.moveTo(centerX, centerY);
-        ctx.lineTo(centerX + 210 * Math.cos(lineAngle), centerY + 210 * Math.sin(lineAngle));
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
-        ctx.stroke();
-
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-        ctx.font = 'bold 10px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(sectorLabels[i], centerX + 215 * Math.cos(labelAngle), centerY + 215 * Math.sin(labelAngle));
-    }
-    ctx.setLineDash([]);
 
     // Draw Friends with Density Awareness
     friends.forEach((f, idx) => {
