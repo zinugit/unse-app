@@ -1592,10 +1592,22 @@ window.renderSynergyGalaxy = function (friends) {
     const userColor = SajuEngine.getElementColor(userEl);
 
     if (sunEl) {
+        sunEl.style.setProperty('--sun-color', userColor + '88'); // CSS 변수 전달 (박동 효과용)
         sunEl.style.backgroundColor = userColor;
-        sunEl.style.boxShadow = `0 0 60px ${userColor}CC`;
+
+        // 태양 내부에 한자(userDM) 유지
         const sunDMText = document.getElementById('user-sun-dm');
         if (sunDMText) sunDMText.innerText = userDM;
+
+        // 이름 라벨 추가 (태양 바로 아래)
+        let nameLabel = document.getElementById('sun-name-label');
+        if (!nameLabel) {
+            nameLabel = document.createElement('div');
+            nameLabel.id = 'sun-name-label';
+            nameLabel.className = 'absolute top-full mt-2 text-white/70 text-[11px] font-black whitespace-nowrap drop-shadow-sm';
+            sunEl.appendChild(nameLabel);
+        }
+        nameLabel.innerText = userSajuData.name;
     }
 
     ctx.clearRect(0, 0, rect.width, rect.height);
