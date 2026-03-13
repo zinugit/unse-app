@@ -1522,6 +1522,7 @@ window.openAddFriendModal = function () {
 
 // 시너지 갤럭시 상태 관리
 let currentGalaxyFilter = 'all';
+let listSectorFilter = 'all'; // 리스트 탭 필터 (전체, 1~5 섹터)
 window.highlightedSector = null; // 리스트 섹션 터치 시 하이라이트용
 
 window.setGalaxyFilter = function (filter) {
@@ -1539,6 +1540,30 @@ window.setGalaxyFilter = function (filter) {
     });
 
     renderFriendList(); // 다시 그리기 유도
+};
+
+window.setListSectorFilter = function (sector) {
+    listSectorFilter = sector;
+    // 탭 UI 업데이트
+    document.querySelectorAll('.sector-tab-chip').forEach(tab => {
+        const tabSector = tab.getAttribute('data-sector');
+        if (tabSector == sector) {
+            tab.classList.add('bg-white/15', 'text-white', 'border-white/10');
+            tab.classList.remove('bg-white/5', 'text-white/40', 'border-white/5');
+        } else {
+            tab.classList.remove('bg-white/15', 'text-white', 'border-white/10');
+            tab.classList.add('bg-white/5', 'text-white/40', 'border-white/5');
+        }
+    });
+
+    // 지도 연동 (전체가 아니면 해당 섹터 하이라이트)
+    if (sector !== 'all') {
+        window.highlightedSector = sector - 1;
+    } else {
+        window.highlightedSector = null;
+    }
+
+    renderFriendList();
 };
 
 window.openOrbitGlossary = function () {
@@ -1910,88 +1935,73 @@ window.renderFriendList = function () {
     // Render Galaxy Canvas
     renderSynergyGalaxy(friendList);
 
-    // 섹터 정의 및 그룹화
-    const sectors = [
-        { id: 1, sIdx: 0, name: "지원군 (인성)", icon: "auto_awesome", color: "#34D399", desc: "나를 채우는 연료" },
-        { id: 2, sIdx: 1, name: "동료 (비겁)", icon: "groups", color: "#60A5FA", desc: "함께 걷는 동반자" },
-        { id: 3, sIdx: 2, name: "창의 (식상)", icon: "tips_and_updates", color: "#F87171", desc: "함께 만드는 파트너" },
-        { id: 4, sIdx: 3, name: "성과 (재성)", icon: "monetization_on", color: "#FBBF24", desc: "비즈니스 귀인" },
-        { id: 5, sIdx: 4, name: "성장 (관성)", icon: "trending_up", color: "#A78BFA", desc: "커리어 코치" }
-    ];
+    // 섹터 정의 (색상 등 참조용)
+    const sectorColors = ["#34D399", "#60A5FA", "#F87171", "#FBBF24", "#A78BFA"];
 
-    const grouped = sectors.map(sector => {
-        const members = friendList.map((f, idx) => ({ ...f, originalIndex: idx }))
-            .filter(f => {
-                const analysis = SajuEngine.analyzeRelationship(userSajuData.pillars, f.pillars);
-                return analysis.orbit === sector.id;
-            });
-        return { ...sector, members };
-    }).filter(s => s.members.length > 0);
+    // 1. 데이터 분석 및 점수순 정렬
+    const analyzedFriends = friendList.map((f, idx) => {
+        const analysis = SajuEngine.analyzeRelationship(userSajuData.pillars, f.pillars);
+        return { ...f, originalIndex: idx, analysis };
+    }).sort((a, b) => b.analysis.score - a.analysis.score);
 
-    // Render Smart List Header & Content
-    container.innerHTML = grouped.map(section => `
-        <div class="mb-8"
-             onmouseenter="window.highlightedSector = ${section.sIdx}" 
-             onmouseleave="window.highlightedSector = null"
-             ontouchstart="window.highlightedSector = ${section.sIdx}"
-             ontouchend="setTimeout(() => { window.highlightedSector = null }, 1500)">
-            
-            <!-- 섹터 헤더 -->
-            <div class="flex items-center justify-between mb-4 px-1">
-                <div class="flex items-center gap-2.5">
-                    <div class="size-8 rounded-lg flex items-center justify-center border border-white/10 shadow-lg" 
-                         style="background-color: ${section.color}15">
-                        <span class="material-symbols-outlined text-[18px]" style="color: ${section.color}">${section.icon}</span>
-                    </div>
-                    <div>
-                        <h4 class="text-white text-[15px] font-black tracking-tight">${section.name}</h4>
-                        <p class="text-white/30 text-[10px] uppercase font-bold tracking-widest">${section.desc}</p>
-                    </div>
-                </div>
-                <div class="bg-white/5 border border-white/10 px-2.5 py-1 rounded-full text-[11px] text-white/60 font-black">
-                    ${section.members.length}명
-                </div>
+    // 2. 필터링 (탭 선택 기준)
+    const filtered = analyzedFriends.filter(f => {
+        if (listSectorFilter === 'all') return true;
+        return f.analysis.orbit == listSectorFilter;
+    });
+
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="py-10 text-center">
+                <p class="text-white/20 text-sm">이 섹터에는 등록된 인연이 없습니다.</p>
             </div>
+        `;
+        return;
+    }
 
-            <!-- 가로 리스트 (Horizontal Scroll) -->
-            <div class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory px-1 pb-4">
-                ${section.members.map(friend => {
-        const analysis = SajuEngine.analyzeRelationship(userSajuData.pillars, friend.pillars);
+    // 3. 고밀도 수직 리스트 렌더링
+    container.innerHTML = filtered.map(item => {
+        const f = item;
+        const ani = item.analysis;
+        const sColor = sectorColors[ani.orbit - 1];
+
         return `
-                        <div onclick="openSynergyReport(${friend.originalIndex})" 
-                             class="snap-start shrink-0 w-[260px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-[28px] p-5 active:scale-[0.97] transition-all shadow-xl">
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="size-11 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
-                                    <span class="material-symbols-outlined text-white/30">${friend.gender === 'male' ? 'face' : 'face_3'}</span>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-[22px] font-black text-white leading-none">${analysis.score}<span class="text-[10px] ml-0.5 text-white/50">점</span></div>
-                                    <div class="mt-1 text-[9px] font-black uppercase text-primary tracking-tighter shadow-sm">Synergy Meta</div>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <h5 class="text-white font-black text-[17px] mb-0.5">${friend.name}</h5>
-                                <div class="flex items-center gap-1.5 opacity-80">
-                                    <span class="size-2 rounded-full" style="background-color: ${analysis.frElColor}"></span>
-                                    <p class="text-[11px] text-white/70 font-bold">${analysis.sipsung} · ${analysis.frDM}의 기운</p>
-                                </div>
-                            </div>
-
-                            <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                                <span class="bg-white/5 px-2 py-0.5 rounded-lg text-white/40 text-[9px] font-bold">Orbit ${analysis.orbit}</span>
-                                <div class="flex items-center gap-1 text-[10px] font-black tracking-tighter" style="color: ${section.color}">
-                                    DETAIL <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                                </div>
-                            </div>
+            <div onclick="openSynergyReport(${f.originalIndex})" 
+                 class="group relative bg-white/5 backdrop-blur-md border border-white/5 rounded-2xl p-4 flex items-center justify-between active:scale-[0.98] transition-all hover:bg-white/10">
+                
+                <div class="flex items-center gap-3">
+                    <!-- Avatar Area -->
+                    <div class="relative">
+                        <div class="size-11 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
+                            <span class="material-symbols-outlined text-white/30 text-[20px]">${f.gender === 'male' ? 'face' : 'face_3'}</span>
                         </div>
-                    `;
-    }).join('')}
-                <!-- Spacer for scroll end -->
-                <div class="shrink-0 w-2"></div>
+                        <!-- 작은 오행 배지 -->
+                        <span class="absolute -bottom-1 -right-1 size-3.5 rounded-full border-2 border-slate-900" style="background-color: ${ani.frElColor}"></span>
+                    </div>
+
+                    <!-- Info Area -->
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <h4 class="font-bold text-white text-[15px]">${f.name}</h4>
+                            <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-white/5 text-white/40 border border-white/5">ORBIT ${ani.orbit}</span>
+                        </div>
+                        <p class="text-[11px] font-medium text-white/40 leading-none mt-1">
+                            ${ani.sipsung} · <span style="color: ${sColor}">${ani.orbitName}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Score Area -->
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-[20px] font-black text-white leading-none">${ani.score}<span class="text-[10px] ml-0.5 opacity-50">점</span></div>
+                        <div class="text-[9px] font-bold text-primary uppercase tracking-tighter mt-1">SYNERGY</div>
+                    </div>
+                    <span class="material-symbols-outlined text-white/20 text-[20px]">chevron_right</span>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 };
 
 window.openSynergyReport = function (index) {
