@@ -1627,20 +1627,24 @@ window.renderSynergyGalaxy = function (friends) {
         const orbitIdx = analysis.orbit - 1;
         const baseRadius = orbits[orbitIdx];
 
-        // [Intuition Fix] Score-based radius offset: higher score pulls star closer to center
-        // Offset range: -10 to +10 pixels within the orbit path
-        const scoreOffset = (analysis.score - 70) * 0.4;
-        const radius = baseRadius - scoreOffset;
+        // [Ultra-Intuitive Gravity Engine] 
+        // Logic: Score is 'Mass'. Higher mass (Score) = Stronger pull toward the Sun.
+        // A 95+ score on any Orbit should feel 'closer' and more powerful.
+        const pullFactor = (analysis.score - 50) / 100; // 0.0 to 0.5 range approx
+        const radius = baseRadius * (1.05 - (pullFactor * 0.8));
 
-        const angle = (idx * (360 / Math.max(1, friends.length)) + (time * 3)) * (Math.PI / 180);
+        const angle = (idx * (360 / Math.max(1, friends.length)) + (time * 2)) * (Math.PI / 180);
 
         const x = centerX + radius * Math.cos(angle);
         const y = centerY + radius * Math.sin(angle);
 
-        // Density-based Size (Score affects size and brightness)
-        const densityFactor = analysis.score / 100;
-        const starSize = 3 + (densityFactor * 3);
-        const glowRadius = 12 + (densityFactor * 8);
+        // Massive Scaling for High Scores
+        const massFactor = Math.pow(analysis.score / 100, 2);
+        const starSize = 3 + (massFactor * 6); // Up to 9px
+        const glowRadius = 15 + (massFactor * 25); // Up to 40px glow
+
+        // Pulse effect for high scores
+        const pulse = (analysis.score > 90) ? Math.sin(time * 4) * 2 : 0;
 
         // Energy Flow (Boost Mode Only)
         if (currentGalaxyFilter === 'boost' && displayAlpha > 0.5) {
@@ -1657,29 +1661,34 @@ window.renderSynergyGalaxy = function (friends) {
         gradient.addColorStop(0, analysis.frElColor);
         gradient.addColorStop(1, 'transparent');
         ctx.fillStyle = gradient;
-        ctx.globalAlpha = (0.4 + Math.sin(time * 2 + idx) * 0.1) * displayAlpha;
+        ctx.globalAlpha = (0.5 + Math.sin(time * 2 + idx) * 0.15) * displayAlpha;
         ctx.beginPath();
-        ctx.arc(x, y, glowRadius, 0, Math.PI * 2);
+        ctx.arc(x, y, glowRadius + pulse, 0, Math.PI * 2);
         ctx.fill();
 
-        // Core star
+        // Core star (Brighter and larger for high scores)
         ctx.globalAlpha = displayAlpha;
         ctx.fillStyle = '#ffffff';
+        if (analysis.score > 90) {
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#ffffff';
+        }
         ctx.beginPath();
         ctx.arc(x, y, starSize, 0, Math.PI * 2);
         ctx.fill();
+        ctx.shadowBlur = 0;
 
-        // Label
+        // Label (High contrast)
         if (displayAlpha > 0.5) {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.font = 'bold 11px sans-serif';
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText(f.name, x, y + 22);
+            ctx.fillText(f.name, x, y + 25);
 
-            // Show score near star for better intuition
+            // Score Badge inside Galaxy
             ctx.fillStyle = analysis.frElColor;
-            ctx.font = '8px sans-serif';
-            ctx.fillText(`${analysis.score}pt`, x, y - 12);
+            ctx.font = 'bold 9px sans-serif';
+            ctx.fillText(`${analysis.score}pt`, x, y - 15);
         }
     });
 
@@ -1758,8 +1767,8 @@ window.renderFriendList = function () {
                     </div>
                 </div>
                 <div class="text-right">
-                    <div class="text-[22px] font-black text-white leading-none">${analysis.score}<span class="text-[10px] ml-0.5 text-white/40">점</span></div>
-                    <div class="mt-2 px-2 py-0.5 bg-primary/40 rounded-full text-white text-[9px] font-black uppercase tracking-widest border border-primary/20 shadow-[0_0_15px_rgba(59,130,246,0.2)]">Synergy</div>
+                    <div class="text-[24px] font-black text-white leading-none">${analysis.score}<span class="text-[10px] ml-0.5 text-white/50">점</span></div>
+                    <div class="mt-2 px-3 py-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-lg border border-white/20 shadow-lg">SYNERGY</div>
                 </div>
             </div>
         `;
