@@ -1602,53 +1602,63 @@ window.renderSynergyGalaxy = function (friends) {
 
     const time = Date.now() * 0.001;
 
-    // 1. [Permanent Sector Guides] 72-degree Intervals
+    // 2. [Permanent Sector Guides] 5대 섹터 가이드 (12시 기준 72도 분할)
+    const sectorLabels = ["지원군(인성)", "동료(비겁)", "창의(식상)", "성과(재성)", "성장(관성)"];
     for (let i = 0; i < 5; i++) {
-        const angle = (-90 + (i * 72)) * (Math.PI / 180);
+        const angle = (-90 + (i * 72)) * (Math.PI / 180); // 12시부터 시작
+
+        // 섹터 구분 점선 (항상 보임)
         ctx.beginPath();
-        ctx.setLineDash([2, 8]);
+        ctx.setLineDash([3, 6]);
         ctx.moveTo(centerX, centerY);
-        ctx.lineTo(centerX + 210 * Math.cos(angle), centerY + 210 * Math.sin(angle));
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineTo(centerX + 220 * Math.cos(angle), centerY + 220 * Math.sin(angle));
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)'; // 시인성 확보
         ctx.stroke();
+
+        // 섹터 이름 라벨 배치 (부채꼴 중앙 궤도 바깥)
+        const midAngle = (-54 + (i * 72)) * (Math.PI / 180);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(sectorLabels[i], centerX + 210 * Math.cos(midAngle), centerY + 210 * Math.sin(midAngle));
     }
     ctx.setLineDash([]);
 
-    // 2. [Atmospheric Sector Glow] Highlight active areas
+    // 3. [Atmospheric Sector Glow] 필터 활성화 시 하이라이트
     const activeSectors = [];
-    if (currentGalaxyFilter === 'boost') activeSectors.push(0, 2); // 지원군(1), 창의(3)
-    if (currentGalaxyFilter === 'challenge') activeSectors.push(3, 4); // 성과(4), 성장(5)
+    if (currentGalaxyFilter === 'boost') activeSectors.push(0, 2); // 지원군, 창의
+    if (currentGalaxyFilter === 'challenge') activeSectors.push(3, 4); // 성과, 성장
 
     activeSectors.forEach(sIdx => {
         const start = (-90 + (sIdx * 72)) * (Math.PI / 180);
         const end = start + (72 * (Math.PI / 180));
         ctx.beginPath();
         ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, 210, start, end);
+        ctx.arc(centerX, centerY, 200, start, end); // 강조 반경
         ctx.closePath();
-        const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 210);
+
+        const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 200);
         grad.addColorStop(0, 'transparent');
-        grad.addColorStop(1, currentGalaxyFilter === 'boost' ? 'rgba(52, 211, 153, 0.08)' : 'rgba(251, 191, 36, 0.08)');
+        const glowColor = currentGalaxyFilter === 'boost' ? 'rgba(52, 211, 153, 0.15)' : 'rgba(251, 191, 36, 0.15)';
+        grad.addColorStop(1, glowColor);
         ctx.fillStyle = grad;
         ctx.fill();
     });
 
-    // 3. [Curved Gravity Tiers] Arc-aligned labels
+    // 4. [Gravity Tiers] 동심원 및 곡선 라벨 (시인성 강화)
     tiers.forEach(tier => {
-        // Ring
         ctx.beginPath();
         ctx.arc(centerX, centerY, tier.r, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)'; // 라인 더 선명하게
         ctx.stroke();
 
-        // Curved Label (Positioned at top-right 45deg area)
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(45 * Math.PI / 180);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; // 글자 더 선명하게
         ctx.font = 'bold 9px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(tier.label, 0, -tier.r - 4);
+        ctx.fillText(tier.label, 0, -tier.r - 5);
         ctx.restore();
     });    // Draw Friends with Density Awareness
     friends.forEach((f, idx) => {
