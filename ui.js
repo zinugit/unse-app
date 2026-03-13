@@ -1617,10 +1617,11 @@ window.renderSynergyGalaxy = function (friends) {
 
         // 섹터 이름 라벨 배치 (부채꼴 중앙 궤도 바깥)
         const midAngle = (-54 + (i * 72)) * (Math.PI / 180);
+        const labelRadius = centerX * 0.82; // 210 대신 안전한 안쪽 반지름 설정
         ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
         ctx.font = 'bold 10px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(sectorLabels[i], centerX + 210 * Math.cos(midAngle), centerY + 210 * Math.sin(midAngle));
+        ctx.fillText(sectorLabels[i], centerX + labelRadius * Math.cos(midAngle), centerY + labelRadius * Math.sin(midAngle));
     }
     ctx.setLineDash([]);
 
