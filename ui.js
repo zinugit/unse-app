@@ -1602,47 +1602,55 @@ window.renderSynergyGalaxy = function (friends) {
 
     const time = Date.now() * 0.001;
 
-    // [New] Draw Sector Illumination (Premium Background Glow)
-    const sectorColors = {
-        boost: 'rgba(16, 185, 129, 0.08)', // Emerald
-        challenge: 'rgba(245, 158, 11, 0.08)' // Amber
-    };
-
-    if (currentGalaxyFilter !== 'all') {
-        const activeSectors = currentGalaxyFilter === 'boost' ? [0, 2] : [3, 4]; // 0:지원, 2:창의 vs 3:성과, 4:성장
-        activeSectors.forEach(sIdx => {
-            const startAngle = (-90 + (sIdx * 72)) * (Math.PI / 180);
-            const endAngle = ((-90 + (sIdx * 72)) + 72) * (Math.PI / 180);
-
-            const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 230);
-            grad.addColorStop(0, sectorColors[currentGalaxyFilter]);
-            grad.addColorStop(1, 'transparent');
-
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, 230, startAngle, endAngle);
-            ctx.closePath();
-            ctx.fillStyle = grad;
-            ctx.fill();
-        });
+    // 1. [Permanent Sector Guides] 72-degree Intervals
+    for (let i = 0; i < 5; i++) {
+        const angle = (-90 + (i * 72)) * (Math.PI / 180);
+        ctx.beginPath();
+        ctx.setLineDash([2, 8]);
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(centerX + 210 * Math.cos(angle), centerY + 210 * Math.sin(angle));
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.stroke();
     }
+    ctx.setLineDash([]);
 
-    // [New] Draw Gravity Rings (Improved Readability)
-    tiers.forEach((tier) => {
+    // 2. [Atmospheric Sector Glow] Highlight active areas
+    const activeSectors = [];
+    if (currentGalaxyFilter === 'boost') activeSectors.push(0, 2); // 지원군(1), 창의(3)
+    if (currentGalaxyFilter === 'challenge') activeSectors.push(3, 4); // 성과(4), 성장(5)
+
+    activeSectors.forEach(sIdx => {
+        const start = (-90 + (sIdx * 72)) * (Math.PI / 180);
+        const end = start + (72 * (Math.PI / 180));
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, 210, start, end);
+        ctx.closePath();
+        const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 210);
+        grad.addColorStop(0, 'transparent');
+        grad.addColorStop(1, currentGalaxyFilter === 'boost' ? 'rgba(52, 211, 153, 0.08)' : 'rgba(251, 191, 36, 0.08)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+    });
+
+    // 3. [Curved Gravity Tiers] Arc-aligned labels
+    tiers.forEach(tier => {
+        // Ring
         ctx.beginPath();
         ctx.arc(centerX, centerY, tier.r, 0, Math.PI * 2);
-        ctx.lineWidth = 0.5;
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-        ctx.setLineDash([1, 4]);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
         ctx.stroke();
 
-        // Tier Label (Floating and faint)
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-        ctx.font = '800 9px sans-serif';
+        // Curved Label (Positioned at top-right 45deg area)
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(45 * Math.PI / 180);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.font = 'bold 9px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(tier.label.toUpperCase(), centerX, centerY - tier.r - 8);
-    });
-    ctx.setLineDash([]);    // Draw Friends with Density Awareness
+        ctx.fillText(tier.label, 0, -tier.r - 4);
+        ctx.restore();
+    });    // Draw Friends with Density Awareness
     friends.forEach((f, idx) => {
         const analysis = SajuEngine.analyzeRelationship(userSajuData.pillars, f.pillars);
         if (!analysis) return;
@@ -1686,8 +1694,8 @@ window.renderSynergyGalaxy = function (friends) {
         // Pulse effect for high scores
         const pulse = (analysis.score > 90) ? Math.sin(time * 4) * 2 : 0;
 
-        // Specialized Mode Effects (Enhanced FX)
-        if (currentGalaxyFilter === 'boost' && isModeActive) { // Boost: Smooth Energy Flows
+        // Specialized Mode Effects
+        if (currentGalaxyFilter === 'boost' && isModeActive) { // Boost: Energy Flows
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
             ctx.quadraticCurveTo(
@@ -1700,46 +1708,36 @@ window.renderSynergyGalaxy = function (friends) {
             ctx.stroke();
         }
 
-        // Mode-Specific Star Particle Behavior
-        let modeSparkle = 0;
-        if (currentGalaxyFilter === 'challenge' && isModeActive) {
-            // Success Mode: Sharp Sparkle
-            modeSparkle = (Math.random() > 0.9) ? 15 : 0;
-        }
-
-        const modePulse = (currentGalaxyFilter === 'boost' && isModeActive) ? Math.sin(time * 6) * 3 : 0;
-
         // Glow (Enhanced for active modes)
-        const glowMult = isModeActive ? 1.8 : 1.0;
+        const glowMult = isModeActive ? 1.5 : 1.0;
         const activeGlow = glowRadius * glowMult;
 
         const gradient = ctx.createRadialGradient(x, y, 0, x, y, activeGlow);
         gradient.addColorStop(0, analysis.frElColor);
         if (currentGalaxyFilter === 'challenge' && isModeActive) {
-            gradient.addColorStop(0.2, '#fbbf24'); // Gold spark core
+            gradient.addColorStop(0.3, '#fbbf24'); // Gold spark for Challenge mode
         }
         gradient.addColorStop(1, 'transparent');
 
         ctx.fillStyle = gradient;
-        ctx.globalAlpha = (0.4 + Math.sin(time * 3 + idx) * 0.2) * displayAlpha;
+        ctx.globalAlpha = (0.5 + Math.sin(time * 3 + idx) * 0.2) * displayAlpha;
         ctx.beginPath();
-        ctx.arc(x, y, activeGlow + pulse + modePulse + modeSparkle, 0, Math.PI * 2);
+        ctx.arc(x, y, activeGlow + pulse, 0, Math.PI * 2);
         ctx.fill();
 
-        // Core star (Premium Rendering)
+        // Core star (Brighter and larger for high scores)
         ctx.globalAlpha = displayAlpha;
         ctx.fillStyle = '#ffffff';
-
-        // Shadow for premium depth
-        ctx.shadowBlur = (analysis.score > 90 || (isModeActive && currentGalaxyFilter !== 'all')) ? 20 : 0;
-        ctx.shadowColor = (currentGalaxyFilter === 'challenge' && isModeActive) ? '#fbbf24' : '#ffffff';
-
+        if (analysis.score > 90) {
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = (currentGalaxyFilter === 'challenge' && isModeActive) ? '#fbbf24' : '#ffffff';
+        }
         ctx.beginPath();
-        ctx.arc(x, y, starSize + (modePulse / 2), 0, Math.PI * 2);
+        ctx.arc(x, y, starSize, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
 
-        // Label (Clean & Professional)
+        // Label (High contrast)
         if (displayAlpha > 0.5) {
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 12px sans-serif';
@@ -1747,9 +1745,8 @@ window.renderSynergyGalaxy = function (friends) {
             ctx.fillText(f.name, x, y + 25);
 
             // Score Badge inside Galaxy
-            const badgeColor = (currentGalaxyFilter === 'challenge' && isModeActive) ? '#fbbf24' : analysis.frElColor;
-            ctx.fillStyle = badgeColor;
-            ctx.font = '900 10px sans-serif';
+            ctx.fillStyle = (currentGalaxyFilter === 'challenge' && isModeActive) ? '#fbbf24' : analysis.frElColor;
+            ctx.font = 'bold 9px sans-serif';
             ctx.fillText(`${analysis.score}pt`, x, y - 15);
         }
     });
