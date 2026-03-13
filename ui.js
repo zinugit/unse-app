@@ -1762,6 +1762,53 @@ window.renderSynergyGalaxy = function (friends) {
         }
     });
 
+    const sectorInfo = [
+        { title: "지원군 (인성)", desc: "나를 돕는 기운입니다. 든든한 멘토와 지원군이 여기에 위치합니다." },
+        { title: "동료 (비겁)", desc: "나와 같은 기운입니다. 함께 달리는 친구와 동료들이 위치합니다." },
+        { title: "창의 (식상)", desc: "내가 생(生)하는 기운입니다. 나의 재능을 발현시키는 인연들입니다." },
+        { title: "성과 (재성)", desc: "내가 다스리는 기운입니다. 실질적인 성취와 수익을 돕는 파트너입니다." },
+        { title: "성장 (관성)", desc: "나를 극(剋)하는 기운입니다. 나의 가치를 높이고 규율을 잡아주는 리더입니다." }
+    ];
+
+    canvas.onclick = function (e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left - (rect.width / 2);
+        const y = e.clientY - rect.top - (rect.height / 2);
+
+        // 1. 각도 판별 (12시 방향 기준 72도씩)
+        let angle = Math.atan2(y, x) * (180 / Math.PI) + 90;
+        if (angle < 0) angle += 360;
+        const sIdx = Math.floor(angle / 72) % 5;
+
+        // 2. 해당 섹터 인원수 실시간 계산
+        const count = friends.filter(f => {
+            const analysis = SajuEngine.analyzeRelationship(userSajuData.pillars, f.pillars);
+            return (analysis.orbit - 1) === sIdx;
+        }).length;
+
+        // 3. UI 업데이트 및 표시
+        const tooltip = document.getElementById('sector-tooltip');
+        if (!tooltip) return;
+
+        document.getElementById('tooltip-title').innerText = sectorInfo[sIdx].title;
+        document.getElementById('tooltip-desc').innerText = sectorInfo[sIdx].desc;
+        document.getElementById('tooltip-count').innerText = `${count}명`;
+
+        // 위치 조정 (터치 지점 상단에 오도록)
+        tooltip.style.left = `${e.clientX - rect.left - (tooltip.offsetWidth / 2)}px`;
+        tooltip.style.top = `${e.clientY - rect.top - tooltip.offsetHeight - 10}px`;
+
+        tooltip.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+        tooltip.classList.add('opacity-100', 'scale-100');
+
+        // 4초 후 자동 숨김
+        if (window.tooltipTimer) clearTimeout(window.tooltipTimer);
+        window.tooltipTimer = setTimeout(() => {
+            tooltip.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+            tooltip.classList.remove('opacity-100', 'scale-100');
+        }, 4000);
+    };
+
     if (document.getElementById('tab-network').classList.contains('active')) {
         requestAnimationFrame(() => renderSynergyGalaxy(friends));
     }
