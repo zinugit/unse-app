@@ -210,6 +210,7 @@ window.switchTab = function (tabId) {
     }
 
     if (tabId === 'tab-network') renderFriendList();
+    if (tabId === 'tab-meetup') renderMeetupUI();
     if (tabId === 'tab-saju') {
         // 기본 서브탭 활성화
         window.switchSajuSubTab('energy');
@@ -2199,3 +2200,116 @@ function resetGenderSelection() {
     if (solarRadio) solarRadio.checked = true;
 }
 window.resetGenderSelection = resetGenderSelection;
+
+/**
+ * [Synergy Meetup] UI Rendering
+ * 결합 로직: (나 + 상대)의 시너지 + 오늘의 일진(Energy)
+ */
+const MEETUP_PLACES_REPO = {
+    Wood: [
+        { name: "문정동 옥소반", category: "스키야키/한식", rating: 4.88, reviews: 1520, element: "Wood", img: "https://images.unsplash.com/photo-1547592166-23ac45744acd?q=80&w=400", desc: "신선한 야채와 고기가 어우러진 스키야키는 서로의 성장을 독려하는 비즈니스 미팅에 최적입니다." }
+    ],
+    Fire: [
+        { name: "송파 몽촌족발", category: "구이/족발", rating: 4.92, reviews: 2400, element: "Fire", img: "https://images.unsplash.com/photo-1544148103-0773bf10d330?q=80&w=400", desc: "화끈한 열기가 필요한 날, 에너지를 폭발적으로 끌어올려줄 최적의 메뉴입니다." }
+    ],
+    Earth: [
+        { name: "위례 정성솥밥", category: "한식솥밥", rating: 4.89, reviews: 760, element: "Earth", img: "https://images.unsplash.com/photo-1512058560366-cd2427ffec5d?q=80&w=400", desc: "묵묵히 서로를 지지해주는 신뢰의 미팅을 원하신다면 건강한 솥밥을 추천합니다." }
+    ],
+    Metal: [
+        { name: "테라타워 스시림", category: "오마카세", rating: 4.95, reviews: 620, element: "Metal", img: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=400", desc: "단호한 결단력이 필요한 비즈니스 미팅이라면 예리한 장인의 손길이 닿은 스시가 제격입니다." }
+    ],
+    Water: [
+        { name: "문정동 해물천하", category: "요리주점/해산물", rating: 4.86, reviews: 1150, element: "Water", img: "https://images.unsplash.com/photo-1534080564607-c980d494440f?q=80&w=400", desc: "막힌 생각의 흐름을 뚫어주는 시원한 해산물 요리와 함께 깊은 통찰을 나누어보세요." }
+    ]
+};
+
+function renderMeetupUI() {
+    const listContainer = document.getElementById('meetup-recommend-list');
+    if (!listContainer) return;
+
+    if (!friendList || friendList.length === 0) {
+        listContainer.innerHTML = `<div class="w-full py-12 text-center"><p class="text-white/30 text-sm">먼저 인연 리스트에 소중한 사람들을 추가해주세요.</p></div>`;
+        return;
+    }
+
+    const weeklyLuck = SajuEngine.getWeeklyTrend(userSajuData.pillars);
+    const todayLuck = weeklyLuck[2];
+    const recommendations = friendList.map(friend => {
+        const synAnalysis = SajuEngine.analyzeRelationship(userSajuData.pillars, friend.pillars);
+        const dailyVariation = (todayLuck.score - 50) / 10;
+        const totalScore = Math.min(100, Math.max(0, synAnalysis.score + dailyVariation));
+        return { friend, analysis: synAnalysis, totalScore };
+    }).sort((a, b) => b.totalScore - a.totalScore);
+
+    const MEETUP_ASSETS = {
+        Wood: { menu: "신선한 한정식/샐러드 🥗", emoji: "🌲" },
+        Fire: { menu: "화끈한 우대갈비/그릴요리 🍖", emoji: "🔥" },
+        Earth: { menu: "정갈한 솥밥/전통요리 🍲", emoji: "⛰️" },
+        Metal: { menu: "고급스러운 일식/사시미 🍣", emoji: "💎" },
+        Water: { menu: "풍성한 해산물/조개구이 🐚", emoji: "🌊" }
+    };
+
+    listContainer.innerHTML = recommendations.map((item) => {
+        const dmChar = item.friend.pillars.dayMaster.charAt(0);
+        const dmEl = FIVE_ELEMENTS[dmChar] || "Wood";
+        const assets = MEETUP_ASSETS[dmEl];
+        const place = MEETUP_PLACES_REPO[dmEl][0];
+
+        return `
+            <div class="snap-start min-w-[300px] bg-white/5 rounded-[32px] border border-white/10 p-6 relative overflow-hidden flex-shrink-0 active:scale-[0.98] transition-all cursor-pointer"
+                 onclick="openMeetupDetail('${dmEl}', 0, '${item.friend.name}')">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="size-14 rounded-2xl bg-white/10 flex items-center justify-center border border-white/10 overflow-hidden">
+                         <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=${item.friend.name}" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h5 class="text-white font-bold text-base">${item.friend.name}님</h5>
+                        <p class="text-primary-light text-[11px] font-black uppercase tracking-widest">${item.analysis.orbitName}</p>
+                    </div>
+                    <div class="ml-auto text-right">
+                        <span class="text-2xl font-black text-white">${Math.floor(item.totalScore)}</span>
+                        <span class="text-[10px] text-white/30 block tracking-tighter">SYNERGY</span>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-white/5 rounded-2xl p-4 min-h-[64px] flex items-center">
+                        <p class="text-[12px] text-white/70 leading-relaxed break-keep">"${item.friend.name}님과 함께 ${assets.emoji} ${assets.menu}를 즐기며 시너지를 내보세요."</p>
+                    </div>
+                    <div class="flex flex-col gap-2 pt-2 text-[12px]">
+                        <div class="flex items-center justify-between"><span class="text-white/40">추천 메뉴</span><span class="text-white font-bold">${assets.menu}</span></div>
+                        <div class="flex items-center justify-between"><span class="text-white/40">추천 장소</span><span class="text-white font-bold">${place.name}</span></div>
+                    </div>
+                </div>
+                <div class="mt-6"><button class="w-full py-3 bg-primary/20 text-primary-light text-[13px] font-bold rounded-xl border border-primary/20 transition-colors pointer-events-none">상세 및 제안하기</button></div>
+            </div>
+        `;
+    }).join('');
+}
+
+window.openMeetupDetail = function (el, placeIdx, friendName) {
+    const place = MEETUP_PLACES_REPO[el][placeIdx];
+    if (!place) return;
+    document.getElementById('meetup-place-img').src = place.img;
+    document.getElementById('meetup-place-name').innerText = place.name;
+    document.getElementById('meetup-place-category').innerText = place.category;
+    document.getElementById('meetup-place-rating').innerText = place.rating;
+    document.getElementById('meetup-place-reviews').innerText = place.reviews.toLocaleString() + "+";
+    document.getElementById('meetup-place-element').innerText = place.element;
+    document.getElementById('meetup-place-desc').innerText = `${friendName}님과 ${place.name}에서 만날 때 가장 좋은 이유는: ${place.desc}`;
+
+    const modal = document.getElementById('meetup-detail-sheet');
+    const content = document.getElementById('meetup-detail-content');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => content.classList.remove('translate-y-full'), 10);
+};
+
+window.closeMeetupDetail = function () {
+    const content = document.getElementById('meetup-detail-content');
+    content.classList.add('translate-y-full');
+    setTimeout(() => {
+        const modal = document.getElementById('meetup-detail-sheet');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }, 500);
+};

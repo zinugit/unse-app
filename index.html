@@ -26,6 +26,7 @@
                 extend: {
                     colors: {
                         "primary": "#256af4",
+                        "primary-light": "#60a5fa",
                         "background-light": "#f5f6f8",
                         "background-dark": "#101622",
                         "saju-wood": "#4ade80",
@@ -1227,6 +1228,92 @@
         </div>
 
         <!-- ========================================== -->
+        <!-- TAB 5: 시너지 밋업 (Synergy Meetup)           -->
+        <!-- ========================================== -->
+        <section id="tab-meetup" class="screen pb-24 overflow-y-auto no-scrollbar relative bg-[#0f172a] hidden">
+            <header
+                class="fixed top-0 left-1/2 -translate-x-1/2 z-[60] w-full max-w-md bg-slate-900/80 backdrop-blur-md border-b border-white/5 px-4 flex items-center justify-between"
+                style="height: calc(56px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top);">
+                <button class="p-2 -ml-2 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white/70 text-[24px]">menu</span>
+                </button>
+                <h1 class="text-[17px] font-bold tracking-tight absolute left-1/2 -translate-x-1/2 text-white">시너지 밋업
+                </h1>
+                <button class="p-2 -mr-2 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white/70 text-[24px]">settings</span>
+                </button>
+            </header>
+
+            <main class="flex-1 pt-4" style="padding-top: calc(16px + env(safe-area-inset-top));">
+                <!-- 1. 밋업 타임라인 (Horizontal Chips) -->
+                <section class="px-5 mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-white font-bold text-base">밋업 타임라인</h3>
+                        <span class="text-primary-light text-xs font-medium">이번 주 황금 라인업</span>
+                    </div>
+                    <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                        <button
+                            class="whitespace-nowrap px-5 py-2.5 rounded-full bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20">오늘
+                            (3/13)</button>
+                        <button
+                            class="whitespace-nowrap px-5 py-2.5 rounded-full bg-white/5 text-white/40 text-sm font-bold border border-white/5">내일
+                            (3/14)</button>
+                        <button
+                            class="whitespace-nowrap px-5 py-2.5 rounded-full bg-white/5 text-white/40 text-sm font-bold border border-white/5">일요일
+                            (3/15)</button>
+                        <button
+                            class="whitespace-nowrap px-5 py-2.5 rounded-full bg-white/5 text-white/40 text-sm font-bold border border-white/5">다음
+                            주 월요일</button>
+                    </div>
+                </section>
+
+                <!-- 2. 인연 큐레이션 (Theme Selection) -->
+                <section class="px-5 mb-10">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div
+                            class="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 p-5 rounded-[28px] border border-white/10 relative overflow-hidden group active:scale-95 transition-all">
+                            <span class="material-symbols-outlined text-indigo-400 mb-3">trending_up</span>
+                            <h4 class="text-white font-bold text-[15px] mb-1">비즈니스 성과</h4>
+                            <p class="text-white/40 text-[11px] leading-tight break-keep">성과를 극대화하는<br>상극 섹터 귀인 추천</p>
+                            <div
+                                class="absolute -right-2 -bottom-2 opacity-10 rotate-12 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-[60px] text-white">work</span>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-gradient-to-br from-emerald-500/20 to-teal-500/20 p-5 rounded-[28px] border border-white/10 relative overflow-hidden group active:scale-95 transition-all">
+                            <span class="material-symbols-outlined text-emerald-400 mb-3">favorite</span>
+                            <h4 class="text-white font-bold text-[15px] mb-1">힐링 & 충전</h4>
+                            <p class="text-white/40 text-[11px] leading-tight break-keep">지친 나를 보듬어주는<br>상생 섹터 지원군 미팅
+                            </p>
+                            <div
+                                class="absolute -right-2 -bottom-2 opacity-10 rotate-12 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-[60px] text-white">eco</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. 오늘의 픽 컨텐츠 AREA (Horizontal Snap Scroll) -->
+                <section class="mb-4">
+                    <div class="px-5 flex items-center justify-between mb-5">
+                        <h3 class="text-white font-black text-lg tracking-tight">오늘 최고의 시너지 PIK!</h3>
+                        <div class="flex gap-1">
+                            <span class="size-1 rounded-full bg-primary"></span>
+                            <span class="size-1 rounded-full bg-white/20"></span>
+                            <span class="size-1 rounded-full bg-white/20"></span>
+                        </div>
+                    </div>
+
+                    <div id="meetup-recommend-list"
+                        class="flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar px-5">
+                        <!-- Dynamic content will be injected here by renderMeetupUI() -->
+                    </div>
+                </section>
+            </main>
+        </section>
+
+        <!-- ========================================== -->
         <!-- TAB 4: 프리미엄 맞춤 부적 생성               -->
         <!-- ========================================== -->
         <section id="tab-amulet"
@@ -1363,28 +1450,34 @@
         <nav
             class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 px-2 pb-6 pt-3 flex justify-around items-center z-50">
             <button type="button"
-                class="nav-link active flex flex-col items-center gap-1.5 px-2 py-1 text-primary animate-in fade-in zoom-in duration-300"
+                class="nav-link active flex flex-col items-center gap-1.5 px-1 py-1 text-primary transition-all duration-300"
                 data-target="tab-saju">
-                <span class="material-symbols-outlined text-[26px] fill-1">calendar_today</span>
-                <span class="nav-text text-[11px] font-bold">내 사주</span>
+                <span class="material-symbols-outlined text-[24px]">calendar_today</span>
+                <span class="nav-text text-[10px] font-bold">내 사주</span>
             </button>
             <button type="button"
-                class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
+                class="nav-link flex flex-col items-center gap-1.5 px-1 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
                 data-target="tab-guide">
-                <span class="material-symbols-outlined text-[28px]">auto_awesome</span>
-                <span class="nav-text text-[11px] font-medium">오늘의 운세</span>
+                <span class="material-symbols-outlined text-[24px]">auto_awesome</span>
+                <span class="nav-text text-[10px] font-medium">오늘운세</span>
             </button>
             <button type="button"
-                class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
+                class="nav-link flex flex-col items-center gap-1.5 px-1 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
                 data-target="tab-network">
-                <span class="material-symbols-outlined text-[26px]">groups</span>
-                <span class="nav-text text-[11px] font-medium">인연</span>
+                <span class="material-symbols-outlined text-[24px]">groups</span>
+                <span class="nav-text text-[10px] font-medium">인연</span>
             </button>
             <button type="button"
-                class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
+                class="nav-link flex flex-col items-center gap-1.5 px-1 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
+                data-target="tab-meetup">
+                <span class="material-symbols-outlined text-[24px]">event_upcoming</span>
+                <span class="nav-text text-[10px] font-medium">밋업</span>
+            </button>
+            <button type="button"
+                class="nav-link flex flex-col items-center gap-1.5 px-1 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
                 data-target="tab-amulet">
-                <span class="material-symbols-outlined text-[26px]">magic_button</span>
-                <span class="nav-text text-[11px] font-medium">부적</span>
+                <span class="material-symbols-outlined text-[24px]">magic_button</span>
+                <span class="nav-text text-[10px] font-medium">부적</span>
             </button>
         </nav>
 
@@ -1530,6 +1623,77 @@
                 </button>
             </div>
         </div>
+        <!-- Meetup Place Detail Bottom Sheet -->
+        <div id="meetup-detail-sheet" class="fixed inset-0 z-[120] hidden items-end justify-center">
+            <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onclick="closeMeetupDetail()"></div>
+            <div id="meetup-detail-content"
+                class="relative w-full max-w-md bg-slate-900 rounded-t-[32px] overflow-hidden shadow-2xl border-t border-white/10 transform translate-y-full transition-transform duration-500 ease-out">
+
+                <!-- Handle Bar -->
+                <div class="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1 bg-white/20 rounded-full z-10"></div>
+
+                <!-- Place Image Preview -->
+                <div class="h-48 w-full bg-slate-800 relative">
+                    <img id="meetup-place-img" src="" class="w-full h-full object-cover opacity-60">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div>
+                    <div class="absolute bottom-4 left-6">
+                        <span id="meetup-place-category"
+                            class="bg-primary/20 text-primary-light text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-widest mb-2 inline-block">Category</span>
+                        <h3 id="meetup-place-name" class="text-2xl font-black text-white tracking-tight">Place Name</h3>
+                    </div>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <!-- Metrics -->
+                    <div class="flex items-center gap-6">
+                        <div class="text-center">
+                            <p class="text-[10px] text-white/30 font-black uppercase tracking-widest mb-1">Naver Rating
+                            </p>
+                            <div class="flex items-baseline gap-1">
+                                <span id="meetup-place-rating" class="text-xl font-black text-white">4.8</span>
+                                <span class="text-[10px] text-emerald-400 font-bold">TOP 3</span>
+                            </div>
+                        </div>
+                        <div class="w-px h-8 bg-white/10"></div>
+                        <div class="text-center">
+                            <p class="text-[10px] text-white/30 font-black uppercase tracking-widest mb-1">Reviews</p>
+                            <span id="meetup-place-reviews" class="text-xl font-black text-white">1,240+</span>
+                        </div>
+                        <div class="w-px h-8 bg-white/10"></div>
+                        <div class="text-center">
+                            <p class="text-[10px] text-white/30 font-black uppercase tracking-widest mb-1">Element</p>
+                            <span id="meetup-place-element" class="text-xl font-black text-primary-light">Water</span>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/5">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="material-symbols-outlined text-primary-light text-[20px]">info</span>
+                            <h4 class="text-sm font-bold text-white">추천 사유</h4>
+                        </div>
+                        <p id="meetup-place-desc" class="text-white/60 text-[13px] leading-relaxed break-keep">
+                            두 분의 공통적인 부족 기운을 보완하며, 비즈니스 대화가 자연스럽게 이어질 수 있는 프라이빗한 공간입니다.
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-2 gap-3 pb-4">
+                        <button onclick="window.open('https://map.naver.com')"
+                            class="h-14 bg-white/5 text-white/70 font-bold rounded-2xl border border-white/10 flex items-center justify-center gap-2 active:scale-95 transition-all">
+                            <span class="material-symbols-outlined text-[20px]">map</span>
+                            네이버 지도
+                        </button>
+                        <button
+                            class="h-14 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 active:scale-95 transition-all">
+                            <span class="material-symbols-outlined text-[20px]">event_available</span>
+                            바로 예약하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </body>
 
