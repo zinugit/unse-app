@@ -1612,7 +1612,8 @@ window.renderSynergyGalaxy = function (friends) {
         const sunDMText = document.getElementById('user-sun-dm');
         if (sunDMText) {
             sunDMText.innerText = userDM;
-            sunDMText.style.opacity = sunBrightness; // 글자도 같이 맥동
+            sunDMText.style.zIndex = "30"; // 광원 효과보다 위에 배치
+            sunDMText.style.opacity = "1"; // 항상 선명하게 유지
         }
     }
 
