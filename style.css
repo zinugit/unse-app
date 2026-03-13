@@ -1392,24 +1392,30 @@ textarea#user-concern {
     color: #ffffff !important;
 }
 
-/* [Galaxy Sun Enhancement] */
+/* [Galaxy Enhancement] */
+#galaxy-view-container {
+    background: radial-gradient(circle at center, #111827 0%, #05070A 100%) !important;
+    position: relative;
+    overflow: hidden;
+}
+
 @keyframes sun-pulse {
     0% {
         transform: scale(1);
-        box-shadow: 0 0 25px var(--sun-glow);
-        opacity: 0.8;
+        box-shadow: 0 0 30px var(--sun-glow), 0 0 15px rgba(255, 255, 255, 0.1);
+        opacity: 0.9;
     }
 
     50% {
-        transform: scale(1.1);
-        box-shadow: 0 0 65px var(--sun-glow);
+        transform: scale(1.15);
+        box-shadow: 0 0 80px var(--sun-glow), 0 0 30px rgba(255, 255, 255, 0.3);
         opacity: 1;
     }
 
     100% {
         transform: scale(1);
-        box-shadow: 0 0 25px var(--sun-glow);
-        opacity: 0.8;
+        box-shadow: 0 0 30px var(--sun-glow), 0 0 15px rgba(255, 255, 255, 0.1);
+        opacity: 0.9;
     }
 }
 
@@ -1420,7 +1426,6 @@ textarea#user-concern {
     align-items: center;
     justify-content: center;
     position: relative;
-    z-index: 50;
-    /* 캔버스보다 확실히 위에 오도록 설정 */
+    z-index: 50 !important;
     transition: background-color 0.5s ease;
 }
