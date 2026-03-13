@@ -210,8 +210,36 @@ window.switchTab = function (tabId) {
     }
 
     if (tabId === 'tab-network') renderFriendList();
+    if (tabId === 'tab-saju') {
+        // 기본 서브탭 활성화
+        window.switchSajuSubTab('energy');
+    }
 
     window.scrollTo({ top: 0, behavior: 'instant' });
+};
+
+window.switchSajuSubTab = function (subTabId) {
+    // 탭 버튼 스타일 업데이트
+    const buttons = document.querySelectorAll('.saju-sub-tab');
+    buttons.forEach(btn => {
+        btn.classList.remove('active', 'text-primary', 'border-primary');
+        btn.classList.add('text-slate-400', 'border-transparent');
+    });
+
+    const activeBtn = document.querySelector(`.saju-sub-tab[onclick*="'${subTabId}'"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active', 'text-primary', 'border-primary');
+        activeBtn.classList.remove('text-slate-400', 'border-transparent');
+    }
+
+    // 컨텐츠 표시 업데이트
+    const contentPanes = document.querySelectorAll('#saju-sub-content > div');
+    contentPanes.forEach(pane => pane.classList.add('hidden'));
+
+    const targetPane = document.getElementById(`sub-tab-${subTabId}`);
+    if (targetPane) {
+        targetPane.classList.remove('hidden');
+    }
 };
 
 function handleSajuAnalysis() {
@@ -552,6 +580,42 @@ function updateModernTraitUI(info) {
     if (summaryEl) {
         summaryEl.innerHTML = `<span class="font-bold text-primary">총평:</span> ${info.comprehensiveDesc}`;
     }
+
+    // --- 추가: 기질 분석 통합 섹션 업데이트 ---
+    const traitSlogan = document.getElementById('trait-slogan');
+    if (traitSlogan) traitSlogan.innerText = info.slogan;
+
+    const traitSummary = document.getElementById('trait-summary');
+    if (traitSummary) traitSummary.innerText = info.desc;
+
+    const traitCoreHanja = document.getElementById('trait-core-hanja');
+    if (traitCoreHanja) traitCoreHanja.innerText = userSajuData.pillars.dayMaster.charAt(0);
+
+    const traitCoreDesc = document.getElementById('trait-core-desc');
+    if (traitCoreDesc) traitCoreDesc.innerText = info.coreDesc;
+
+    const traitFunctionalTitle = document.getElementById('trait-functional-title');
+    if (traitFunctionalTitle) traitFunctionalTitle.innerText = info.title;
+
+    const traitFunctionalDesc = document.getElementById('trait-functional-desc');
+    if (traitFunctionalDesc) traitFunctionalDesc.innerText = info.desc;
+
+    const traitComprehensive = document.getElementById('trait-comprehensive');
+    if (traitComprehensive) traitComprehensive.innerText = info.comprehensiveDesc;
+
+    const traitKeywords = document.getElementById('trait-keywords');
+    if (traitKeywords && info.hashtags) {
+        traitKeywords.innerHTML = info.hashtags.map(tag =>
+            `<span class="px-3 py-1 bg-slate-50 text-slate-500 text-[12px] font-bold rounded-full border border-slate-100">${tag}</span>`
+        ).join('');
+
+        // 목표 스타일 칩 업데이트
+        const chip1 = document.getElementById('flow-chip-value-1');
+        const chip2 = document.getElementById('flow-chip-value-2');
+        if (chip1 && info.hashtags[0]) chip1.innerText = info.hashtags[0];
+        if (chip2 && info.hashtags[1]) chip2.innerText = info.hashtags[1];
+    }
+    // ----------------------------------------
 
     // 나머지 데이터 렌더링 호출
     renderSajuGrid(userSajuData.pillars);

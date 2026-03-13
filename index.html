@@ -152,6 +152,18 @@
             font-weight: 700;
         }
 
+        /* My Saju Sub-Tabs */
+        .saju-sub-tab.active {
+            color: #256af4;
+            border-color: #256af4;
+            opacity: 1;
+        }
+
+        .saju-sub-tab {
+            transition: all 0.2s ease;
+            opacity: 0.6;
+        }
+
         /* Modals */
         .modal {
             display: none;
@@ -354,201 +366,211 @@
         <!-- ========================================== -->
         <!-- TAB 1: 내 사주 (Stitch ui_1)                 -->
         <!-- ========================================== -->
-        <section id="tab-saju" class="screen active pb-24 overflow-y-auto no-scrollbar relative bg-white">
-            <header
-                class="fixed top-0 left-1/2 -translate-x-1/2 z-[60] w-full max-w-md bg-white/98 backdrop-blur-md border-b border-slate-100 px-4 flex items-center justify-between"
-                style="height: calc(56px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top);">
-                <button class="p-2 -ml-2 rounded-full flex items-center justify-center">
-                    <span class="material-symbols-outlined text-slate-700 text-[24px]">menu</span>
-                </button>
-                <h1 class="text-[17px] font-bold tracking-tight absolute left-1/2 -translate-x-1/2 text-slate-900">내 사주
-                </h1>
-                <button class="p-2 -mr-2 rounded-full flex items-center justify-center">
-                    <span class="material-symbols-outlined text-slate-700 text-[24px]">settings</span>
-                </button>
-            </header>
+        <section id="tab-saju" class="screen active pb-24 overflow-y-auto no-scrollbar relative bg-[#f8f9fb]">
+            <!-- [1] 상단 고정 영역 (Profile + Grid) -->
+            <div id="saju-header-static" class="bg-white">
+                <header
+                    class="fixed top-0 left-1/2 -translate-x-1/2 z-[60] w-full max-w-md bg-white/98 backdrop-blur-md border-b border-slate-50 px-4 flex items-center justify-between"
+                    style="height: calc(56px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top);">
+                    <button class="p-2 -ml-2 rounded-full flex items-center justify-center">
+                        <span class="material-symbols-outlined text-slate-700 text-[24px]">menu</span>
+                    </button>
+                    <h1 class="text-[17px] font-bold tracking-tight absolute left-1/2 -translate-x-1/2 text-slate-900">내
+                        사주</h1>
+                    <button class="p-2 -mr-2 rounded-full flex items-center justify-center">
+                        <span class="material-symbols-outlined text-slate-700 text-[24px]">settings</span>
+                    </button>
+                </header>
 
-            <section class="px-6 pb-6 bg-white" style="padding-top: calc(16px + env(safe-area-inset-top));">
-                <div class="flex items-center gap-6">
-                    <div class="relative shrink-0">
-                        <div
-                            class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
-                            <img id="profile-avatar" src="" class="w-full h-full object-cover bg-slate-200">
+                <section class="px-6 pb-6 bg-white" style="padding-top: calc(16px + env(safe-area-inset-top));">
+                    <div class="flex items-center gap-6">
+                        <div class="relative shrink-0">
+                            <div
+                                class="w-20 h-20 rounded-[28px] bg-primary/5 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
+                                <img id="profile-avatar" src="" class="w-full h-full object-cover bg-slate-100">
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex-1 min-w-0 py-1">
-                        <div class="flex flex-col space-y-2">
-                            <h2 class="text-2xl font-bold tracking-tight text-slate-900 leading-tight">
+                        <div class="flex-1 min-w-0">
+                            <h2 class="text-2xl font-black tracking-tight text-slate-900 leading-none mb-2">
                                 <span id="display-user-name">--</span>님
                             </h2>
-                            <div class="flex">
+                            <div class="flex mb-2">
                                 <span id="display-dm-badge"
-                                    class="bg-primary/10 text-primary text-[11px] px-3 py-1 rounded-full font-bold border border-primary/20 shrink-0">
+                                    class="bg-primary/10 text-primary text-[10px] px-2.5 py-1 rounded-lg font-black border border-primary/20 shrink-0 uppercase tracking-wider">
                                     --
                                 </span>
                             </div>
-                            <p id="display-birth-info" class="text-slate-500 text-[13px] font-medium tracking-tight">
+                            <p id="display-birth-info" class="text-slate-400 text-[12px] font-bold tracking-tight">
                                 ----년 --월 --일 · --
                             </p>
                         </div>
-                        <div id="display-user-slogan" class="hidden"></div>
                     </div>
-                </div>
-            </section>
-
-            <div class="bg-[#f5f7fa] min-h-screen border-t border-slate-100">
-                <section class="px-4 py-6">
-                    <div class="flex items-center justify-between mb-4 px-1">
-                        <h3 class="text-lg font-bold text-slate-900">사주명식</h3>
-                        <span class="text-xs text-primary font-medium flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm">info</span> 만세력 기준
-                        </span>
-                    </div>
-                    <div id="saju-grid-container" class="grid grid-cols-4 gap-2"></div>
                 </section>
 
-                <section class="px-4 pb-10">
-                    <div class="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100">
-                        <h3 class="font-bold text-base mb-6 text-slate-900">오행 밸런스 상세 분석</h3>
-                        <div id="element-balance-list" class="space-y-5"></div>
-                        <div class="mt-8 p-4 bg-primary/5 rounded-xl border border-primary/10">
-                            <p id="saju-comprehensive-summary"
-                                class="text-sm leading-relaxed text-slate-700 font-medium">
-                            </p>
+                <section class="px-4 pb-6">
+                    <div id="saju-grid-card" class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                        <div class="flex items-center justify-between mb-4 px-1">
+                            <h3 class="text-[15px] font-black text-slate-800 tracking-tight">사주명식 <span
+                                    class="text-[10px] font-normal text-slate-400 ml-1 uppercase tracking-widest">Pillars</span>
+                            </h3>
+                            <span
+                                class="text-[10px] text-primary/60 font-bold flex items-center gap-1 bg-primary/5 px-2 py-1 rounded-md">
+                                <span class="material-symbols-outlined text-[14px]">info</span> 만세력 기준
+                            </span>
                         </div>
+                        <div id="saju-grid-container" class="grid grid-cols-4 gap-2.5"></div>
                     </div>
                 </section>
             </div>
-        </section>
 
-        <!-- ========================================== -->
-        <!-- TAB 2: 기질 분석 (Stitch ui_2)               -->
-        <!-- ========================================== -->
-        <section id="tab-trait" class="screen pb-24 overflow-y-auto no-scrollbar relative bg-white hidden">
-            <header
-                class="fixed top-0 left-1/2 -translate-x-1/2 z-[60] w-full max-w-md bg-white/98 backdrop-blur-md border-b border-slate-100 px-4 flex items-center justify-between"
-                style="height: calc(56px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top);">
-                <button class="p-2 -ml-2 rounded-full flex items-center justify-center">
-                    <span class="material-symbols-outlined text-slate-700 text-[24px]">menu</span>
-                </button>
-                <h1 class="text-[17px] font-bold tracking-tight absolute left-1/2 -translate-x-1/2 text-slate-900">기질 분석
-                </h1>
-                <button class="p-2 -mr-2 rounded-full flex items-center justify-center">
-                    <span class="material-symbols-outlined text-slate-700 text-[24px]">settings</span>
-                </button>
-            </header>
+            <!-- [2] 중단 탭 네비게이션 (Sticky) -->
+            <div id="saju-sub-tabs"
+                class="sticky top-[calc(56px+env(safe-area-inset-top))] z-[55] bg-white/95 backdrop-blur-md border-b border-slate-100 flex px-2 overflow-x-auto no-scrollbar shadow-sm">
+                <button onclick="switchSajuSubTab('energy')"
+                    class="saju-sub-tab active flex-1 py-4 text-[13px] font-extrabold text-primary border-b-2 border-primary transition-all">에너지
+                    분석</button>
+                <button onclick="switchSajuSubTab('essence')"
+                    class="saju-sub-tab flex-1 py-4 text-[13px] font-extrabold text-slate-400 border-b-2 border-transparent transition-all">본질
+                    분석</button>
+                <button onclick="switchSajuSubTab('flow')"
+                    class="saju-sub-tab flex-1 py-4 text-[13px] font-extrabold text-slate-400 border-b-2 border-transparent transition-all">운의
+                    흐름</button>
+            </div>
 
-            <main class="space-y-4" style="padding-top: calc(16px + env(safe-area-inset-top));">
-                <!-- Top Graphic -->
-                <div class="flex flex-col items-center pt-2">
-                    <div class="relative mb-4 mt-2">
-                        <div
-                            class="w-24 h-24 rounded-full bg-gradient-to-tr from-[#89b4f8] to-primary flex items-center justify-center border-4 border-white shadow-md overflow-hidden">
-                            <span class="material-symbols-outlined text-white text-[48px] fill-icon">diamond</span>
-                        </div>
-                        <div
-                            class="absolute bottom-0 right-0 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow border border-slate-100/50">
-                            <span class="material-symbols-outlined text-primary text-[14px] fill-icon">star</span>
-                        </div>
-                    </div>
-                    <h2 id="trait-profile-name" class="text-[22px] font-bold mb-1 text-slate-800">홍길동님</h2>
-                    <p id="trait-profile-desc" class="text-slate-400 text-[13px]">- 기질</p>
-                </div>
-
-                <!-- Theme Slogan -->
-                <div class="px-5">
-                    <div
-                        class="relative overflow-hidden rounded-2xl bg-[#f8faff] p-6 shadow-sm border border-[#f0f4ff]">
-                        <div class="relative z-10">
-                            <div
-                                class="inline-block px-3 py-1 rounded-full bg-[#e6edff] text-primary text-[11px] font-bold mb-4">
-                                성격 테마</div>
-                            <h3 id="trait-slogan"
-                                class="text-[19px] font-bold text-slate-900 mb-3 leading-snug tracking-tight">-</h3>
-                            <p id="trait-summary" class="text-slate-600 text-[13px] leading-relaxed break-keep">-</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Core Energy -->
-                <div class="px-5">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="material-symbols-outlined text-primary text-[22px] fill-icon">bolt</span>
-                        <h3 class="text-[17px] font-bold text-slate-800 tracking-tight">코어 에너지</h3>
-                    </div>
-                    <div class="bg-[#f8faff] rounded-2xl p-5 border border-[#f0f4ff] shadow-sm">
-                        <div class="flex items-start gap-4">
-                            <div
-                                class="w-12 h-12 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm border border-slate-100">
-                                <span id="trait-core-hanja" class="text-primary text-[24px] font-bold">-</span>
+            <!-- [3] 하단 상세 영역 -->
+            <div id="saju-sub-content" class="py-6 min-h-[50vh]">
+                <!-- 탭 1: 에너지 분석 (오행) -->
+                <div id="sub-tab-energy" class="space-y-6">
+                    <section class="px-4">
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                            <div class="flex items-center gap-2 mb-6">
+                                <div class="w-1 h-4 bg-primary rounded-full"></div>
+                                <h3 class="font-black text-[16px] text-slate-800 tracking-tight">오행 밸런스 상세 분석</h3>
                             </div>
-                            <p id="trait-core-desc"
-                                class="text-slate-700 text-[13.5px] leading-[1.6] break-keep tracking-tight pt-1">-</p>
+                            <div id="element-balance-list" class="space-y-5"></div>
                         </div>
-                    </div>
+                    </section>
                 </div>
 
-                <!-- Goal Style -->
-                <div class="px-5">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="material-symbols-outlined text-primary text-[22px] fill-icon">radar</span>
-                        <h3 class="text-[17px] font-bold text-slate-800 tracking-tight">목표 달성 스타일</h3>
-                    </div>
-                    <div
-                        class="bg-white rounded-2xl p-6 border border-slate-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)]">
-                        <div class="flex gap-2 items-center mb-4">
-                            <div class="bg-[#e0f8e9] text-[#16a34a] p-1.5 rounded-full mr-1">
-                                <span class="material-symbols-outlined text-[20px] fill-icon">trending_up</span>
+                <!-- 탭 2: 본질 분석 (기질) -->
+                <div id="sub-tab-essence" class="hidden space-y-6">
+                    <!-- 종합 리포트 카드 -->
+                    <section class="px-4">
+                        <div class="bg-primary p-6 rounded-[32px] shadow-lg shadow-primary/20 relative overflow-hidden">
+                            <div class="relative z-10">
+                                <div class="flex items-center gap-1.5 mb-3 opacity-60">
+                                    <span class="material-symbols-outlined text-[14px] text-white">auto_awesome</span>
+                                    <p class="text-white text-[10px] font-black uppercase tracking-[0.2em]">
+                                        Comprehensive
+                                        Report</p>
+                                </div>
+                                <p id="saju-comprehensive-summary"
+                                    class="text-white text-[17px] font-bold leading-relaxed break-keep">
+                                    분석 준비 중입니다...
+                                </p>
+                            </div>
+                            <div class="absolute -right-6 -bottom-6 opacity-10 rotate-12">
+                                <span class="material-symbols-outlined text-[120px] text-white">psychology</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 성격 테마 -->
+                    <section class="px-4">
+                        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                            <div class="flex items-center gap-2 mb-4">
+                                <h3 class="text-[12px] font-black text-primary uppercase tracking-widest">Theme Slogan
+                                </h3>
+                            </div>
+                            <h3 id="trait-slogan"
+                                class="text-[19px] font-black text-slate-900 mb-2 break-keep leading-tight">
+                                -</h3>
+                            <p id="trait-summary" class="text-slate-500 text-[13px] leading-relaxed break-keep">-</p>
+                        </div>
+                    </section>
+
+                    <!-- 코어 에너지 -->
+                    <section class="px-4">
+                        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                            <div class="flex items-center gap-2 mb-4">
+                                <h3 class="text-[12px] font-black text-primary uppercase tracking-widest">Core Energy
+                                </h3>
+                            </div>
+                            <div class="flex items-start gap-5">
+                                <div class="size-16 rounded-2xl bg-primary/5 flex items-center justify-center shrink-0">
+                                    <span id="trait-core-hanja" class="text-primary text-[28px] font-bold">-</span>
+                                </div>
+                                <div class="flex-1">
+                                    <p id="trait-core-desc"
+                                        class="text-slate-600 text-[14px] leading-relaxed break-keep pt-1">
+                                        -
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 목표 스타일 -->
+                    <section class="px-4">
+                        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-[12px] font-black text-primary uppercase tracking-widest">Goal Style
+                                </h3>
+                                <div class="flex gap-1">
+                                    <span class="size-1 rounded-full bg-primary/20"></span>
+                                    <span class="size-1 rounded-full bg-primary/40"></span>
+                                    <span class="size-1 rounded-full bg-primary"></span>
+                                </div>
                             </div>
                             <span id="trait-functional-title"
-                                class="font-bold text-[16px] text-slate-800 tracking-tight">-</span>
-                        </div>
-                        <p id="trait-functional-desc"
-                            class="text-slate-600 text-[13.5px] leading-[1.6] tracking-tight mb-4 break-keep">-</p>
-
-                        <div class="grid grid-cols-2 gap-3 mt-2">
-                            <div
-                                class="bg-[#fafbfc] rounded-xl py-3.5 flex flex-col items-center justify-center border border-slate-100/50">
-                                <span id="flow-chip-title-1"
-                                    class="text-[11px] text-slate-400 font-medium mb-1 tracking-tight">아이디어</span>
-                                <span id="flow-chip-value-1" class="text-primary text-[13px] font-bold">-</span>
+                                class="inline-block text-[14px] font-black text-slate-900 mb-3">-</span>
+                            <p id="trait-functional-desc"
+                                class="text-slate-500 text-[13px] leading-relaxed break-keep mb-5">
+                                -
+                            </p>
+                            <div class="grid grid-cols-2 gap-3 pt-5 border-t border-slate-50">
+                                <div class="bg-slate-50/80 p-3.5 rounded-2xl">
+                                    <p class="text-[9px] text-slate-400 font-black mb-1.5 uppercase tracking-tighter">
+                                        Keyword 01</p>
+                                    <span id="flow-chip-value-1"
+                                        class="text-[13px] font-bold text-slate-800">#준비중</span>
+                                </div>
+                                <div class="bg-slate-50/80 p-3.5 rounded-2xl">
+                                    <p class="text-[9px] text-slate-400 font-black mb-1.5 uppercase tracking-tighter">
+                                        Keyword 02</p>
+                                    <span id="flow-chip-value-2"
+                                        class="text-[13px] font-bold text-slate-800">#준비중</span>
+                                </div>
                             </div>
-                            <div
-                                class="bg-[#fafbfc] rounded-xl py-3.5 flex flex-col items-center justify-center border border-slate-100/50">
-                                <span id="flow-chip-title-2"
-                                    class="text-[11px] text-slate-400 font-medium mb-1 tracking-tight">성과</span>
-                                <span id="flow-chip-value-2" class="text-primary text-[13px] font-bold">-</span>
-                            </div>
                         </div>
-                    </div>
+                    </section>
+
+                    <!-- 키워드 -->
+                    <section class="px-4">
+                        <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                            <p id="trait-comprehensive"
+                                class="text-slate-500 text-[13px] leading-relaxed break-keep mb-5">
+                                사주 분석 결과에 따른 기질 요약입니다.
+                            </p>
+                            <div id="trait-keywords" class="flex flex-wrap gap-2"></div>
+                        </div>
+                    </section>
                 </div>
 
-                <!-- Comprehensive Desc -->
-                <div class="px-5">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="material-symbols-outlined text-primary text-[22px] fill-icon">auto_awesome</span>
-                        <h3 class="text-[17px] font-bold text-slate-800 tracking-tight">기질 종합 분석</h3>
+                <!-- 탭 3: 운의 흐름 (FLOW) -->
+                <div id="sub-tab-flow" class="hidden px-6 py-20 text-center">
+                    <div class="size-20 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-6">
+                        <span class="material-symbols-outlined text-slate-300 text-[40px]">timeline</span>
                     </div>
-                    <div
-                        class="bg-gradient-to-br from-indigo-50 to-white rounded-2xl p-6 border border-indigo-100/50 shadow-sm">
-                        <p id="trait-comprehensive"
-                            class="text-slate-700 text-[14px] leading-relaxed break-keep tracking-tight">-</p>
-                    </div>
+                    <h4 class="text-slate-800 font-bold mb-2">운의 흐름 분석 준비 중</h4>
+                    <p class="text-slate-400 text-[13px] leading-relaxed">
+                        대운과 세운을 통한 정밀한 미래 예측 서비스가<br>곧 업데이트될 예정입니다.
+                    </p>
                 </div>
-
-                <!-- Keywords -->
-                <div class="px-5 pb-12">
-                    <div class="flex items-center gap-2 mb-4">
-                        <span class="material-symbols-outlined text-primary text-[22px] fill-icon">psychology</span>
-                        <h3 class="text-[17px] font-bold text-slate-800 tracking-tight">기질 키워드</h3>
-                    </div>
-                    <div id="trait-keywords" class="flex flex-wrap gap-2"></div>
-                </div>
-            </main>
+            </div>
         </section>
 
 
-        <!-- ========================================== -->
         <!-- ========================================== -->
         <!-- TAB 3: 오늘의 가이드 (Stitch ui_3 / ui_todayguide 01 & 02) -->
         <!-- ========================================== -->
@@ -804,7 +826,8 @@
                                 class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
                                 <p class="text-[10px] text-slate-400 font-bold mb-1">행운의 방향</p>
                                 <p id="modal-luck-direction"
-                                    class="text-sm font-black text-slate-800 dark:text-slate-100">--</p>
+                                    class="text-sm font-black text-slate-800 dark:text-slate-100">
+                                    --</p>
                             </div>
                         </div>
                     </section>
@@ -963,7 +986,8 @@
                                     class="bg-white/10 px-2 py-0.5 rounded-lg text-[10px] text-white/80 font-bold whitespace-nowrap border border-white/5">0명</span>
                             </div>
                             <p id="tooltip-desc"
-                                class="text-white/90 text-[11px] leading-relaxed break-keep font-medium">데이터를 분석 중입니다...
+                                class="text-white/90 text-[11px] leading-relaxed break-keep font-medium">
+                                데이터를 분석 중입니다...
                             </p>
                         </div>
                         <div
@@ -1355,12 +1379,6 @@
                 data-target="tab-network">
                 <span class="material-symbols-outlined text-[26px]">groups</span>
                 <span class="nav-text text-[11px] font-medium">인연</span>
-            </button>
-            <button type="button"
-                class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
-                data-target="tab-trait">
-                <span class="material-symbols-outlined text-[26px]">psychology</span>
-                <span class="nav-text text-[11px] font-medium">기질 분석</span>
             </button>
             <button type="button"
                 class="nav-link flex flex-col items-center gap-1.5 px-2 py-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors"
