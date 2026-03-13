@@ -1625,7 +1625,13 @@ window.renderSynergyGalaxy = function (friends) {
         if (currentGalaxyFilter === 'challenge' && !(analysis.orbit === 4 || analysis.orbit === 5)) displayAlpha = 0.15;
 
         const orbitIdx = analysis.orbit - 1;
-        const radius = orbits[orbitIdx];
+        const baseRadius = orbits[orbitIdx];
+
+        // [Intuition Fix] Score-based radius offset: higher score pulls star closer to center
+        // Offset range: -10 to +10 pixels within the orbit path
+        const scoreOffset = (analysis.score - 70) * 0.4;
+        const radius = baseRadius - scoreOffset;
+
         const angle = (idx * (360 / Math.max(1, friends.length)) + (time * 3)) * (Math.PI / 180);
 
         const x = centerX + radius * Math.cos(angle);
@@ -1665,10 +1671,15 @@ window.renderSynergyGalaxy = function (friends) {
 
         // Label
         if (displayAlpha > 0.5) {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.font = 'bold 10px sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = 'bold 11px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText(f.name, x, y + 22);
+
+            // Show score near star for better intuition
+            ctx.fillStyle = analysis.frElColor;
+            ctx.font = '8px sans-serif';
+            ctx.fillText(`${analysis.score}pt`, x, y - 12);
         }
     });
 
@@ -1738,17 +1749,17 @@ window.renderFriendList = function () {
                     <div>
                         <div class="flex items-center gap-2">
                             <h4 class="font-bold text-white text-[16px]">${friend.name}</h4>
-                            <span class="text-white/40 text-[10px] bg-white/5 px-2 py-0.5 rounded-lg border border-white/5">Orbit ${analysis.orbit}</span>
+                            <span class="text-white/80 text-[10px] bg-white/10 px-2 py-0.5 rounded-lg border border-white/20 font-bold">Orbit ${analysis.orbit}</span>
                         </div>
                         <div class="flex items-center gap-1.5 mt-1">
                             <span class="size-2 rounded-full" style="background-color: ${analysis.frElColor}"></span>
-                            <p class="text-[11px] text-white/40 font-bold">${analysis.sipsung} - ${analysis.orbitName}</p>
+                            <p class="text-[11px] text-white/70 font-bold tracking-tight">${analysis.sipsung} · ${analysis.orbitName}</p>
                         </div>
                     </div>
                 </div>
                 <div class="text-right">
-                    <div class="text-[22px] font-black text-white">${analysis.score}<span class="text-[10px] ml-0.5 text-white/30">점</span></div>
-                    <div class="mt-1 px-2 py-0.5 bg-primary/20 rounded-full text-primary-light text-[9px] font-black uppercase tracking-widest">Synergy</div>
+                    <div class="text-[22px] font-black text-white leading-none">${analysis.score}<span class="text-[10px] ml-0.5 text-white/40">점</span></div>
+                    <div class="mt-2 px-2 py-0.5 bg-primary/40 rounded-full text-white text-[9px] font-black uppercase tracking-widest border border-primary/20 shadow-[0_0_15px_rgba(59,130,246,0.2)]">Synergy</div>
                 </div>
             </div>
         `;
