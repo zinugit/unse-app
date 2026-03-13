@@ -1579,6 +1579,7 @@ window.renderSynergyGalaxy = function (friends) {
 
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
+    const time = Date.now() * 0.001;
 
     // [Zone 2.2] Score-based Gravity Rings (Intuition: Distance = Score Tier)
     const tiers = [
@@ -1616,8 +1617,6 @@ window.renderSynergyGalaxy = function (friends) {
     }
 
     ctx.clearRect(0, 0, rect.width, rect.height);
-
-    const time = Date.now() * 0.001;
 
     // 2. [Permanent Sector Guides] 5대 섹터 가이드 (12시 기준 72도 분할)
     const sectorLabels = ["지원군(인성)", "동료(비겁)", "창의(식상)", "성과(재성)", "성장(관성)"];
