@@ -1794,9 +1794,27 @@ window.renderSynergyGalaxy = function (friends) {
         document.getElementById('tooltip-desc').innerText = sectorInfo[sIdx].desc;
         document.getElementById('tooltip-count').innerText = `${count}명`;
 
-        // 위치 조정 (터치 지점 상단에 오도록)
-        tooltip.style.left = `${e.clientX - rect.left - (tooltip.offsetWidth / 2)}px`;
-        tooltip.style.top = `${e.clientY - rect.top - tooltip.offsetHeight - 10}px`;
+        // 위치 조정 (터치 지점 상단에 오도록 하되, 화면 밖으로 나가지 않게 조절)
+        let left = e.clientX - rect.left - (tooltip.offsetWidth / 2);
+        let top = e.clientY - rect.top - tooltip.offsetHeight - 15;
+
+        // 좌우 경계 체크 (Safe-Area Awareness)
+        if (left < 10) left = 10;
+        if (left + tooltip.offsetWidth > rect.width - 10) left = rect.width - tooltip.offsetWidth - 10;
+
+        // 상단 경계 체크 (너무 위면 터치 지점 아래로 표시)
+        if (top < 10) {
+            top = e.clientY - rect.top + 20;
+            // 말꼬리 위치 조정 (생략 가능하지만 옵션으로 처리)
+            const arrow = tooltip.querySelector('div:last-child');
+            if (arrow) arrow.style.display = 'none'; // 아래로 나올 땐 화살표 숨김
+        } else {
+            const arrow = tooltip.querySelector('div:last-child');
+            if (arrow) arrow.style.display = 'block';
+        }
+
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
 
         tooltip.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
         tooltip.classList.add('opacity-100', 'scale-100');
