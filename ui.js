@@ -2202,9 +2202,52 @@ function resetGenderSelection() {
 window.resetGenderSelection = resetGenderSelection;
 
 /**
- * [Synergy Meetup] UI Rendering
- * 결합 로직: (나 + 상대)의 시너지 + 오늘의 일진(Energy)
+ * [Synergy Meetup] 상태 및 인터랙션 핸들러
  */
+let meetupFilter = {
+    dateOffset: 2, // 2 = 오늘
+    theme: 'all'  // 'all', 'business', 'healing'
+};
+
+window.setMeetupDate = function (offset) {
+    meetupFilter.dateOffset = offset;
+
+    const timelineContainer = document.querySelector('#tab-meetup .overflow-x-auto');
+    if (timelineContainer) {
+        const buttons = timelineContainer.querySelectorAll('button');
+        buttons.forEach((btn, idx) => {
+            if (idx === (offset - 2)) {
+                btn.classList.remove('bg-white/5', 'text-white/40');
+                btn.classList.add('bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20');
+            } else {
+                btn.classList.add('bg-white/5', 'text-white/40');
+                btn.classList.remove('bg-primary', 'text-white', 'shadow-lg', 'shadow-primary/20');
+            }
+        });
+    }
+
+    const titles = ["그저께", "어제", "오늘", "내일", "모레", "글피", "그글피"];
+    const titleEl = document.querySelector('#tab-meetup h3.font-black');
+    if (titleEl) titleEl.innerText = `${titles[offset]} 최고의 시너지 PIK!`;
+
+    renderMeetupUI();
+};
+
+window.setMeetupTheme = function (theme) {
+    meetupFilter.theme = (meetupFilter.theme === theme) ? 'all' : theme;
+
+    const businessCard = document.getElementById('meetup-theme-business');
+    const healingCard = document.getElementById('meetup-theme-healing');
+    const activeClasses = ['ring-2', 'ring-white/60', 'scale-[1.02]'];
+
+    if (businessCard && healingCard) {
+        [businessCard, healingCard].forEach(card => card.classList.remove(...activeClasses));
+        if (meetupFilter.theme === 'business') businessCard.classList.add(...activeClasses);
+        else if (meetupFilter.theme === 'healing') healingCard.classList.add(...activeClasses);
+    }
+
+    renderMeetupUI();
+};
 const MEETUP_PLACES_REPO = {
     Wood: [
         { name: "문정동 옥소반", category: "스키야키/한식", rating: 4.88, reviews: 1520, element: "Wood", img: "https://images.unsplash.com/photo-1547592166-23ac45744acd?q=80&w=400", desc: "신선한 야채와 고기가 어우러진 스키야키는 서로의 성장을 독려하는 비즈니스 미팅에 최적입니다." }
@@ -2233,13 +2276,27 @@ function renderMeetupUI() {
     }
 
     const weeklyLuck = SajuEngine.getWeeklyTrend(userSajuData.pillars);
-    const todayLuck = weeklyLuck[2];
-    const recommendations = friendList.map(friend => {
+    const selectedLuck = weeklyLuck[meetupFilter.dateOffset] || weeklyLuck[2];
+
+    let recommendations = friendList.map(friend => {
         const synAnalysis = SajuEngine.analyzeRelationship(userSajuData.pillars, friend.pillars);
-        const dailyVariation = (todayLuck.score - 50) / 10;
+        const dailyVariation = (selectedLuck.score - 50) / 10;
         const totalScore = Math.min(100, Math.max(0, synAnalysis.score + dailyVariation));
         return { friend, analysis: synAnalysis, totalScore };
-    }).sort((a, b) => b.totalScore - a.totalScore);
+    });
+
+    if (meetupFilter.theme === 'business') {
+        recommendations = recommendations.filter(item => item.analysis.orbit === 4 || item.analysis.orbit === 5);
+    } else if (meetupFilter.theme === 'healing') {
+        recommendations = recommendations.filter(item => item.analysis.orbit === 1 || item.analysis.orbit === 2 || item.analysis.orbit === 3);
+    }
+
+    recommendations.sort((a, b) => b.totalScore - a.totalScore);
+
+    if (recommendations.length === 0) {
+        listContainer.innerHTML = `<div class="w-full py-12 text-center"><p class="text-white/30 text-sm">해당 테마에 맞는 인연이 없습니다.</p></div>`;
+        return;
+    }
 
     const MEETUP_ASSETS = {
         Wood: { menu: "신선한 한정식/샐러드 🥗", emoji: "🌲" },
@@ -2250,13 +2307,12 @@ function renderMeetupUI() {
     };
 
     listContainer.innerHTML = recommendations.map((item) => {
-        const dmChar = item.friend.pillars.dayMaster.charAt(0);
-        const dmEl = FIVE_ELEMENTS[dmChar] || "Wood";
+        const dmEl = FIVE_ELEMENTS[item.friend.pillars.dayMaster.charAt(0)] || "Wood";
         const assets = MEETUP_ASSETS[dmEl];
         const place = MEETUP_PLACES_REPO[dmEl][0];
 
         return `
-            <div class="snap-start min-w-[300px] bg-white/5 rounded-[32px] border border-white/10 p-6 relative overflow-hidden flex-shrink-0 active:scale-[0.98] transition-all cursor-pointer"
+            <div class="snap-start w-[calc(100vw-40px)] max-w-[350px] bg-white/5 rounded-[32px] border border-white/10 p-6 relative overflow-hidden flex-shrink-0 active:scale-[0.98] transition-all cursor-pointer"
                  onclick="openMeetupDetail('${dmEl}', 0, '${item.friend.name}')">
                 <div class="flex items-center gap-4 mb-6">
                     <div class="size-14 rounded-2xl bg-white/10 flex items-center justify-center border border-white/10 overflow-hidden">
@@ -2273,7 +2329,7 @@ function renderMeetupUI() {
                 </div>
                 <div class="space-y-4">
                     <div class="bg-white/5 rounded-2xl p-4 min-h-[64px] flex items-center">
-                        <p class="text-[12px] text-white/70 leading-relaxed break-keep">"${item.friend.name}님과 함께 ${assets.emoji} ${assets.menu}를 즐기며 시너지를 내보세요."</p>
+                        <p class="text-[12px] text-white/70 leading-relaxed break-keep whitespace-normal break-words">"${item.friend.name}님과 함께 ${assets.emoji} ${assets.menu}를 즐기며 시너지를 내보세요."</p>
                     </div>
                     <div class="flex flex-col gap-2 pt-2 text-[12px]">
                         <div class="flex items-center justify-between"><span class="text-white/40">추천 메뉴</span><span class="text-white font-bold">${assets.menu}</span></div>
