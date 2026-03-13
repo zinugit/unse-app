@@ -1579,8 +1579,13 @@ window.renderSynergyGalaxy = function (friends) {
 
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const orbits = [45, 75, 115, 155, 195];
-    const orbitNames = ["든든한 지원군", "러닝메이트", "창의적 파트너", "비즈니스 귀인", "커리어 코치"];
+
+    // [Zone 2.2] Score-based Gravity Rings (Intuition: Distance = Score Tier)
+    const tiers = [
+        { score: 90, r: 65, label: 'Soulmate' },
+        { score: 80, r: 125, label: 'Synergy' },
+        { score: 70, r: 185, label: 'Network' }
+    ];
 
     const userDM = userSajuData.pillars.dayMaster.charAt(0);
     const userEl = FIVE_ELEMENTS[userDM];
@@ -1597,21 +1602,21 @@ window.renderSynergyGalaxy = function (friends) {
 
     const time = Date.now() * 0.001;
 
-    // Draw Orbits based on filter
-    orbits.forEach((r, i) => {
+    // Draw Score Tier Rings (Gravity Gauges)
+    tiers.forEach((tier) => {
         ctx.beginPath();
-        ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
-
+        ctx.arc(centerX, centerY, tier.r, 0, Math.PI * 2);
         ctx.lineWidth = 1;
-        if (currentGalaxyFilter === 'challenge' && (i === 3 || i === 4)) {
-            ctx.setLineDash([2, 6]);
-            ctx.strokeStyle = 'rgba(255, 165, 0, 0.15)';
-        } else {
-            ctx.setLineDash([]);
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-        }
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.setLineDash([2, 4]);
         ctx.stroke();
+
+        // Tier Label
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.font = 'bold 8px sans-serif';
+        ctx.fillText(tier.label, centerX, centerY - tier.r - 5);
     });
+    ctx.setLineDash([]);
     ctx.setLineDash([]);
 
     // Draw Friends with Density Awareness
@@ -1619,24 +1624,42 @@ window.renderSynergyGalaxy = function (friends) {
         const analysis = SajuEngine.analyzeRelationship(userSajuData.pillars, f.pillars);
         if (!analysis) return;
 
-        // Filter Logic
+        // Filter Logic & Mode Activity
         let displayAlpha = 1.0;
-        if (currentGalaxyFilter === 'boost' && !(analysis.orbit === 1 || analysis.orbit === 3)) displayAlpha = 0.15;
-        if (currentGalaxyFilter === 'challenge' && !(analysis.orbit === 4 || analysis.orbit === 5)) displayAlpha = 0.15;
+        let isModeActive = true;
 
-        const orbitIdx = analysis.orbit - 1;
-        const baseRadius = orbits[orbitIdx];
+        if (currentGalaxyFilter === 'boost' && !(analysis.orbit === 1 || analysis.orbit === 3)) {
+            displayAlpha = 0.15;
+            isModeActive = false;
+        }
+        if (currentGalaxyFilter === 'challenge' && !(analysis.orbit === 4 || analysis.orbit === 5)) {
+            displayAlpha = 0.15;
+            isModeActive = false;
+        }
 
-        // [Ultra-Intuitive Gravity Engine] 
-        // Logic: Score is 'Mass'. Higher mass (Score) = Stronger pull toward the Sun.
-        // A 95+ score on any Orbit should feel 'closer' and more powerful.
-        const pullFactor = (analysis.score - 50) / 100; // 0.0 to 0.5 range approx
-        const radius = baseRadius * (1.05 - (pullFactor * 0.8));
+        // [Radial Architecture] Sector Mapping (Direction = Relationship Nature)
+        const sectors = [
+            { min: -90, max: -30 }, // Orbit 1: Support (12시~2시)
+            { min: -30, max: 30 },  // Orbit 2: Mate (2시~4시)
+            { min: 30, max: 120 },  // Orbit 3: Creative (4시~7시)
+            { min: 120, max: 210 }, // Orbit 4: Business (7시~9시)
+            { min: 210, max: 270 }  // Orbit 5: Career (9시~12시)
+        ];
 
-        const angle = (idx * (360 / Math.max(1, friends.length)) + (time * 2)) * (Math.PI / 180);
+        const sector = sectors[analysis.orbit - 1];
+        const midAngle = (sector.min + sector.max) / 2;
+        const spread = (sector.max - sector.min) * 0.7;
 
-        const x = centerX + radius * Math.cos(angle);
-        const y = centerY + radius * Math.sin(angle);
+        // Wobble oscillation for organic feel
+        const wobble = Math.sin(time + idx) * (spread / 4);
+        const targetAngle = (midAngle + wobble) * (Math.PI / 180);
+
+        // Distance = Gravity (Score-based radius)
+        // 100pt -> 60px (Sun center), 60pt -> 180px (Galaxy edge)
+        const radius = 60 + (100 - analysis.score) * 3;
+
+        const x = centerX + radius * Math.cos(targetAngle);
+        const y = centerY + radius * Math.sin(targetAngle);
 
         // Massive Scaling for High Scores
         const massFactor = Math.pow(analysis.score / 100, 2);
@@ -1646,32 +1669,43 @@ window.renderSynergyGalaxy = function (friends) {
         // Pulse effect for high scores
         const pulse = (analysis.score > 90) ? Math.sin(time * 4) * 2 : 0;
 
-        // Energy Flow (Boost Mode Only)
-        if (currentGalaxyFilter === 'boost' && displayAlpha > 0.5) {
+        // Specialized Mode Effects
+        if (currentGalaxyFilter === 'boost' && isModeActive) { // Boost: Energy Flows
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
-            ctx.quadraticCurveTo(centerX + radius / 2 * Math.cos(angle - 0.2), centerY + radius / 2 * Math.sin(angle - 0.2), x, y);
-            ctx.strokeStyle = `${analysis.frElColor}22`;
-            ctx.lineWidth = 1.5;
+            ctx.quadraticCurveTo(
+                centerX + radius / 2 * Math.cos(targetAngle - 0.2),
+                centerY + radius / 2 * Math.sin(targetAngle - 0.2),
+                x, y
+            );
+            ctx.strokeStyle = `${analysis.frElColor}44`;
+            ctx.lineWidth = 1;
             ctx.stroke();
         }
 
-        // Glow
-        const gradient = ctx.createRadialGradient(x, y, 0, x, y, glowRadius);
+        // Glow (Enhanced for active modes)
+        const glowMult = isModeActive ? 1.5 : 1.0;
+        const activeGlow = glowRadius * glowMult;
+
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, activeGlow);
         gradient.addColorStop(0, analysis.frElColor);
+        if (currentGalaxyFilter === 'challenge' && isModeActive) {
+            gradient.addColorStop(0.3, '#fbbf24'); // Gold spark for Challenge mode
+        }
         gradient.addColorStop(1, 'transparent');
+
         ctx.fillStyle = gradient;
-        ctx.globalAlpha = (0.5 + Math.sin(time * 2 + idx) * 0.15) * displayAlpha;
+        ctx.globalAlpha = (0.5 + Math.sin(time * 3 + idx) * 0.2) * displayAlpha;
         ctx.beginPath();
-        ctx.arc(x, y, glowRadius + pulse, 0, Math.PI * 2);
+        ctx.arc(x, y, activeGlow + pulse, 0, Math.PI * 2);
         ctx.fill();
 
         // Core star (Brighter and larger for high scores)
         ctx.globalAlpha = displayAlpha;
         ctx.fillStyle = '#ffffff';
         if (analysis.score > 90) {
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#ffffff';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = (currentGalaxyFilter === 'challenge' && isModeActive) ? '#fbbf24' : '#ffffff';
         }
         ctx.beginPath();
         ctx.arc(x, y, starSize, 0, Math.PI * 2);
@@ -1686,7 +1720,7 @@ window.renderSynergyGalaxy = function (friends) {
             ctx.fillText(f.name, x, y + 25);
 
             // Score Badge inside Galaxy
-            ctx.fillStyle = analysis.frElColor;
+            ctx.fillStyle = (currentGalaxyFilter === 'challenge' && isModeActive) ? '#fbbf24' : analysis.frElColor;
             ctx.font = 'bold 9px sans-serif';
             ctx.fillText(`${analysis.score}pt`, x, y - 15);
         }
