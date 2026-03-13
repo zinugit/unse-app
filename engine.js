@@ -820,7 +820,7 @@
             const myEl = FIVE_ELEMENTS[myDM];
             const frEl = FIVE_ELEMENTS[frDM];
 
-            // 1. Determine Sipsung Relationship (Orbits)
+            // 1. Determine Sipsung Relationship (Sectors)
             let orbit = 2; // Default
             let sipsung = "비겁";
             let role = "러닝메이트 (동식)";

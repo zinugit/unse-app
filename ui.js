@@ -1566,8 +1566,8 @@ window.setListSectorFilter = function (sector) {
     renderFriendList();
 };
 
-window.openOrbitGlossary = function () {
-    const modal = document.getElementById('orbit-glossary-modal');
+window.openSectorGlossary = function () {
+    const modal = document.getElementById('sector-glossary-modal');
     const content = modal?.querySelector('.relative');
     if (!modal) return;
 
@@ -1578,8 +1578,8 @@ window.openOrbitGlossary = function () {
     }, 10);
 };
 
-window.closeOrbitGlossary = function () {
-    const modal = document.getElementById('orbit-glossary-modal');
+window.closeSectorGlossary = function () {
+    const modal = document.getElementById('sector-glossary-modal');
     const content = modal?.querySelector('.relative');
 
     content?.classList.add('translate-y-full');
@@ -1983,7 +1983,7 @@ window.renderFriendList = function () {
                     <div>
                         <div class="flex items-center gap-1.5">
                             <h4 class="font-bold text-white text-[15px]">${f.name}</h4>
-                            <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-white/5 text-white/40 border border-white/5">ORBIT ${ani.orbit}</span>
+                            <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-white/5 text-white/40 border border-white/5">SECTOR ${ani.orbit}</span>
                         </div>
                         <p class="text-[11px] font-medium text-white/40 leading-none mt-1">
                             ${ani.sipsung} · <span style="color: ${sColor}">${ani.orbitName}</span>
@@ -2015,7 +2015,7 @@ window.openSynergyReport = function (index) {
     if (!analysis || !modal) return;
 
     // Fill Data
-    document.getElementById('report-orbit-label').innerText = `Orbit ${analysis.orbit}`;
+    document.getElementById('report-sector-label').innerText = `Sector ${analysis.orbit}`;
     document.getElementById('report-title').innerText = `${userSajuData.name} & ${friend.name}`;
     document.getElementById('report-score').innerHTML = `${analysis.score}<span class="text-xs ml-0.5 text-white/30">점</span>`;
     document.getElementById('report-role-name').innerText = `${analysis.orbitName} (${analysis.sipsung})`;

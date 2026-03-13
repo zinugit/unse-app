@@ -923,7 +923,7 @@
                 </button>
                 <h1 class="text-[17px] font-bold tracking-tight absolute left-1/2 -translate-x-1/2 text-white">시너지 갤럭시
                 </h1>
-                <button onclick="openOrbitGlossary()" class="p-2 -mr-2 rounded-full flex items-center justify-center">
+                <button onclick="openSectorGlossary()" class="p-2 -mr-2 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined text-white/70 text-[24px]">info</span>
                 </button>
             </header>
@@ -1027,19 +1027,19 @@
                 </div>
             </div>
 
-            <!-- Orbit Glossary Modal (Bottom Sheet) -->
-            <div id="orbit-glossary-modal" class="fixed inset-0 z-[130] hidden items-end justify-center">
-                <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeOrbitGlossary()"></div>
+            <!-- Sector Glossary Modal (Bottom Sheet) -->
+            <div id="sector-glossary-modal" class="fixed inset-0 z-[130] hidden items-end justify-center">
+                <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeSectorGlossary()"></div>
                 <div
                     class="relative w-full max-w-md bg-slate-900 rounded-t-[32px] p-8 shadow-2xl border-t border-white/10 transform translate-y-full transition-transform duration-500 ease-out">
                     <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8"></div>
-                    <h3 class="text-2xl font-black text-white mb-2 tracking-tight">인연 궤도 가이드</h3>
-                    <p class="text-white/40 text-sm mb-8">UNSE가 분석한 5단계 운명적 관계</p>
+                    <h3 class="text-2xl font-black text-white mb-2 tracking-tight">인연 섹터 가이드</h3>
+                    <p class="text-white/40 text-sm mb-8">UNSE가 분석한 5대 섹터별 운명적 관계</p>
                     <div class="space-y-6 max-h-[60vh] overflow-y-auto no-scrollbar">
                         <div class="flex gap-4">
                             <div
                                 class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shrink-0 text-primary-light font-black text-sm">
-                                O1</div>
+                                S1</div>
                             <div>
                                 <h4 class="text-white font-bold mb-1 text-sm">든든한 지원군 (인성)</h4>
                                 <p class="text-white/50 text-[11px] leading-relaxed">나에게 조건 없는 사랑과 에너지를 주는 멘토입니다.</p>
@@ -1048,7 +1048,7 @@
                         <div class="flex gap-4">
                             <div
                                 class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 text-white/50 font-black text-sm">
-                                O2</div>
+                                S2</div>
                             <div>
                                 <h4 class="text-white font-bold mb-1 text-sm">러닝메이트 (비겁)</h4>
                                 <p class="text-white/50 text-[11px] leading-relaxed">함께 경쟁하며 성장하는 친구 같은 동료입니다.</p>
@@ -1057,7 +1057,7 @@
                         <div class="flex gap-4">
                             <div
                                 class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400 font-black text-sm">
-                                O3</div>
+                                S3</div>
                             <div>
                                 <h4 class="text-white font-bold mb-1 text-sm">창의적 파트너 (식상)</h4>
                                 <p class="text-white/50 text-[11px] leading-relaxed">내가 에너지를 쏟아 키우고 결과를 만드는 파트너입니다.</p>
@@ -1066,7 +1066,7 @@
                         <div class="flex gap-4">
                             <div
                                 class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center shrink-0 text-orange-400 font-black text-sm">
-                                O4</div>
+                                S4</div>
                             <div>
                                 <h4 class="text-white font-bold mb-1 text-sm">비즈니스 귀인 (재성)</h4>
                                 <p class="text-white/50 text-[11px] leading-relaxed">나를 자극하여 부와 성과를 가져오는 귀한 인연입니다.</p>
@@ -1075,14 +1075,14 @@
                         <div class="flex gap-4">
                             <div
                                 class="w-10 h-10 rounded-xl bg-rose-500/20 flex items-center justify-center shrink-0 text-rose-400 font-black text-sm">
-                                O5</div>
+                                S5</div>
                             <div>
                                 <h4 class="text-white font-bold mb-1 text-sm">커리어 코치 (관성)</h4>
                                 <p class="text-white/50 text-[11px] leading-relaxed">나를 리드하고 사회적 지위를 높여주는 리더입니다.</p>
                             </div>
                         </div>
                     </div>
-                    <button onclick="closeOrbitGlossary()"
+                    <button onclick="closeSectorGlossary()"
                         class="w-full mt-8 py-4 text-white/30 font-bold rounded-2xl active:scale-95 transition-all">닫기</button>
                 </div>
             </div>
@@ -1455,8 +1455,8 @@
 
                 <div class="flex items-center justify-between mb-6">
                     <div>
-                        <span id="report-orbit-label"
-                            class="text-[10px] font-black text-primary-light uppercase tracking-widest bg-primary/10 px-2 py-1 rounded-md">Orbit
+                        <span id="report-sector-label"
+                            class="text-[10px] font-black text-primary-light uppercase tracking-widest bg-primary/10 px-2 py-1 rounded-md">Sector
                             1</span>
                         <h3 id="report-title" class="text-2xl font-black text-white mt-2 tracking-tight">피터 & 김철수</h3>
                     </div>
