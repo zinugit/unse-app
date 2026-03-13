@@ -1616,7 +1616,23 @@ window.renderSynergyGalaxy = function (friends) {
         ctx.font = 'bold 8px sans-serif';
         ctx.fillText(tier.label, centerX, centerY - tier.r - 5);
     });
-    ctx.setLineDash([]);
+
+    const sectorLabels = ['지원군', '동료', '창의', '성과', '성장'];
+    for (let i = 0; i < 5; i++) {
+        const lineAngle = (-90 + (i * 72)) * (Math.PI / 180);
+        const labelAngle = (-90 + (i * 72) + 36) * (Math.PI / 180);
+        ctx.beginPath();
+        ctx.setLineDash([2, 6]);
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(centerX + 210 * Math.cos(lineAngle), centerY + 210 * Math.sin(lineAngle));
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(sectorLabels[i], centerX + 215 * Math.cos(labelAngle), centerY + 215 * Math.sin(labelAngle));
+    }
     ctx.setLineDash([]);
 
     // Draw Friends with Density Awareness
@@ -1637,18 +1653,12 @@ window.renderSynergyGalaxy = function (friends) {
             isModeActive = false;
         }
 
-        // [Radial Architecture] Sector Mapping (Direction = Relationship Nature)
-        const sectors = [
-            { min: -90, max: -30 }, // Orbit 1: Support (12시~2시)
-            { min: -30, max: 30 },  // Orbit 2: Mate (2시~4시)
-            { min: 30, max: 120 },  // Orbit 3: Creative (4시~7시)
-            { min: 120, max: 210 }, // Orbit 4: Business (7시~9시)
-            { min: 210, max: 270 }  // Orbit 5: Career (9시~12시)
-        ];
-
-        const sector = sectors[analysis.orbit - 1];
-        const midAngle = (sector.min + sector.max) / 2;
-        const spread = (sector.max - sector.min) * 0.7;
+        // [Radial Architecture] Sector Mapping (Standardized 72 deg blocks)
+        // S1: -90 to -18, S2: -18 to 54, S3: 54 to 126, S4: 126 to 198, S5: 198 to 270
+        const startDeg = -90 + (analysis.orbit - 1) * 72;
+        const endDeg = startDeg + 72;
+        const midAngle = (startDeg + endDeg) / 2;
+        const spread = 45; // Degrees to spread stars within sector
 
         // Wobble oscillation for organic feel
         const wobble = Math.sin(time + idx) * (spread / 4);
